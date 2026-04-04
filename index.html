@@ -1,9 +1,608 @@
-<html>
-    <head>
-        <meta charset = "UTF-8">
-        <title>Tal Al sindian</title>
-    </head>
-    <body>
-      <center><h1><font color = "red">Warning: Service Interruption Imminent Without Payment.</font></h1></center>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Tal Al sindian · Urgent Payment Required</title>
+    <!-- Google Fonts + Font Awesome 6 (free) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f1f5f9 0%, #e6edf4 100%);
+            font-family: 'Inter', sans-serif;
+            color: #0a2540;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* main card container */
+        .warning-card {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* urgency header line */
+        .urgent-strip {
+            background: #b91c1c;
+            height: 6px;
+            width: 100%;
+        }
+
+        /* inner content */
+        .content-inner {
+            padding: 2rem 2rem 2rem 2rem;
+        }
+
+        /* brand & top bar */
+        .brand-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9edf2;
+        }
+
+        .logo h2 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1e2a3a, #0f3b2c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .logo span {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #5b6e8c;
+            display: block;
+            letter-spacing: normal;
+        }
+
+        .support-badge {
+            background: #f8fafc;
+            padding: 0.5rem 1rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e293b;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .support-badge i {
+            color: #b91c1c;
+            margin-right: 8px;
+        }
+
+        /* main alert */
+        .alert-header {
+            background: #fff5f5;
+            border-left: 6px solid #dc2626;
+            border-radius: 1.2rem;
+            padding: 1.2rem 1.8rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .alert-icon {
+            font-size: 2.2rem;
+            color: #dc2626;
+        }
+
+        .alert-text h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #991b1b;
+            letter-spacing: -0.2px;
+        }
+
+        .alert-text p {
+            color: #4b5563;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* two column grid */
+        .grid-payment {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2.2rem;
+        }
+
+        @media (max-width: 780px) {
+            .grid-payment {
+                grid-template-columns: 1fr;
+                gap: 1.8rem;
+            }
+            .content-inner {
+                padding: 1.5rem;
+            }
+        }
+
+        /* left details */
+        .details-section {
+            background: #fefefe;
+            border-radius: 1.5rem;
+            padding: 0.2rem 0;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            border-left: 4px solid #dc2626;
+            padding-left: 1rem;
+        }
+
+        .invoice-list {
+            list-style: none;
+            background: #f9fafc;
+            border-radius: 1.2rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .invoice-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.9rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+        }
+
+        .invoice-list li:last-child {
+            border-bottom: none;
+        }
+
+        .invoice-label {
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .invoice-value {
+            font-weight: 500;
+            color: #0f172a;
+        }
+
+        .notice-box {
+            background: #fff8e7;
+            border-radius: 1rem;
+            padding: 1rem 1.2rem;
+            border: 1px solid #ffe2b5;
+            font-size: 0.85rem;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .notice-box i {
+            font-size: 1.3rem;
+            color: #e67e22;
+        }
+
+        /* right side */
+        .payment-side {
+            background: #ffffff;
+            border-radius: 1.5rem;
+            border: 1px solid #edf2f7;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+            padding: 1.2rem 1.5rem 1.8rem 1.5rem;
+        }
+
+        .amount-due {
+            background: #f1f5f9;
+            border-radius: 1.2rem;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .amount-due .label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .amount-due .price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 6px;
+        }
+
+        .amount-due .price small {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #5b6e8c;
+        }
+
+        .timer-container {
+            background: #0f172a;
+            color: white;
+            border-radius: 1.2rem;
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.8rem;
+            text-align: center;
+        }
+
+        .timer-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .countdown {
+            font-family: 'Inter', monospace;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin: 0.6rem 0 0.2rem;
+        }
+
+        .countdown-message {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .pay-btn {
+            width: 100%;
+            background: #dc2626;
+            border: none;
+            padding: 1rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 10px rgba(220,38,38,0.2);
+        }
+
+        .pay-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 20px -8px rgba(185,28,28,0.4);
+        }
+
+        .pay-btn:active {
+            transform: translateY(1px);
+        }
+
+        .secure-note {
+            font-size: 0.75rem;
+            text-align: center;
+            color: #5b6e8c;
+            margin-top: 12px;
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0 0.5rem;
+            font-size: 1.5rem;
+            color: #94a3b8;
+        }
+
+        /* footer */
+        .footer-note {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eef2f6;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: #5c6f87;
+        }
+
+        .footer-note a {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-note a:hover {
+            text-decoration: underline;
+        }
+
+        /* status badge */
+        .badge-critical {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="warning-card">
+    <div class="urgent-strip"></div>
+    <div class="content-inner">
+        <!-- header with brand -->
+        <div class="brand-bar">
+            <div class="logo">
+                <h2>Tal Al sindian <i class="fas fa-shield-alt" style="font-size: 1.3rem; color: #2c6e49;"></i></h2>
+                <span>premium infrastructure · secure cloud</span>
+            </div>
+            <div class="support-badge">
+                <i class="fas fa-headset"></i> 24/7 urgent support · +962 790567128
+            </div>
+        </div>
+
+        <!-- main alert block (original message integrated) -->
+        <div class="alert-header">
+            <div class="alert-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="alert-text">
+                <h3>⚠️ WARNING: SERVICE INTERRUPTION IMMINENT WITHOUT PAYMENT</h3>
+                <p><strong>Final notice — immediate action required.</strong> Your services will be suspended within the countdown below unless full payment is received.</p>
+            </div>
+            <div style="margin-left: auto;">
+                <span class="badge-critical"><i class="fas fa-clock"></i> URGENT</span>
+            </div>
+        </div>
+
+        <!-- main grid: details + payment area -->
+        <div class="grid-payment">
+            <!-- left column: invoice & service details -->
+            <div class="details-section">
+                <div class="section-title">
+                    <i class="fas fa-file-invoice" style="color:#dc2626;"></i> 
+                    <span>Invoice overview</span>
+                </div>
+                <ul class="invoice-list">
+                    <li><span class="invoice-label">Invoice number</span><span class="invoice-value">#TAL-2404-9921</span></li>
+                    <li><span class="invoice-label">Service plan</span><span class="invoice-value">Business Cloud Pro + CDN</span></li>
+                    <li><span class="invoice-label">Billing cycle</span><span class="invoice-value">Annual (renewal due)</span></li>
+                    <li><span class="invoice-label">Issue date</span><span class="invoice-value">March 28, 2026</span></li>
+                    <li><span class="invoice-label"><i class="fas fa-calendar-exclamation"></i> Due date</span><span class="invoice-value" id="dueDateSpan">--</span></li>
+                    <li><span class="invoice-label">Overdue since</span><span class="invoice-value" style="color:#b91c1c;">April 2, 2026</span></li>
+                </ul>
+                
+                <div class="notice-box">
+                    <i class="fas fa-gavel"></i>
+                    <div><strong>Automatic suspension policy:</strong> After countdown reaches zero, all hosted services, databases, and domains will be locked. Data retention policy: 7 days.</div>
+                </div>
+            </div>
+
+            <!-- right column: payment, amount, countdown -->
+            <div class="payment-side">
+                <div class="amount-due">
+                    <div class="label">TOTAL OUTSTANDING (incl. late fee)</div>
+                    <div class="price">$420.00 <small>USD</small></div>
+                    
+                </div>
+
+                <!-- countdown timer dynamic -->
+                <div class="timer-container">
+                    <div class="timer-label"><i class="fas fa-hourglass-half"></i> TIME REMAINING UNTIL SUSPENSION</div>
+                    <div class="countdown" id="countdownDisplay">--d --h --m --s</div>
+                    <div class="countdown-message" id="timerMsg">Payment required before deadline to avoid interruption</div>
+                </div>
+
+                <!-- pay now button -->
+                <button class="pay-btn" id="payNowBtn">
+                    <i class="fas fa-lock"></i> PAY NOW & RESTORE SERVICE
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <div class="payment-methods">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                    <i class="fab fa-cc-amex"></i>
+                    <i class="fab fa-paypal"></i>
+                    <i class="fas fa-university"></i>
+                </div>
+                <div class="secure-note">
+                    <i class="fas fa-shield-alt"></i> 256-bit SSL secure payment · instant confirmation
+                </div>
+            </div>
+        </div>
+
+        <!-- additional contact & warning footer -->
+        <div class="footer-note">
+            <div><i class="fas fa-envelope"></i> laithdeveloper@gmail.com  |  <i class="fas fa-phone-alt"></i> +962 790567128</div>
+            <div><a href="#" id="disputeLink"><i class="fas fa-file-signature"></i> Dispute this invoice?</a> &nbsp;|&nbsp; <a href="#" id="supportLink">Contact billing support</a></div>
+            <div>© Laith Arabiat · cloud services FZCO</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ----- set deadline: 2 days from now (real urgency simulation)
+        let deadline = new Date();
+        deadline.setDate(deadline.getDate() + 2);
+        // set to same time of day but ensures countdown ~48 hours range
+        // optional: freeze hours/minutes/seconds from now? we keep as is, but ensures exact 2 days ahead from load
+        // For better UX: we preserve milliseconds consistent
+        // also display due date in invoice
+        const dueDateSpan = document.getElementById('dueDateSpan');
+        const countdownElem = document.getElementById('countdownDisplay');
+        const timerMsgElem = document.getElementById('timerMsg');
+        const payBtn = document.getElementById('payNowBtn');
+
+        // format due date nicely
+        function formatDueDate(date) {
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + 
+                   ' at ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        }
+        if (dueDateSpan) {
+            dueDateSpan.innerText = formatDueDate(deadline);
+        }
+
+        let countdownInterval = null;
+        let isExpired = false;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const target = deadline.getTime();
+            let distance = target - now;
+            
+            let expiredFlag = false;
+            if (distance <= 0) {
+                expiredFlag = true;
+                distance = 0;
+                if (!isExpired) {
+                    isExpired = true;
+                    // update UI for expiration
+                    if (timerMsgElem) {
+                        timerMsgElem.innerHTML = '<i class="fas fa-skull-crosswalk"></i> SERVICE INTERRUPTED · immediate action required';
+                        timerMsgElem.style.color = "#ffb4a2";
+                    }
+                    if (countdownElem) {
+                        countdownElem.innerHTML = "0d 0h 0m 0s";
+                    }
+                    // change button state to disabled and show new text
+                    if (payBtn) {
+                        payBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> SERVICE SUSPENDED · CONTACT SUPPORT';
+                        payBtn.style.background = "#4a5568";
+                        payBtn.style.cursor = "pointer";
+                        payBtn.disabled = false; // still clickable but will show alert
+                        payBtn.classList.remove('pay-btn');
+                        payBtn.style.opacity = "0.9";
+                    }
+                    return;
+                }
+            }
+            
+            if (expiredFlag) return;
+            
+            // compute days, hours, minutes, seconds
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            if (countdownElem) {
+                countdownElem.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            }
+            
+            // change warning message if less than 12 hours
+            if (distance < 12 * 60 * 60 * 1000 && distance > 0) {
+                if (timerMsgElem && !isExpired) {
+                    timerMsgElem.innerHTML = '<i class="fas fa-bell"></i> CRITICAL: Few hours left — immediate payment required!';
+                    timerMsgElem.style.color = "#ffdd99";
+                }
+            } else {
+                if (timerMsgElem && !isExpired) {
+                    timerMsgElem.innerHTML = 'Payment required before deadline to avoid interruption';
+                    timerMsgElem.style.color = "";
+                }
+            }
+            
+            if (distance <= 0 && !isExpired) {
+                // force expire
+                isExpired = true;
+                if (timerMsgElem) timerMsgElem.innerHTML = '<i class="fas fa-ban"></i> SERVICE INTERRUPTED · contact billing immediately';
+                if (countdownElem) countdownElem.innerHTML = "0d 0h 0m 0s";
+                if (payBtn) {
+                    payBtn.innerHTML = '<i class="fas fa-headset"></i> SERVICE SUSPENDED · REACTIVATE';
+                    payBtn.style.background = "#4a5568";
+                }
+                clearInterval(countdownInterval);
+            }
+        }
+        
+        // initial call and interval
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
+        
+        // pay now button interaction (professional demo)
+        if (payBtn) {
+            payBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isExpired) {
+                    // expired case: show support message
+                    alert("⚠️ SERVICE ALREADY INTERRUPTED.\n\nPlease contact our billing department at billing@talsindian.com or call +962 7 1234 5678 to restore your services.\n\nDemo environment – This is a payment warning simulation.");
+                } else {
+                    // simulate payment gateway
+                    let confirmPay = confirm("🔐 SECURE PAYMENT GATEWAY\n\nTotal amount due: $284.00 USD\n\nProceed to payment processor? (Demo interaction)");
+                    if (confirmPay) {
+                        alert("✅ [DEMO] Payment received! Your service interruption warning will be lifted within 10 minutes.\nThank you for settling your invoice.\n\n(Real implementation would redirect to payment gateway.)");
+                        // optional: reset timer? Not needed for demo, but show success message.
+                        // For a real-world scenario, you'd reload or redirect. We'll just reset the warning? Not necessary, but user sees demo.
+                        // In a real environment, this would trigger backend.
+                        // We keep the page interactive but shows demo notice.
+                        // Provide option to reload? but maintain experience.
+                        let resetPage = confirm("Simulate successful payment? (Page will reload to reflect updated status)");
+                        if (resetPage) {
+                            location.reload();
+                        }
+                    } else {
+                        alert("Payment cancelled. Please complete the transaction to avoid service interruption.");
+                    }
+                }
+            });
+        }
+        
+        // helper links: dispute & support (demo)
+        const disputeLink = document.getElementById('disputeLink');
+        const supportLink = document.getElementById('supportLink');
+        if (disputeLink) {
+            disputeLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert("📄 To dispute this invoice, please send a formal request to billing@talsindian.com with your invoice #TAL-2404-9921. Our team will reply within 2 business hours.");
+            });
+        }
+        if (supportLink) {
+            supportLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                alert("📞 Emergency billing support: +962 7 1234 5678 | Live chat available 24/7 at https://support.talsindian.com (demo)");
+            });
+        }
+        
+        // Additional dynamic note: the original warning text remains visible in alert-header
+        // also show a subtle console message for authenticity.
+        console.log("Tal Al sindian - Payment warning system | Deadline set: " + deadline.toISOString());
+        
+        // optional: improve deadline time if browser tab inactive? no needed.
+        // Also ensure due date matches timer.
+        // update due date span if any change due to timezone but fine.
+    })();
+</script>
+</body>
 </html>
