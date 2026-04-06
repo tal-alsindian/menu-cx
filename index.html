@@ -1,608 +1,1787 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Tal Al sindian · Urgent Payment Required</title>
-    <!-- Google Fonts + Font Awesome 6 (free) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🌲 تل السنديان | قائمة الطعام الأصيلة</title>
+    <link rel="apple-touch-icon" href="https://iili.io/qfhk5Pt.png">
+    <link rel="icon" href="https://iili.io/qfhk5Pt.png">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
+     <style>
+        /* 🎨 هوية تل السنديان - ألوان الطبيعة والجبل - أبيض وأخضر مضيء + سنجاب بني */
+        :root {
+            --forest-green-light: #3f8b3a;
+            --forest-green-bright: #5cb85c;
+            --olive-green-bright: #8bc34a;
+            --sandy-beige: #F5E6D3;
+            --pure-white: #FFFFFF;
+            --off-white: #F8F9FA;
+            --text-dark: #1e3b1a;
+            --shadow-soft: rgba(60, 120, 50, 0.35);
+            --shadow-intense: rgba(45, 90, 39, 0.8);
+            --gradient-forest-luxury: linear-gradient(145deg, #2b5e25, #4e8d42, #7fb073);
+            --gradient-white-luxury: linear-gradient(145deg, #FFFFFF, #F0F2F5, #E5E8EB);
+            --header-overlay: rgba(30, 70, 20, 0.55);
+            --card-radius: 32px;
+            --btn-radius: 60px;
+            --modal-radius: 45px;
+            --transition-smooth: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow-elevation: 0 25px 45px -10px rgba(30, 70, 10, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.5) inset;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: linear-gradient(145deg, #f1f5f9 0%, #e6edf4 100%);
-            font-family: 'Inter', sans-serif;
-            color: #0a2540;
-            padding: 2rem 1.5rem;
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at 10% 20%, #386f2e, #1f4a18);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            direction: rtl;
+            text-align: right;
             min-height: 100vh;
+            touch-action: pan-y pan-x;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ===== خلفية غابة متحركة بأوراق متساقطة محسنة للأداء ===== */
+        #animated-forest-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #1e4a1a, #3d7534, #68a355);
+            z-index: -2;
+            overflow: hidden;
+            box-shadow: inset 0 0 150px rgba(255, 255, 255, 0.3);
+        }
+
+        .falling-leaves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .leaf {
+            position: absolute;
+            top: -10%;
+            color: rgba(255, 255, 240, 0.9);
+            font-size: 1.8rem;
+            text-shadow: 0 0 15px #ffffff, 0 0 30px #f0fff0;
+            animation: fall linear infinite;
+            user-select: none;
+            opacity: 0.9;
+            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.2));
+            will-change: transform, opacity;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-20vh) rotate(0deg) scale(1);
+                opacity: 0.9;
+            }
+            80% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(120vh) rotate(360deg) scale(0.8);
+                opacity: 0.2;
+            }
+        }
+
+        /* ===== شاشة البداية مع السنجاب الجاري نحو بيته ===== */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #1f4a1a, #3f7a32, #65a34e);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 1.5s ease-out;
+            overflow: hidden;
+        }
+
+        #intro-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .intro-burst-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .intro-burst-particle {
+            position: absolute;
+            font-size: 0;
+            opacity: 0;
+            animation: burstOut 1.3s ease-out forwards;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.9));
+            z-index: 5;
+            transform-origin: center;
+            color: var(--sandy-beige);
+        }
+
+        @keyframes burstOut {
+            0% { transform: scale(0) translate(0, 0); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: scale(2) translate(var(--x-offset), var(--y-offset)); opacity: 0; }
+        }
+
+        .intro-logo {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            box-shadow: 0 0 80px #ffffff, 0 0 120px #f0fff0, inset 0 0 35px rgba(255, 255, 255, 0.7);
+            border: 6px solid var(--pure-white);
+            transform: scale(0);
+            opacity: 0;
+            animation: logoPopIn 0.9s ease-out forwards;
+            animation-delay: 0.3s;
+            position: relative;
+            z-index: 20;
+        }
+
+        .intro-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+            animation: logoSingleSpin 0.8s ease-in-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        .intro-logo::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, transparent 70%);
+            z-index: -1;
+            opacity: 0.3;
+            animation: glowPulse 2s infinite alternate;
+        }
+
+        @keyframes glowPulse {
+            0% { opacity: 0.2; transform: scale(0.95); }
+            100% { opacity: 0.6; transform: scale(1.15); }
+        }
+
+        @keyframes logoPopIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes logoSingleSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .intro-text {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 2.7em;
+            color: var(--pure-white);
+            text-shadow: 0 0 30px #b5e5a0, 0 0 70px #ffffff, 3px 3px 0 rgba(0,0,0,0.2);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: textFadeIn 1s ease-out forwards;
+            animation-delay: 0.9s;
+            position: relative;
+            z-index: 20;
+        }
+
+        @keyframes textFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .squirrel-loading-container {
+            width: 85%;
+            max-width: 600px;
+            margin-top: 45px;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 0.9s ease-out forwards;
+            animation-delay: 1.6s;
+            z-index: 20;
+        }
+
+        .tree-branch {
+            width: 100%;
+            height: 28px;
+            background: linear-gradient(180deg, #b58b5a, #7b572e, #4a341c);
+            border-radius: 40px 40px 15px 15px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 -4px 6px rgba(0,0,0,0.6), inset 0 4px 10px rgba(255,225,150,0.7);
+            border: 2px solid #dbb38c;
+            margin-bottom: 30px;
+        }
+
+        .tree-branch::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,0,0,0.2) 18px, rgba(0,0,0,0.2) 36px);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .branch-knot {
+            position: absolute;
+            top: -10px;
+            left: 15%;
+            width: 22px;
+            height: 32px;
+            background: #7b572e;
+            border-radius: 50% 50% 25% 25%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transform: rotate(5deg);
+            border: 1px solid #b58b5a;
+            z-index: 5;
+        }
+
+        .branch-knot2 {
+            position: absolute;
+            top: -8px;
+            right: 25%;
+            width: 18px;
+            height: 28px;
+            background: #5a3a1c;
+            border-radius: 40% 40% 15% 15%;
+            transform: rotate(-8deg);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            border: 1px solid #b58b5a;
+            z-index: 5;
+        }
+
+        .branch-leaf {
+            position: absolute;
+            bottom: 100%;
+            left: 8%;
+            width: 24px;
+            height: 24px;
+            background: #7fb073;
+            border-radius: 80% 0 70% 20%;
+            transform: rotate(35deg);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            opacity: 0.9;
+            z-index: 10;
+        }
+
+        .branch-leaf::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 6px;
+            width: 8px;
+            height: 12px;
+            background: #b58b5a;
+            border-radius: 3px;
+            transform: rotate(-15deg);
+        }
+
+        .branch-leaf2 { left: 45%; transform: rotate(-20deg); background: #8bc34a; }
+        .branch-leaf3 { left: 75%; transform: rotate(55deg); background: #5cb85c; }
+
+        .squirrel-home {
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 65px;
+            z-index: 30;
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.5));
+        }
+
+        .home-trunk {
+            position: absolute;
+            width: 44px;
+            height: 55px;
+            background: linear-gradient(145deg, #b58b5a, #7b572e);
+            border-radius: 35% 35% 20% 20%;
+            right: 0;
+            bottom: 0;
+            box-shadow: inset -4px -4px 10px #3e2a14, inset 4px 4px 12px #e0b58c;
+            border: 2px solid #7b572e;
+        }
+
+        .home-hole {
+            position: absolute;
+            width: 26px;
+            height: 32px;
+            background: #3e2a14;
+            border-radius: 45% 45% 20% 20%;
+            right: 9px;
+            top: 12px;
+            box-shadow: inset 0 0 15px #0a0602;
+            border: 2px solid #7b572e;
+            overflow: hidden;
+        }
+        .home-hole::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 30%, #5a3a1c, #1f140a);
+            border-radius: inherit;
+        }
+        .home-roof {
+            position: absolute;
+            width: 55px;
+            height: 22px;
+            background: #7b572e;
+            top: -10px;
+            right: -6px;
+            border-radius: 60% 60% 10% 10%;
+            transform: rotate(2deg);
+            box-shadow: 0 -4px 8px rgba(0,0,0,0.4);
+            border: 1px solid #b58b5a;
+        }
+        .home-leaf {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #7fb073;
+            border-radius: 70% 0 70% 0;
+            top: -18px;
+            right: 18px;
+            transform: rotate(45deg);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+        }
+        .home-leaf2 {
+            right: 0px;
+            top: -12px;
+            transform: rotate(-15deg);
+            background: #5cb85c;
+        }
+        .home-acorn {
+            position: absolute;
+            width: 12px;
+            height: 14px;
+            background: #b58b5a;
+            border-radius: 40% 40% 30% 30%;
+            bottom: 5px;
+            left: -5px;
+            transform: rotate(20deg);
+            border: 1px solid #7b572e;
+        }
+        .home-acorn::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 3px;
+            width: 7px;
+            height: 6px;
+            background: #7b572e;
+            border-radius: 50%;
+        }
+
+        .running-squirrel {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 50px;
+            z-index: 40;
+            animation: runToHome 4.2s ease-in-out forwards;
+            filter: drop-shadow(4px 7px 12px rgba(0,0,0,0.5));
+        }
+        .squirrel-body {
+            position: absolute;
+            width: 36px;
+            height: 32px;
+            background: linear-gradient(145deg, #b58b5a, #7b572e, #5a3a1c);
+            border-radius: 50% 40% 40% 50%;
+            top: 9px;
+            left: 14px;
+            box-shadow: inset -4px -4px 6px #3e2a14, inset 4px 4px 12px #eac39b;
+            border: 2px solid #7b572e;
+        }
+        .squirrel-head {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(145deg, #b58b5a, #7b572e);
+            border-radius: 50% 40% 50% 30%;
+            top: 2px;
+            right: -2px;
+            box-shadow: inset -3px -3px 5px #3e2a14;
+            border: 2px solid #7b572e;
+        }
+        .squirrel-ear {
+            position: absolute;
+            width: 9px;
+            height: 11px;
+            background: #b58b5a;
+            border-radius: 50% 50% 0 0;
+            top: -5px;
+            right: 3px;
+            transform: rotate(-10deg);
+            border: 1px solid #7b572e;
+        }
+        .squirrel-ear::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #eac39b;
+            border-radius: 50%;
+            top: 2px;
+            right: 2px;
+        }
+        .squirrel-eye {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            top: 6px;
+            right: 6px;
+            box-shadow: 0 0 4px black;
+        }
+        .squirrel-eye::before {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: black;
+            border-radius: 50%;
+            top: 1px;
+            right: 1px;
+        }
+        .squirrel-nose {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: black;
+            border-radius: 50%;
+            top: 10px;
+            right: 3px;
+        }
+        .squirrel-belly {
+            position: absolute;
+            width: 18px;
+            height: 16px;
+            background: #eac39b;
+            border-radius: 40% 20% 30% 40%;
+            top: 11px;
+            left: 20px;
+            opacity: 0.7;
+            border: 1px solid #b58b5a;
+        }
+        .squirrel-tail {
+            position: absolute;
+            width: 26px;
+            height: 28px;
+            background: linear-gradient(145deg, #b58b5a, #7b572e, #5a3a1c);
+            border-radius: 80% 20% 70% 30%;
+            top: 4px;
+            left: -12px;
+            transform: rotate(20deg);
+            box-shadow: inset -3px -3px 6px #3e2a14;
+            border: 2px solid #7b572e;
+            animation: tailWag 0.2s infinite alternate;
+        }
+        .squirrel-tail::before {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 5px;
+            background: rgba(220, 190, 150, 0.4);
+            top: 6px;
+            left: 3px;
+            border-radius: 50%;
+            transform: rotate(-5deg);
+        }
+        .squirrel-tail::after {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 5px;
+            background: rgba(220, 190, 150, 0.4);
+            bottom: 6px;
+            left: 4px;
+            border-radius: 50%;
+            transform: rotate(5deg);
+        }
+        .squirrel-leg-front {
+            position: absolute;
+            width: 9px;
+            height: 11px;
+            background: #b58b5a;
+            border-radius: 30% 30% 20% 20%;
+            bottom: 2px;
+            right: 9px;
+            transform: rotate(5deg);
+            border: 1px solid #7b572e;
+            animation: legMove 0.15s infinite alternate;
+        }
+        .squirrel-leg-back {
+            position: absolute;
+            width: 10px;
+            height: 12px;
+            background: #b58b5a;
+            border-radius: 30% 30% 20% 20%;
+            bottom: 2px;
+            left: 20px;
+            transform: rotate(-5deg);
+            border: 1px solid #7b572e;
+            animation: legMove 0.15s infinite alternate-reverse;
+        }
+        .squirrel-nut {
+            position: absolute;
+            width: 8px;
+            height: 9px;
+            background: #b58b5a;
+            border-radius: 40% 40% 30% 30%;
+            bottom: 7px;
+            right: 2px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.4);
+            border: 1px solid #7b572e;
+            z-index: 5;
+        }
+        .squirrel-nut::before {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 4px;
+            background: #7b572e;
+            top: 1px;
+            left: 2px;
+            border-radius: 50%;
+        }
+
+        @keyframes runToHome {
+            0% { left: 0; transform: translateY(-50%) scale(1); }
+            15% { transform: translateY(-58%) scale(1.03); }
+            30% { transform: translateY(-42%) scale(0.97); }
+            45% { transform: translateY(-55%) scale(1.02); }
+            60% { transform: translateY(-45%) scale(0.98); }
+            75% { transform: translateY(-53%) scale(1.02); }
+            90% { transform: translateY(-47%) scale(0.98); }
+            100% { left: calc(100% - 65px); transform: translateY(-50%) scale(1); }
+        }
+        @keyframes tailWag {
+            0% { transform: rotate(15deg) scale(1); }
+            100% { transform: rotate(28deg) scale(1.12); }
+        }
+        @keyframes legMove {
+            0% { transform: rotate(0deg) translateY(0); }
+            100% { transform: rotate(10deg) translateY(-4px); }
+        }
+
+        .trail-acorn {
+            position: absolute;
+            bottom: -8px;
+            width: 10px;
+            height: 12px;
+            background: #b58b5a;
+            border-radius: 40% 40% 30% 30%;
+            opacity: 0.7;
+            z-index: 15;
+        }
+        .trail-acorn1 { left: 15%; transform: rotate(10deg); }
+        .trail-acorn2 { left: 35%; transform: rotate(-15deg); }
+        .trail-acorn3 { left: 55%; transform: rotate(25deg); }
+        .trail-acorn4 { left: 75%; transform: rotate(-5deg); }
+        .trail-acorn::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 2px;
+            width: 5px;
+            height: 5px;
+            background: #7b572e;
+            border-radius: 50%;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* ===== الهيدر الأصلي الجميل مع تحسين الأقسام (تصغيرها) ===== */
+        .header {
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 5px solid var(--pure-white);
+            box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(255, 255, 255, 0.5) inset;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            overflow: hidden;
+            background: linear-gradient(145deg, #2d6827, #4f9442, #7cb86b);
+            backdrop-filter: blur(4px);
+            border-radius: 0 0 45px 45px;
+        }
+
+        .header-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            filter: brightness(0.7) saturate(1.5) hue-rotate(75deg) contrast(1.1);
+            transition: filter .5s ease-in-out;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--header-overlay);
+            z-index: -1;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 18px 18px 8px;
+        }
+
+        .logo-circle {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            box-shadow: 0 0 45px #ffffff, 0 0 90px #f0fff0, 0 5px 20px rgba(0,0,0,0.3);
+            border: 5px solid #ffffff;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .logo-circle:hover {
+            transform: scale(1.08) rotate(3deg);
+            box-shadow: 0 0 70px #ffffff, 0 0 120px #b5e5a0;
+        }
+
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .restaurant-name {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 2em;
+            margin-bottom: 5px;
+            color: white;
+            text-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff, 3px 3px 0 rgba(0,0,0,0.3);
+            animation: titlePulse 2.5s infinite alternate ease-in-out;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        @keyframes titlePulse {
+            from { transform: scale(1); text-shadow: 0 0 25px #ffffff, 0 0 45px #ffffff; }
+            to { transform: scale(1.02); text-shadow: 0 0 35px #ffffff, 0 0 70px #f0fff0; }
+        }
+
+        .restaurant-name small {
+            font-size: 0.5em;
+            color: var(--sandy-beige);
+            display: block;
+            text-shadow: 0 0 15px black;
+            letter-spacing: 1.5px;
+        }
+
+        /* شريط التبويبات المحسّن (أصغر حجماً وأكثر احترافية) - تم حل مشكلة التمرير */
+        .nav-tabs {
+            display: flex;
+            justify-content: flex-start; /* تغيير من center إلى flex-start لبدء التمرير من اليمين */
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; /* تمرير سلس على iOS */
+            scrollbar-width: thin;
+            scrollbar-color: #ffffff #F5E6D3;
+            width: calc(100% - 32px);
+            padding: 8px 16px 6px; /* زيادة padding قليلاً لإعطاء مساحة للتمرير */
+            margin: 0 16px 8px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.03), 0 4px 10px rgba(0, 0, 0, 0.15);
+            gap: 6px;
+            position: relative;
+            z-index: 2;
+            border-radius: 40px 40px 25px 25px;
+            direction: rtl; /* تأكيد الاتجاه */
+        }
+        .nav-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        .nav-tabs::-webkit-scrollbar-track {
+            background: var(--sandy-beige);
+            border-radius: 20px;
+        }
+        .nav-tabs::-webkit-scrollbar-thumb {
+            background: #ffffff;
+            border-radius: 20px;
+        }
+
+        .nav-tab {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            padding: 6px 14px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.85em;
+            color: #2b4d24;
+            font-weight: 800;
+            border-radius: 30px;
+            transition: var(--transition-smooth);
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        /* main card container */
-        .warning-card {
-            max-width: 1280px;
-            width: 100%;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 2rem;
-            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 8px 18px rgba(0, 0, 0, 0.05);
+            gap: 4px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            flex: 0 0 auto; /* منع العناصر من الانكماش */
+            position: relative;
             overflow: hidden;
-            transition: all 0.2s ease;
+        }
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            transition: left 0.5s ease;
+        }
+        .nav-tab:hover::before {
+            left: 100%;
+        }
+        .nav-tab:active { transform: scale(0.94); }
+        .nav-tab:hover {
+            color: #1f4a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+            border-color: #ffffff;
+        }
+        .nav-tab.active {
+            background: linear-gradient(145deg, #3f8b3a, #7cb86b, #b3e6a0);
+            color: var(--pure-white);
+            box-shadow: 0 8px 18px rgba(45, 90, 39, 0.7), 0 10px 20px rgba(45, 90, 39, 0.4);
+            transform: translateY(-2px);
+            border: 1.5px solid var(--pure-white);
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+        }
+        .nav-tab.active i { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 1)); }
+        .nav-tab i {
+            font-size: 1em;
+            color: inherit;
+            transition: transform .3s ease;
         }
 
-        /* urgency header line */
-        .urgent-strip {
-            background: #b91c1c;
-            height: 6px;
+        /* ===== بطاقات المنتجات بدون صور خلفية (خلفية بيضاء ناعمة) ===== */
+        .menu-container {
+            max-width: 1400px;
+            margin: 20px auto 40px;
+            padding: 0 20px;
+            flex: 1;
             width: 100%;
         }
 
-        /* inner content */
-        .content-inner {
-            padding: 2rem 2rem 2rem 2rem;
-        }
-
-        /* brand & top bar */
-        .brand-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e9edf2;
-        }
-
-        .logo h2 {
-            font-size: 1.7rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-            background: linear-gradient(135deg, #1e2a3a, #0f3b2c);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-
-        .logo span {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #5b6e8c;
-            display: block;
-            letter-spacing: normal;
-        }
-
-        .support-badge {
-            background: #f8fafc;
-            padding: 0.5rem 1rem;
-            border-radius: 60px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #1e293b;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-
-        .support-badge i {
-            color: #b91c1c;
-            margin-right: 8px;
-        }
-
-        /* main alert */
-        .alert-header {
-            background: #fff5f5;
-            border-left: 6px solid #dc2626;
-            border-radius: 1.2rem;
-            padding: 1.2rem 1.8rem;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-        }
-
-        .alert-icon {
-            font-size: 2.2rem;
-            color: #dc2626;
-        }
-
-        .alert-text h3 {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: #991b1b;
-            letter-spacing: -0.2px;
-        }
-
-        .alert-text p {
-            color: #4b5563;
-            font-weight: 500;
-            margin-top: 4px;
-        }
-
-        /* two column grid */
-        .grid-payment {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2.2rem;
-        }
-
-        @media (max-width: 780px) {
-            .grid-payment {
-                grid-template-columns: 1fr;
-                gap: 1.8rem;
-            }
-            .content-inner {
-                padding: 1.5rem;
-            }
-        }
-
-        /* left details */
-        .details-section {
-            background: #fefefe;
-            border-radius: 1.5rem;
-            padding: 0.2rem 0;
-        }
+        .menu-section { display: none; animation: fadeIn 0.5s ease; }
+        .menu-section.active { display: block; }
 
         .section-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            border-left: 4px solid #dc2626;
-            padding-left: 1rem;
-        }
-
-        .invoice-list {
-            list-style: none;
-            background: #f9fafc;
-            border-radius: 1.2rem;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .invoice-list li {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.9rem 0;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 0.95rem;
-        }
-
-        .invoice-list li:last-child {
-            border-bottom: none;
-        }
-
-        .invoice-label {
-            font-weight: 600;
-            color: #334155;
-        }
-
-        .invoice-value {
-            font-weight: 500;
-            color: #0f172a;
-        }
-
-        .notice-box {
-            background: #fff8e7;
-            border-radius: 1rem;
-            padding: 1rem 1.2rem;
-            border: 1px solid #ffe2b5;
-            font-size: 0.85rem;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .notice-box i {
-            font-size: 1.3rem;
-            color: #e67e22;
-        }
-
-        /* right side */
-        .payment-side {
-            background: #ffffff;
-            border-radius: 1.5rem;
-            border: 1px solid #edf2f7;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
-            padding: 1.2rem 1.5rem 1.8rem 1.5rem;
-        }
-
-        .amount-due {
-            background: #f1f5f9;
-            border-radius: 1.2rem;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1.8rem;
-        }
-
-        .amount-due .label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        .amount-due .price {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #0f172a;
-            margin-top: 6px;
-        }
-
-        .amount-due .price small {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #5b6e8c;
-        }
-
-        .timer-container {
-            background: #0f172a;
-            color: white;
-            border-radius: 1.2rem;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1.8rem;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 2.5em;
+            color: var(--pure-white);
+            text-shadow: 0 0 25px #ffffff, 0 0 45px #ffffff, 2px 2px 0 rgba(0,0,0,0.3);
+            margin-bottom: 35px;
             text-align: center;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 5px;
+            background: linear-gradient(90deg, #ffffff, #f0f0f0, #ffffff);
+            border-radius: 8px;
+            box-shadow: 0 0 20px #ffffff;
         }
 
-        .timer-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 500;
-            opacity: 0.8;
+        .products-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
         }
 
-        .countdown {
-            font-family: 'Inter', monospace;
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin: 0.6rem 0 0.2rem;
-        }
-
-        .countdown-message {
-            font-size: 0.75rem;
-            opacity: 0.9;
-        }
-
-        .pay-btn {
-            width: 100%;
-            background: #dc2626;
-            border: none;
-            padding: 1rem;
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: white;
-            border-radius: 60px;
+        .product-card {
+            position: relative;
+            background-color: #fefefe;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-elevation);
+            border: 3px solid #ffffff;
+            transition: var(--transition-smooth);
             display: flex;
+            flex-direction: row;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
+            padding: 8px;
+        }
+
+        .product-card::before {
+            display: none;
+        }
+
+        .product-card > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 40px -8px #3f6b35, 0 0 0 5px #ffffff;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 20px;
+            border: 3px solid #3f8b3a;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+            transition: transform 0.4s ease;
+            flex-shrink: 0;
             cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 4px 10px rgba(220,38,38,0.2);
+            loading: lazy;
+        }
+        .product-card:hover .product-image {
+            transform: scale(1.02);
         }
 
-        .pay-btn:hover {
-            background: #b91c1c;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 20px -8px rgba(185,28,28,0.4);
-        }
-
-        .pay-btn:active {
-            transform: translateY(1px);
-        }
-
-        .secure-note {
-            font-size: 0.75rem;
-            text-align: center;
-            color: #5b6e8c;
-            margin-top: 12px;
-        }
-
-        .payment-methods {
+        .card-content { 
+            padding: 4px 10px 4px 4px;
+            flex-grow: 1;
             display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1rem 0 0.5rem;
-            font-size: 1.5rem;
-            color: #94a3b8;
+            flex-direction: column;
+            min-width: 0;
         }
 
-        /* footer */
-        .footer-note {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eef2f6;
+        .product-title {
+            font-size: 1.1em;
+            color: #1f4a1a;
+            margin-bottom: 4px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-description {
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            font-size: 0.75em;
+            line-height: 1.3;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-price {
+            font-size: 1.2em;
+            font-weight: 900;
+            color: #1f4a1a;
+            margin-bottom: 4px;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.5);
+        }
+
+        .new-tag {
+            background: linear-gradient(145deg, #3f8b3a, #7cb86b);
+            color: var(--pure-white);
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: 0.5em;
+            margin-right: 4px;
+            animation: newTagPulse 1.8s infinite;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            white-space: nowrap;
+        }
+        @keyframes newTagPulse {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2b5e25, #5cb85c);
+            color: var(--pure-white);
+            border: none;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 10px rgba(60, 120, 50, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quantity-btn:active { transform: scale(0.85); background: #ffffff; color: #1f4a1a; }
+
+        .quantity-display {
+            font-size: 1em;
+            font-weight: bold;
+            color: #1f4a1a;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 8px;
+            background: linear-gradient(145deg, #2b5e25, #5cb85c, #8bc34a);
+            color: var(--pure-white);
+            border: none;
+            border-radius: 40px;
+            font-size: 0.8em;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: var(--transition-smooth);
+            border: 2px solid var(--pure-white);
+            margin-top: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+        .add-to-cart-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        .add-to-cart-btn:hover::before {
+            left: 100%;
+        }
+        .add-to-cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(45, 90, 39, 0.7);
+        }
+
+        /* ==== أزرار النكهة ==== */
+        .flavor-simple-btn, .flavor-mojito-btn {
+            width: 100%;
+            padding: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid #ffffff;
+            border-radius: 40px;
+            font-size: 0.7em;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            transition: var(--transition-smooth);
+            margin-top: 5px;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .flavor-simple-btn.enabled, .flavor-mojito-btn.enabled {
+            background: linear-gradient(145deg, #2e7d32, #4caf50);
+            color: white;
+            border-color: #ffffff;
+            opacity: 1;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 4px 10px #4caf50;
+        }
+        .flavor-simple-btn.enabled:hover, .flavor-mojito-btn.enabled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px #4caf50;
+        }
+        .flavor-simple-btn i, .flavor-mojito-btn i {
+            font-size: 0.9em;
+        }
+
+        /* مودال اختيار النكهات للموهيتو */
+        .flavor-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 4000;
+            justify-content: center;
+            align-items: center;
+        }
+        .flavor-modal.active {
+            display: flex;
+        }
+        .flavor-modal-content {
+            background: linear-gradient(145deg, #ffffff, #f0f2f5);
+            border-radius: var(--modal-radius);
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            border: 5px solid #2b5e25;
+            box-shadow: 0 30px 70px #1f4a1a;
+            text-align: center;
+        }
+        .flavor-modal-content h3 {
+            color: #1f4a1a;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+        .flavor-option {
             display: flex;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-            font-size: 0.75rem;
-            color: #5c6f87;
+            align-items: center;
+            background: rgba(60, 120, 50, 0.1);
+            border: 2px solid #1f4a1a;
+            border-radius: 50px;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        .flavor-option:hover {
+            background: rgba(60, 120, 50, 0.3);
+            transform: scale(1.02);
+        }
+        .flavor-option span {
+            color: #1f4a1a;
+            font-size: 1.2em;
+        }
+        .flavor-option .price {
+            color: #1f4a1a;
+            font-weight: bold;
+        }
+        .close-flavor-modal {
+            margin-top: 20px;
+            background: #2b5e25;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        .close-flavor-modal:hover {
+            background: #3f8b3a;
         }
 
-        .footer-note a {
-            color: #dc2626;
-            text-decoration: none;
-            font-weight: 500;
+        .cart-fab {
+            position: fixed;
+            bottom: 35px;
+            left: 35px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #ffffff, #f0f2f5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1f4a1a;
+            font-size: 2.2em;
+            box-shadow: 0 15px 45px rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            z-index: 1001;
+            border: 5px solid var(--sandy-beige);
+            transition: var(--transition-smooth);
+        }
+        .cart-fab:hover { 
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 30px 60px #ffffff;
         }
 
-        .footer-note a:hover {
-            text-decoration: underline;
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #1f4a1a;
+            color: var(--pure-white);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            border: 3px solid var(--sandy-beige);
         }
 
-        /* status badge */
-        .badge-critical {
-            background: #fee2e2;
-            color: #b91c1c;
-            padding: 0.2rem 0.8rem;
-            border-radius: 30px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            display: inline-block;
+        /* ===== مودال عرض الصورة ===== */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(12px);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-modal.active { display: flex; }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 32px;
+            border: 5px solid #ffffff;
+            box-shadow: 0 30px 70px #000000, 0 0 0 5px rgba(255,255,255,0.3);
+            overflow: hidden;
+            background: #ffffff;
+        }
+        .image-modal-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .close-image-modal {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            font-size: 3em;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            border: 2px solid white;
+        }
+        .close-image-modal:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: rgba(255,255,255,0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border-radius: var(--modal-radius);
+            padding: 35px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 5px solid #ffffff;
+            box-shadow: 0 30px 70px #2b5e25;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #1f4a1a;
+            padding-bottom: 15px;
+        }
+        .modal-header h2 { 
+            color: #1f4a1a; 
+            font-size: 2em; 
+            font-weight: 900;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2.2em;
+            color: #1f4a1a;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .close-btn:hover { transform: rotate(90deg); }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px;
+            background: rgba(60, 120, 50, 0.08);
+            border-radius: 40px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .cart-item-info h4 { 
+            color: #1f4a1a; 
+            margin-bottom: 6px; 
+            font-size: 1.2em;
+        }
+        .cart-item-price { 
+            color: #1f4a1a; 
+            font-weight: bold; 
+            font-size: 1.1em;
+        }
+        .cart-item-controls { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+        }
+        .cart-qty-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #2b5e25, #5cb85c);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: var(--transition-smooth);
+        }
+        .cart-qty-btn:hover { transform: scale(1.1); }
+
+        .cart-total {
+            font-size: 1.8em;
+            font-weight: 900;
+            color: #1f4a1a;
+            text-align: center;
+            margin: 25px 0;
+            padding: 18px;
+            background: linear-gradient(145deg, #ffffff, #f0f2f5);
+            border-radius: 60px;
+            border: 2px solid #ffffff;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(145deg, #2b5e25, #5cb85c, #8bc34a);
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.3em;
+            font-weight: 900;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        .checkout-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px #2b5e25;
+        }
+
+        .form-group { margin-bottom: 25px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 800;
+            color: #1f4a1a;
+            font-size: 1.1em;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #3f8b3a;
+            box-shadow: 0 0 0 4px rgba(60, 120, 50, 0.25);
+        }
+        .form-group input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .form-group input[type="number"]::-webkit-outer-spin-button,
+        .form-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .table-input {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+            background-color: #ffffff;
+        }
+        .table-input.error { border-color: #ff4444; background-color: #fff0f0; }
+        .error-message {
+            color: #ff4444;
+            font-size: 0.9em;
+            margin-top: 8px;
+            display: none;
+        }
+        .error-message.visible { display: block; }
+
+        .submit-order {
+            background: linear-gradient(145deg, #2b5e25, #5cb85c, #8bc34a);
+            color: white;
+            padding: 18px 30px;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.3em;
+            font-weight: 900;
+            width: 100%;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+        .submit-order:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .footer {
+            background: linear-gradient(145deg, #1f4a1a, #3f8b3a, #7cb86b);
+            color: var(--pure-white);
+            padding: 10px 15px;
+            text-align: center;
+            border-top: 2px solid #ffffff;
+            border-radius: 20px 20px 0 0;
+            font-size: 0.9rem;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .instagram-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffffff, #f0f2f5);
+            color: #1f4a1a;
+            font-size: 1.3em;
+            margin-bottom: 6px;
+            border: 2px solid var(--sandy-beige);
+            transition: var(--transition-smooth);
+        }
+        .instagram-btn:hover { 
+            transform: scale(1.1) rotate(10deg);
+            background: #ffffff;
+        }
+
+        .footer p {
+            font-size: 1.00em;
+            margin: 4px 0;
+            line-height: 1.3;
+        }
+
+        @media (max-width: 480px) {
+            .product-image {
+                width: 70px;
+                height: 70px;
+            }
+            .product-title { font-size: 1em; }
+            .product-price { font-size: 1.1em; }
+            .quantity-btn { width: 28px; height: 28px; font-size: 1.1em; }
+            .add-to-cart-btn { font-size: 0.75em; padding: 6px; }
+            .product-description { font-size: 0.7em; }
+            
+            .footer {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+            .instagram-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1.2em;
+                margin-bottom: 4px;
+            }
+            .nav-tab {
+                padding: 5px 10px;
+                font-size: 0.8em;
+            }
+            .nav-tab i {
+                font-size: 0.9em;
+            }
+        }
+
+        /* ===== مؤشر التحميل المتحسن ===== */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            width: 100%;
+        }
+        .loading-spinner::after {
+            content: '';
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    <div id="animated-forest-bg"></div>
+    <div class="falling-leaves" id="fallingLeaves"></div>
 
-<div class="warning-card">
-    <div class="urgent-strip"></div>
-    <div class="content-inner">
-        <!-- header with brand -->
-        <div class="brand-bar">
-            <div class="logo">
-                <h2>Tal Al sindian <i class="fas fa-shield-alt" style="font-size: 1.3rem; color: #2c6e49;"></i></h2>
-                <span>premium infrastructure · secure cloud</span>
-            </div>
-            <div class="support-badge">
-                <i class="fas fa-headset"></i> 24/7 urgent support · +962 790567128
-            </div>
+    <div id="intro-screen">
+        <div class="intro-burst-container">
+            <span class="intro-burst-particle" style="font-size: 45px; --x-offset: -120px; --y-offset: -180px; animation-delay: 0.1s;">🌿</span>
+            <span class="intro-burst-particle" style="font-size: 38px; --x-offset: 150px; --y-offset: -150px; animation-delay: 0.15s;">🍂</span>
+            <span class="intro-burst-particle" style="font-size: 52px; --x-offset: -180px; --y-offset: 100px; animation-delay: 0.2s;">🌱</span>
+            <span class="intro-burst-particle" style="font-size: 35px; --x-offset: 200px; --y-offset: 170px; animation-delay: 0.25s;">🍃</span>
+            <span class="intro-burst-particle" style="font-size: 48px; --x-offset: -90px; --y-offset: 210px; animation-delay: 0.3s;">🌲</span>
+            <span class="intro-burst-particle" style="font-size: 42px; --x-offset: 130px; --y-offset: -220px; animation-delay: 0.35s;">🌳</span>
+            <span class="intro-burst-particle" style="font-size: 55px; --x-offset: -220px; --y-offset: -80px; animation-delay: 0.4s;">🌿</span>
+            <span class="intro-burst-particle" style="font-size: 36px; --x-offset: 180px; --y-offset: 130px; animation-delay: 0.45s;">🍂</span>
+            <span class="intro-burst-particle" style="font-size: 49px; --x-offset: -150px; --y-offset: -200px; animation-delay: 0.5s;">🌱</span>
+            <span class="intro-burst-particle" style="font-size: 41px; --x-offset: 110px; --y-offset: 190px; animation-delay: 0.55s;">🍃</span>
+            <span class="intro-burst-particle" style="font-size: 53px; --x-offset: -200px; --y-offset: 50px; animation-delay: 0.6s;">🌲</span>
+            <span class="intro-burst-particle" style="font-size: 37px; --x-offset: 160px; --y-offset: -190px; animation-delay: 0.65s;">🌳</span>
         </div>
-
-        <!-- main alert block (original message integrated) -->
-        <div class="alert-header">
-            <div class="alert-icon">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="alert-text">
-                <h3>⚠️ WARNING: SERVICE INTERRUPTION IMMINENT WITHOUT PAYMENT</h3>
-                <p><strong>Final notice — immediate action required.</strong> Your services will be suspended within the countdown below unless full payment is received.</p>
-            </div>
-            <div style="margin-left: auto;">
-                <span class="badge-critical"><i class="fas fa-clock"></i> URGENT</span>
-            </div>
+        
+        <div class="intro-logo">
+            <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان">
         </div>
-
-        <!-- main grid: details + payment area -->
-        <div class="grid-payment">
-            <!-- left column: invoice & service details -->
-            <div class="details-section">
-                <div class="section-title">
-                    <i class="fas fa-file-invoice" style="color:#dc2626;"></i> 
-                    <span>Invoice overview</span>
-                </div>
-                <ul class="invoice-list">
-                    <li><span class="invoice-label">Invoice number</span><span class="invoice-value">#TAL-2404-9921</span></li>
-                    <li><span class="invoice-label">Service plan</span><span class="invoice-value">Business Cloud Pro + CDN</span></li>
-                    <li><span class="invoice-label">Billing cycle</span><span class="invoice-value">Annual (renewal due)</span></li>
-                    <li><span class="invoice-label">Issue date</span><span class="invoice-value">March 28, 2026</span></li>
-                    <li><span class="invoice-label"><i class="fas fa-calendar-exclamation"></i> Due date</span><span class="invoice-value" id="dueDateSpan">--</span></li>
-                    <li><span class="invoice-label">Overdue since</span><span class="invoice-value" style="color:#b91c1c;">April 2, 2026</span></li>
-                </ul>
+        
+        <div class="intro-text">🌲 تل السنديان</div>
+        
+        <div class="squirrel-loading-container">
+            <div class="tree-branch">
+                <div class="branch-knot"></div>
+                <div class="branch-knot2"></div>
                 
-                <div class="notice-box">
-                    <i class="fas fa-gavel"></i>
-                    <div><strong>Automatic suspension policy:</strong> After countdown reaches zero, all hosted services, databases, and domains will be locked. Data retention policy: 7 days.</div>
+                <div class="branch-leaf"></div>
+                <div class="branch-leaf branch-leaf2"></div>
+                <div class="branch-leaf branch-leaf3"></div>
+                
+                <div class="trail-acorn trail-acorn1"></div>
+                <div class="trail-acorn trail-acorn2"></div>
+                <div class="trail-acorn trail-acorn3"></div>
+                <div class="trail-acorn trail-acorn4"></div>
+                
+                <div class="squirrel-home">
+                    <div class="home-trunk"></div>
+                    <div class="home-hole"></div>
+                    <div class="home-roof"></div>
+                    <div class="home-leaf"></div>
+                    <div class="home-leaf home-leaf2"></div>
+                    <div class="home-acorn"></div>
+                </div>
+                
+                <div class="running-squirrel">
+                    <div class="squirrel-tail"></div>
+                    <div class="squirrel-body"></div>
+                    <div class="squirrel-belly"></div>
+                    <div class="squirrel-head">
+                        <div class="squirrel-ear"></div>
+                        <div class="squirrel-eye"></div>
+                        <div class="squirrel-nose"></div>
+                    </div>
+                    <div class="squirrel-leg-front"></div>
+                    <div class="squirrel-leg-back"></div>
+                    <div class="squirrel-nut"></div>
                 </div>
             </div>
-
-            <!-- right column: payment, amount, countdown -->
-            <div class="payment-side">
-                <div class="amount-due">
-                    <div class="label">TOTAL OUTSTANDING (incl. late fee)</div>
-                    <div class="price">$420.00 <small>USD</small></div>
-                    
-                </div>
-
-                <!-- countdown timer dynamic -->
-                <div class="timer-container">
-                    <div class="timer-label"><i class="fas fa-hourglass-half"></i> TIME REMAINING UNTIL SUSPENSION</div>
-                    <div class="countdown" id="countdownDisplay">--d --h --m --s</div>
-                    <div class="countdown-message" id="timerMsg">Payment required before deadline to avoid interruption</div>
-                </div>
-
-                <!-- pay now button -->
-                <button class="pay-btn" id="payNowBtn">
-                    <i class="fas fa-lock"></i> PAY NOW & RESTORE SERVICE
-                    <i class="fas fa-arrow-right"></i>
-                </button>
-
-                <div class="payment-methods">
-                    <i class="fab fa-cc-visa"></i>
-                    <i class="fab fa-cc-mastercard"></i>
-                    <i class="fab fa-cc-amex"></i>
-                    <i class="fab fa-paypal"></i>
-                    <i class="fas fa-university"></i>
-                </div>
-                <div class="secure-note">
-                    <i class="fas fa-shield-alt"></i> 256-bit SSL secure payment · instant confirmation
-                </div>
-            </div>
-        </div>
-
-        <!-- additional contact & warning footer -->
-        <div class="footer-note">
-            <div><i class="fas fa-envelope"></i> laithdeveloper@gmail.com  |  <i class="fas fa-phone-alt"></i> +962 790567128</div>
-            <div><a href="#" id="disputeLink"><i class="fas fa-file-signature"></i> Dispute this invoice?</a> &nbsp;|&nbsp; <a href="#" id="supportLink">Contact billing support</a></div>
-            <div>© Laith Arabiat · cloud services FZCO</div>
         </div>
     </div>
-</div>
 
-<script>
-    (function() {
-        // ----- set deadline: 2 days from now (real urgency simulation)
-        let deadline = new Date();
-        deadline.setDate(deadline.getDate() + 2);
-        // set to same time of day but ensures countdown ~48 hours range
-        // optional: freeze hours/minutes/seconds from now? we keep as is, but ensures exact 2 days ahead from load
-        // For better UX: we preserve milliseconds consistent
-        // also display due date in invoice
-        const dueDateSpan = document.getElementById('dueDateSpan');
-        const countdownElem = document.getElementById('countdownDisplay');
-        const timerMsgElem = document.getElementById('timerMsg');
-        const payBtn = document.getElementById('payNowBtn');
-
-        // format due date nicely
-        function formatDueDate(date) {
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + 
-                   ' at ' + date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-        }
-        if (dueDateSpan) {
-            dueDateSpan.innerText = formatDueDate(deadline);
-        }
-
-        let countdownInterval = null;
-        let isExpired = false;
-
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const target = deadline.getTime();
-            let distance = target - now;
-            
-            let expiredFlag = false;
-            if (distance <= 0) {
-                expiredFlag = true;
-                distance = 0;
-                if (!isExpired) {
-                    isExpired = true;
-                    // update UI for expiration
-                    if (timerMsgElem) {
-                        timerMsgElem.innerHTML = '<i class="fas fa-skull-crosswalk"></i> SERVICE INTERRUPTED · immediate action required';
-                        timerMsgElem.style.color = "#ffb4a2";
-                    }
-                    if (countdownElem) {
-                        countdownElem.innerHTML = "0d 0h 0m 0s";
-                    }
-                    // change button state to disabled and show new text
-                    if (payBtn) {
-                        payBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> SERVICE SUSPENDED · CONTACT SUPPORT';
-                        payBtn.style.background = "#4a5568";
-                        payBtn.style.cursor = "pointer";
-                        payBtn.disabled = false; // still clickable but will show alert
-                        payBtn.classList.remove('pay-btn');
-                        payBtn.style.opacity = "0.9";
-                    }
-                    return;
-                }
-            }
-            
-            if (expiredFlag) return;
-            
-            // compute days, hours, minutes, seconds
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            if (countdownElem) {
-                countdownElem.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            }
-            
-            // change warning message if less than 12 hours
-            if (distance < 12 * 60 * 60 * 1000 && distance > 0) {
-                if (timerMsgElem && !isExpired) {
-                    timerMsgElem.innerHTML = '<i class="fas fa-bell"></i> CRITICAL: Few hours left — immediate payment required!';
-                    timerMsgElem.style.color = "#ffdd99";
-                }
-            } else {
-                if (timerMsgElem && !isExpired) {
-                    timerMsgElem.innerHTML = 'Payment required before deadline to avoid interruption';
-                    timerMsgElem.style.color = "";
-                }
-            }
-            
-            if (distance <= 0 && !isExpired) {
-                // force expire
-                isExpired = true;
-                if (timerMsgElem) timerMsgElem.innerHTML = '<i class="fas fa-ban"></i> SERVICE INTERRUPTED · contact billing immediately';
-                if (countdownElem) countdownElem.innerHTML = "0d 0h 0m 0s";
-                if (payBtn) {
-                    payBtn.innerHTML = '<i class="fas fa-headset"></i> SERVICE SUSPENDED · REACTIVATE';
-                    payBtn.style.background = "#4a5568";
-                }
-                clearInterval(countdownInterval);
-            }
-        }
+    <header class="header" id="main-header">
+        <video autoplay loop muted playsinline class="header-video" poster="https://via.placeholder.com/1920x1080/2D5A27/FFFFFF?text=Forest+Video">
+            <source src="https://cdn.pixabay.com/video/2023/11/19/189813-887078786_medium.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-overlay"></div>
         
-        // initial call and interval
-        updateCountdown();
-        countdownInterval = setInterval(updateCountdown, 1000);
+        <div class="header-content">
+            <div class="logo-circle">
+                <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان">
+            </div>
+            <h1 class="restaurant-name">
+                تل السنديان
+                <small>Tel AlSindian</small>
+            </h1>
+        </div>
         
-        // pay now button interaction (professional demo)
-        if (payBtn) {
-            payBtn.addEventListener('click', function(e) {
+        <div class="nav-tabs" id="navTabs"></div>
+    </header>
+
+    <main class="menu-container" id="menuContainer"></main>
+
+    <!-- مودال عرض الصورة -->
+    <div class="image-modal" id="imageModal" onclick="closeImageModal(event)">
+        <span class="close-image-modal" onclick="closeImageModal()">&times;</span>
+        <div class="image-modal-content">
+            <img id="modalImage" src="" alt="صورة المنتج">
+        </div>
+    </div>
+
+    <!-- تم إزالة زر السلة والمودالات الخاصة بالسلة والطلب -->
+
+    <footer class="footer">
+        <a href="https://www.instagram.com/tal_sindian_cafe/" target="_blank" class="instagram-btn">
+            <i class="fab fa-instagram"></i>
+        </a>
+        <p>© 2026 تل السنديان - جميع الحقوق محفوظة</p>
+        <p style="margin-top: 3px; font-size: 0.7em;">نظام الطلبات الذكي v3.0</p>
+    </footer>
+
+    <script>
+        // ================== منع التكبير (zoom) بشكل كامل ==================
+        (function preventZoom() {
+            document.addEventListener('wheel', function(e) {
+                if (e.ctrlKey) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '_' || e.key === '0')) {
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('gesturestart', function(e) {
                 e.preventDefault();
-                if (isExpired) {
-                    // expired case: show support message
-                    alert("⚠️ SERVICE ALREADY INTERRUPTED.\n\nPlease contact our billing department at billing@talsindian.com or call +962 7 1234 5678 to restore your services.\n\nDemo environment – This is a payment warning simulation.");
-                } else {
-                    // simulate payment gateway
-                    let confirmPay = confirm("🔐 SECURE PAYMENT GATEWAY\n\nTotal amount due: $284.00 USD\n\nProceed to payment processor? (Demo interaction)");
-                    if (confirmPay) {
-                        alert("✅ [DEMO] Payment received! Your service interruption warning will be lifted within 10 minutes.\nThank you for settling your invoice.\n\n(Real implementation would redirect to payment gateway.)");
-                        // optional: reset timer? Not needed for demo, but show success message.
-                        // For a real-world scenario, you'd reload or redirect. We'll just reset the warning? Not necessary, but user sees demo.
-                        // In a real environment, this would trigger backend.
-                        // We keep the page interactive but shows demo notice.
-                        // Provide option to reload? but maintain experience.
-                        let resetPage = confirm("Simulate successful payment? (Page will reload to reflect updated status)");
-                        if (resetPage) {
-                            location.reload();
-                        }
+            });
+        })();
+
+        // ================== إنشاء الأوراق المتساقطة ==================
+        function createLeaves() {
+            const leavesContainer = document.getElementById('fallingLeaves');
+            const leafCount = 30;
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                const leafSymbols = ['🌿', '🍂', '🍃'];
+                leaf.textContent = leafSymbols[Math.floor(Math.random() * leafSymbols.length)];
+                const size = Math.random() * 1.5 + 1.2;
+                leaf.style.fontSize = size + 'rem';
+                leaf.style.left = Math.random() * 100 + '%';
+                const duration = Math.random() * 10 + 12;
+                leaf.style.animationDuration = duration + 's';
+                leaf.style.animationDelay = Math.random() * -20 + 's';
+                leaf.style.color = `rgba(255, 255, 255, ${Math.random() * 0.5 + 0.5})`;
+                leavesContainer.appendChild(leaf);
+            }
+        }
+
+        // ================== دوال عرض الصورة ==================
+        function openImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = imageSrc;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // منع التمرير
+        }
+
+        function closeImageModal(event) {
+            if (event && event.target !== document.getElementById('imageModal') && event.target.className !== 'close-image-modal') return;
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // استعادة التمرير
+        }
+
+        // ================== روابط السيرفرات ==================
+        const OLD_API_URL = 'https://script.google.com/macros/s/AKfycbzU7pp0Ul8KNDT4iEd7kGFxNrXYzX4B4zfdYANjE59ABvMq1vIKlmEM4gAOipY47Zeoiw/exec';
+        const NEW_API_URL = 'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec';
+
+        // ================== حالة التطبيق ==================
+        let categories = [];
+        let products = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            createLeaves();
+
+            setTimeout(() => {
+                document.getElementById('intro-screen').classList.add('hidden');
+            }, 4000);
+            
+            loadMenuData();
+        });
+
+        async function loadMenuData() {
+            try {
+                const response = await fetch(`${NEW_API_URL}?action=getMenuData`);
+                const data = await response.json();
+                if (data.success) {
+                    categories = data.categories || [];
+                    products = data.products || [];
+                    
+                    categories.sort((a, b) => (a.order || 0) - (b.order || 0));
+                    
+                    renderCategories();
+                    if (categories.length > 0) {
+                        renderProducts(categories[0].id);
                     } else {
-                        alert("Payment cancelled. Please complete the transaction to avoid service interruption.");
+                        document.getElementById('menuContainer').innerHTML = '<div class="empty-state">لا توجد أصناف متاحة حالياً</div>';
                     }
+                } else {
+                    console.error('فشل تحميل البيانات');
                 }
-            });
+            } catch (error) {
+                console.error('خطأ في الاتصال بالسيرفر الجديد:', error);
+            }
         }
-        
-        // helper links: dispute & support (demo)
-        const disputeLink = document.getElementById('disputeLink');
-        const supportLink = document.getElementById('supportLink');
-        if (disputeLink) {
-            disputeLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert("📄 To dispute this invoice, please send a formal request to billing@talsindian.com with your invoice #TAL-2404-9921. Our team will reply within 2 business hours.");
-            });
+
+        function renderCategories() {
+            const navTabs = document.getElementById('navTabs');
+            if (!navTabs) return;
+            
+            navTabs.innerHTML = categories.map(cat => `
+                <div class="nav-tab ${cat.id === categories[0]?.id ? 'active' : ''}" onclick="switchCategory('${cat.id}', this)">
+                    <i class="fas ${getIconForCategory(cat.name)}"></i>
+                    <span>${cat.name}</span>
+                </div>
+            `).join('');
         }
-        if (supportLink) {
-            supportLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                alert("📞 Emergency billing support: +962 7 1234 5678 | Live chat available 24/7 at https://support.talsindian.com (demo)");
-            });
+
+        function getIconForCategory(name) {
+            const nameLower = name.toLowerCase();
+            if (nameLower.includes('ساندويش') || nameLower.includes('ساندويتش')) return 'fa-sandwich';
+            if (nameLower.includes('طبق') || nameLower.includes('رئيسية')) return 'fa-drumstick-bite';
+            if (nameLower.includes('صينية') || nameLower.includes('صواني')) return 'fa-utensils';
+            if (nameLower.includes('مقبلات') || nameLower.includes('سلطة')) return 'fa-leaf';
+            return 'fa-utensils';
         }
-        
-        // Additional dynamic note: the original warning text remains visible in alert-header
-        // also show a subtle console message for authenticity.
-        console.log("Tal Al sindian - Payment warning system | Deadline set: " + deadline.toISOString());
-        
-        // optional: improve deadline time if browser tab inactive? no needed.
-        // Also ensure due date matches timer.
-        // update due date span if any change due to timezone but fine.
-    })();
-</script>
+
+        function switchCategory(catId, element) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            element.classList.add('active');
+            renderProducts(catId);
+        }
+
+        function renderProducts(categoryId) {
+            const container = document.getElementById('menuContainer');
+            const category = categories.find(c => c.id === categoryId);
+            const filteredProducts = products.filter(p => p.categoryId === categoryId).sort((a, b) => (a.order || 0) - (b.order || 0));
+            
+            if (!filteredProducts.length) {
+                container.innerHTML = `
+                    <div class="menu-section active">
+                        <h2 class="section-title">${category?.name || ''}</h2>
+                        <p style="text-align:center; color:var(--pure-white);">لا توجد منتجات في هذا القسم</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="menu-section active">
+                    <h2 class="section-title">${category?.name || ''}</h2>
+                    <div class="products-grid">
+                        ${filteredProducts.map(product => `
+                            <div class="product-card">
+                                <img src="${product.image}" class="product-image" onclick="openImageModal('${product.image}')" onerror="this.src='https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=تل+السنديان'">
+                                <div class="card-content">
+                                    <h3 class="product-title">${product.name} ${product.isNew ? '<span class="new-tag">جديد</span>' : ''}</h3>
+                                    <p class="product-description">${product.description}</p>
+                                    <div class="product-price">${Number(product.price).toFixed(2)} د.أ</div>
+                                    <!-- تم إزالة عناصر التحكم بالكمية وزر الإضافة إلى السلة -->
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // تم إزالة جميع دوال السلة والطلب: updateQuantity, addToCart, updateCartBadge, showCart, updateCartItem, removeCartItem, closeCart, showCheckout, validateTableNumber, submitOrder, showNotification
+        // مع الاحتفاظ بدوال عرض الصورة فقط.
+    </script>
 </body>
 </html>
