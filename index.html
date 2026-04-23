@@ -7,54 +7,44 @@
     <meta name="description" content="قائمة طعام تل السنديان - مطعم طبيعي أصيل">
     <title>🌲 تل السنديان | قائمة الطعام</title>
 
-    <!-- ═══ DNS Prefetch & Preconnect ═══ -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="https://script.google.com">
+    <!-- Preconnect لتسريع تحميل الخطوط -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-    <!-- ═══ Preload critical assets ═══ -->
-    <link rel="preload" href="https://iili.io/qfhk5Pt.png" as="image" fetchpriority="high">
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@700;900&display=swap" as="style">
+    <!-- Preload للشعار -->
+    <link rel="preload" href="https://iili.io/qfhk5Pt.png" as="image">
 
     <link rel="apple-touch-icon" href="https://iili.io/qfhk5Pt.png">
     <link rel="icon" href="https://iili.io/qfhk5Pt.png">
-
-    <!-- ═══ Fonts ═══ -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        /* ═══════════════════════════════════════
-           CSS Variables & Reset
-        ═══════════════════════════════════════ */
+        /* ========= CSS Variables ========= */
         :root {
             --green-dark:   #1f4a1a;
             --green-mid:    #3f8b3a;
             --green-light:  #7cb86b;
             --green-bright: #5cb85c;
+            --green-lime:   #8bc34a;
             --beige:        #F5E6D3;
             --white:        #FFFFFF;
+            --off-white:    #F8F9FA;
             --text-dark:    #1e3b1a;
-            --radius-card:  22px;
+            --radius-card:  24px;
             --radius-btn:   60px;
-            --shadow-card:  0 8px 28px -6px rgba(30,70,10,.38), 0 0 0 2px rgba(255,255,255,.5) inset;
+            --radius-modal: 45px;
+            --shadow-card:  0 12px 35px -8px rgba(30,70,10,.45), 0 0 0 2px rgba(255,255,255,.6) inset;
             --ease-bounce:  cubic-bezier(.175,.885,.32,1.275);
-            --tr:           all .3s var(--ease-bounce);
+            --transition:   all .35s var(--ease-bounce);
         }
 
-        *, *::before, *::after {
-            margin: 0; padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
         body {
             font-family: 'Cairo', sans-serif;
-            background: linear-gradient(145deg, #1e4a1a 0%, #3d7534 55%, #5a9647 100%);
+            background: radial-gradient(circle at 15% 20%, #386f2e, #1f4a18);
             color: var(--text-dark);
             overflow-x: hidden;
             direction: rtl;
@@ -64,19 +54,24 @@
             flex-direction: column;
         }
 
-        /* ═══ Canvas Leaves ═══ */
+        /* ===== خلفية الغابة ===== */
+        #forest-bg {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(145deg, #1e4a1a, #3d7534, #68a355);
+            z-index: -2;
+        }
+
+        /* ===== قماش الأوراق (أداء عالي) ===== */
         #leaves-canvas {
             position: fixed;
             inset: 0;
             pointer-events: none;
-            z-index: 0;
-            opacity: .75;
-            will-change: transform;
+            z-index: -1;
+            opacity: .85;
         }
 
-        /* ═══════════════════════════════════════
-           INTRO SCREEN — سريع وخفيف
-        ═══════════════════════════════════════ */
+        /* ===== شاشة البداية ===== */
         #intro-screen {
             position: fixed;
             inset: 0;
@@ -86,587 +81,517 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity .8s ease-out, visibility .8s ease-out;
+            transition: opacity 1.2s ease-out;
             overflow: hidden;
         }
-        #intro-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+        #intro-screen.hidden { opacity: 0; pointer-events: none; }
 
+        /* دقائق الانفجار */
         .burst-particle {
             position: absolute;
             opacity: 0;
-            animation: burstOut 1s ease-out forwards;
+            animation: burstOut 1.2s ease-out forwards;
+            filter: drop-shadow(0 0 12px rgba(255,255,255,.9));
             z-index: 5;
         }
         @keyframes burstOut {
             0%   { transform: scale(0) translate(0,0); opacity: 0; }
             15%  { opacity: 1; }
-            100% { transform: scale(1.8) translate(var(--bx), var(--by)); opacity: 0; }
+            100% { transform: scale(2) translate(var(--bx), var(--by)); opacity: 0; }
         }
 
         .intro-logo {
-            width: 140px; height: 140px;
+            width: 150px; height: 150px;
             border-radius: 50%;
             overflow: hidden;
-            border: 5px solid var(--white);
-            box-shadow: 0 0 60px #fff8, 0 0 100px #f0fff040;
+            border: 6px solid var(--white);
+            box-shadow: 0 0 70px #fff, 0 0 110px #f0fff0;
             transform: scale(0); opacity: 0;
-            animation: popIn .8s var(--ease-bounce) forwards .2s;
+            animation: popIn .9s var(--ease-bounce) forwards .3s;
             position: relative; z-index: 20;
         }
         .intro-logo img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
 
         @keyframes popIn {
             0%   { transform:scale(0); opacity:0; }
-            80%  { transform:scale(1.1); opacity:1; }
+            80%  { transform:scale(1.12); opacity:1; }
             100% { transform:scale(1); opacity:1; }
         }
 
         .intro-title {
             font-family: 'Tajawal', sans-serif;
-            font-size: clamp(1.8em, 6vw, 2.6em);
-            font-weight: 900;
+            font-size: clamp(2em, 6vw, 2.8em);
             color: var(--white);
-            text-shadow: 0 0 28px #fff, 3px 3px 0 rgba(0,0,0,.2);
-            opacity: 0;
-            transform: translateY(24px);
-            animation: slideUp .8s ease-out forwards .7s;
+            text-shadow: 0 0 30px #b5e5a0, 0 0 60px #fff, 3px 3px 0 rgba(0,0,0,.2);
+            opacity: 0; transform: translateY(28px);
+            animation: slideUp .9s ease-out forwards .9s;
             z-index: 20;
-            margin-top: 14px;
         }
         @keyframes slideUp { to { opacity:1; transform:translateY(0); } }
 
         /* شريط التحميل بالسنجاب */
         .loader-wrap {
-            width: min(88%, 560px);
-            margin-top: 36px;
+            width: min(90%, 580px);
+            margin-top: 40px;
             opacity: 0;
-            animation: fadeIn .7s ease forwards 1.2s;
+            animation: fadeIn .8s ease forwards 1.5s;
             z-index: 20;
         }
         @keyframes fadeIn { to { opacity:1; } }
 
         .branch {
-            width: 100%; height: 24px;
+            width: 100%; height: 26px;
             background: linear-gradient(180deg, #b58b5a, #7b572e, #4a341c);
             border-radius: 40px 40px 14px 14px;
             position: relative;
-            box-shadow: 0 8px 18px rgba(0,0,0,.55), inset 0 4px 8px rgba(255,220,140,.5);
+            box-shadow: 0 8px 20px rgba(0,0,0,.6), inset 0 4px 8px rgba(255,220,140,.6);
             border: 2px solid #dbb38c;
         }
         .branch::before {
             content:'';
             position:absolute; inset:0;
-            background-image: repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(0,0,0,.16) 18px,rgba(0,0,0,.16) 36px);
+            background-image: repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(0,0,0,.18) 18px,rgba(0,0,0,.18) 36px);
             border-radius:inherit;
         }
 
         .squirrel-home {
             position:absolute; right:-4px; top:50%; transform:translateY(-50%);
-            width:56px; height:60px; z-index:30;
-            filter:drop-shadow(0 5px 10px rgba(0,0,0,.45));
+            width:58px; height:62px; z-index:30;
+            filter:drop-shadow(0 6px 12px rgba(0,0,0,.5));
         }
-        .h-trunk  { position:absolute; width:40px; height:50px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:35% 35% 20% 20%; right:0; bottom:0; box-shadow:inset -3px -3px 7px #3e2a14,inset 3px 3px 9px #e0b58c; border:2px solid #7b572e; }
-        .h-hole   { position:absolute; width:22px; height:28px; background:#3e2a14; border-radius:45% 45% 20% 20%; right:9px; top:10px; box-shadow:inset 0 0 10px #0a0602; border:2px solid #7b572e; }
-        .h-roof   { position:absolute; width:50px; height:19px; background:#7b572e; top:-9px; right:-5px; border-radius:60% 60% 10% 10%; transform:rotate(2deg); }
-        .h-leaf   { position:absolute; width:15px; height:15px; background:#7fb073; border-radius:70% 0 70% 0; top:-15px; right:16px; transform:rotate(45deg); }
-        .h-leaf2  { right:0; top:-10px; transform:rotate(-14deg); background:#5cb85c; width:13px; height:13px; }
+        .h-trunk  { position:absolute; width:42px; height:52px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:35% 35% 20% 20%; right:0; bottom:0; box-shadow:inset -4px -4px 8px #3e2a14,inset 4px 4px 10px #e0b58c; border:2px solid #7b572e; }
+        .h-hole   { position:absolute; width:24px; height:30px; background:#3e2a14; border-radius:45% 45% 20% 20%; right:9px; top:11px; box-shadow:inset 0 0 12px #0a0602; border:2px solid #7b572e; }
+        .h-roof   { position:absolute; width:52px; height:20px; background:#7b572e; top:-9px; right:-5px; border-radius:60% 60% 10% 10%; transform:rotate(2deg); }
+        .h-leaf   { position:absolute; width:16px; height:16px; background:#7fb073; border-radius:70% 0 70% 0; top:-16px; right:17px; transform:rotate(45deg); }
+        .h-leaf2  { right:0; top:-11px; transform:rotate(-14deg); background:#5cb85c; width:14px; height:14px; }
 
         .squirrel {
             position:absolute; top:50%; left:0;
             transform:translateY(-50%);
-            width:56px; height:46px; z-index:40;
-            animation: runAcross 3.8s ease-in-out forwards;
-            filter:drop-shadow(2px 5px 8px rgba(0,0,0,.45));
+            width:58px; height:48px; z-index:40;
+            animation: runAcross 4.2s ease-in-out forwards;
+            filter:drop-shadow(3px 6px 10px rgba(0,0,0,.5));
         }
         @keyframes runAcross {
-            0%   { left:0; transform:translateY(-50%); }
-            15%  { transform:translateY(-56%); }
-            30%  { transform:translateY(-44%); }
-            45%  { transform:translateY(-53%); }
-            60%  { transform:translateY(-45%); }
-            75%  { transform:translateY(-52%); }
-            100% { left:calc(100% - 60px); transform:translateY(-50%); }
+            0%   { left:0; transform:translateY(-50%) scaleX(1); }
+            14%  { transform:translateY(-58%) scaleX(1); }
+            28%  { transform:translateY(-42%) scaleX(1); }
+            42%  { transform:translateY(-54%) scaleX(1); }
+            56%  { transform:translateY(-44%) scaleX(1); }
+            70%  { transform:translateY(-53%) scaleX(1); }
+            85%  { transform:translateY(-47%) scaleX(1); }
+            100% { left:calc(100% - 62px); transform:translateY(-50%) scaleX(1); }
         }
 
-        .s-body  { position:absolute; width:32px; height:28px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:50% 40% 40% 50%; top:9px; left:14px; border:2px solid #7b572e; }
-        .s-head  { position:absolute; width:19px; height:19px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:50% 40% 50% 30%; top:2px; right:-1px; border:2px solid #7b572e; }
-        .s-ear   { position:absolute; width:7px; height:9px; background:#b58b5a; border-radius:50% 50% 0 0; top:-5px; right:2px; transform:rotate(-10deg); border:1px solid #7b572e; }
-        .s-eye   { position:absolute; width:4px; height:4px; background:#fff; border-radius:50%; top:5px; right:5px; box-shadow:0 0 3px #000; }
+        .s-body  { position:absolute; width:34px; height:30px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:50% 40% 40% 50%; top:9px; left:14px; border:2px solid #7b572e; }
+        .s-head  { position:absolute; width:20px; height:20px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:50% 40% 50% 30%; top:2px; right:-1px; border:2px solid #7b572e; }
+        .s-ear   { position:absolute; width:8px; height:10px; background:#b58b5a; border-radius:50% 50% 0 0; top:-5px; right:2px; transform:rotate(-10deg); border:1px solid #7b572e; }
+        .s-eye   { position:absolute; width:4px; height:4px; background:#fff; border-radius:50%; top:6px; right:5px; box-shadow:0 0 3px #000; }
         .s-eye::before { content:''; position:absolute; width:2px; height:2px; background:#000; border-radius:50%; top:1px; right:1px; }
-        .s-nose  { position:absolute; width:3px; height:3px; background:#000; border-radius:50%; top:9px; right:2px; }
-        .s-belly { position:absolute; width:15px; height:14px; background:#eac39b; border-radius:40% 20% 30% 40%; top:10px; left:18px; opacity:.7; }
-        .s-tail  { position:absolute; width:22px; height:24px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:80% 20% 70% 30%; top:4px; left:-10px; transform:rotate(20deg); border:2px solid #7b572e; animation:wagTail .2s infinite alternate; }
+        .s-nose  { position:absolute; width:3px; height:3px; background:#000; border-radius:50%; top:10px; right:2px; }
+        .s-belly { position:absolute; width:16px; height:15px; background:#eac39b; border-radius:40% 20% 30% 40%; top:11px; left:19px; opacity:.7; }
+        .s-tail  { position:absolute; width:24px; height:26px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:80% 20% 70% 30%; top:4px; left:-11px; transform:rotate(20deg); border:2px solid #7b572e; animation:wagTail .2s infinite alternate; }
         @keyframes wagTail { from{transform:rotate(14deg)} to{transform:rotate(28deg)} }
-        .s-leg-f { position:absolute; width:7px; height:9px; background:#b58b5a; border-radius:30% 30% 20% 20%; bottom:2px; right:7px; border:1px solid #7b572e; animation:legAnim .14s infinite alternate; }
-        .s-leg-b { position:absolute; width:8px; height:10px; background:#b58b5a; border-radius:30% 30% 20% 20%; bottom:2px; left:18px; border:1px solid #7b572e; animation:legAnim .14s infinite alternate-reverse; }
+        .s-leg-f { position:absolute; width:8px; height:10px; background:#b58b5a; border-radius:30% 30% 20% 20%; bottom:3px; right:8px; border:1px solid #7b572e; animation:legAnim .15s infinite alternate; }
+        .s-leg-b { position:absolute; width:9px; height:11px; background:#b58b5a; border-radius:30% 30% 20% 20%; bottom:3px; left:19px; border:1px solid #7b572e; animation:legAnim .15s infinite alternate-reverse; }
         @keyframes legAnim { from{transform:rotate(0) translateY(0)} to{transform:rotate(10deg) translateY(-3px)} }
 
-        /* ═══════════════════════════════════════
-           HEADER
-        ═══════════════════════════════════════ */
+        /* ===== الهيدر ===== */
         .header {
             width: 100%;
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: linear-gradient(145deg, #2d6827, #4f9442, #7cb86b);
-            border-bottom: 3px solid var(--white);
-            box-shadow: 0 14px 32px -5px rgba(0,0,0,.5);
-            border-radius: 0 0 36px 36px;
-            position: relative;
             overflow: hidden;
+            background: linear-gradient(145deg, #2d6827, #4f9442, #7cb86b);
+            border-bottom: 4px solid var(--white);
+            box-shadow: 0 18px 38px -5px rgba(0,0,0,.55);
+            border-radius: 0 0 40px 40px;
+            position: relative;
         }
 
         .header-video {
             position: absolute; inset: 0;
             width: 100%; height: 100%;
             object-fit: cover; z-index: -2;
-            filter: brightness(.65) saturate(1.4) hue-rotate(72deg) contrast(1.1);
+            filter: brightness(.68) saturate(1.4) hue-rotate(72deg) contrast(1.1);
         }
         .video-overlay {
             position: absolute; inset: 0;
-            background: rgba(25,60,15,.50); z-index: -1;
+            background: rgba(30,70,20,.52); z-index: -1;
         }
 
         .header-content {
             position: relative; z-index: 2;
             width: 100%;
             display: flex; flex-direction: column;
-            align-items: center;
-            padding: 16px 16px 6px;
+            align-items: center; justify-content: center;
+            padding: 18px 18px 8px;
         }
 
         .logo-circle {
-            width: 76px; height: 76px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 4px solid var(--white);
-            box-shadow: 0 0 36px #fff8, 0 4px 16px rgba(0,0,0,.3);
-            margin-bottom: 8px;
-            transition: var(--tr);
+            width: 82px; height: 82px;
+            border-radius: 50%; overflow: hidden;
+            border: 5px solid var(--white);
+            box-shadow: 0 0 40px #fff, 0 0 80px #f0fff0, 0 5px 18px rgba(0,0,0,.3);
+            margin-bottom: 10px;
+            transition: var(--transition);
             cursor: pointer;
         }
-        .logo-circle:hover { transform: scale(1.08) rotate(3deg); }
+        .logo-circle:hover { transform: scale(1.08) rotate(3deg); box-shadow: 0 0 65px #fff; }
         .logo-circle img { width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
 
         .restaurant-name {
             font-family: 'Tajawal', sans-serif;
-            font-size: clamp(1.5em, 5vw, 2em);
-            font-weight: 900;
+            font-size: clamp(1.6em, 5vw, 2.1em);
             color: var(--white);
-            text-shadow: 0 0 18px #fff8, 3px 3px 0 rgba(0,0,0,.25);
+            text-shadow: 0 0 20px #fff, 0 0 38px #fff, 3px 3px 0 rgba(0,0,0,.3);
             text-align: center; line-height: 1.2;
-            animation: namePulse 3s infinite alternate ease-in-out;
+            animation: namePulse 2.8s infinite alternate ease-in-out;
         }
         .restaurant-name small {
-            font-size: .48em; display: block;
-            color: var(--beige); letter-spacing: 2px;
-            text-shadow: 0 0 10px #0006;
+            font-size: .5em; display: block;
+            color: var(--beige); letter-spacing: 1.5px;
+            text-shadow: 0 0 14px #000;
         }
         @keyframes namePulse {
-            from { text-shadow: 0 0 20px #fff8, 0 0 38px #fff4; }
-            to   { text-shadow: 0 0 30px #fff, 0 0 60px #f0fff080; }
+            from { text-shadow: 0 0 22px #fff, 0 0 40px #fff; }
+            to   { text-shadow: 0 0 32px #fff, 0 0 65px #f0fff0; }
         }
 
-        /* ═══ Nav Tabs ═══ */
+        /* ===== Nav Tabs ===== */
         .nav-tabs {
             display: flex;
             flex-wrap: nowrap;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
-            width: calc(100% - 24px);
-            padding: 7px 12px 9px;
-            margin: 0 12px 10px;
-            background: rgba(255,255,255,.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-top: 1px solid rgba(255,255,255,.65);
-            box-shadow: 0 3px 10px rgba(0,0,0,.1);
-            gap: 6px;
-            border-radius: 36px 36px 20px 20px;
+            width: calc(100% - 28px);
+            padding: 8px 14px 8px;
+            margin: 0 14px 10px;
+            background: rgba(255,255,255,.93);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid rgba(255,255,255,.7);
+            box-shadow: 0 4px 12px rgba(0,0,0,.12);
+            gap: 7px;
+            border-radius: 40px 40px 24px 24px;
             direction: rtl;
             position: relative; z-index: 2;
         }
         .nav-tabs::-webkit-scrollbar { display: none; }
 
         .nav-tab {
-            background: linear-gradient(145deg, #fff, #f5f7f5);
+            background: linear-gradient(145deg, #fff, #f8f9fa);
             border: 1.5px solid transparent;
             cursor: pointer;
-            padding: 5px 13px;
+            padding: 6px 14px;
             font-family: 'Cairo', sans-serif;
-            font-size: .82em;
+            font-size: .84em;
             color: #2b4d24;
             font-weight: 800;
-            border-radius: 28px;
-            transition: var(--tr);
+            border-radius: 30px;
+            transition: var(--transition);
             display: flex; align-items: center; justify-content: center;
             gap: 5px;
-            box-shadow: 0 3px 8px rgba(0,0,0,.08);
+            box-shadow: 0 4px 10px rgba(0,0,0,.09);
             white-space: nowrap;
             flex: 0 0 auto;
-            position: relative;
-            overflow: hidden;
-            will-change: transform;
+            position: relative; overflow: hidden;
         }
         .nav-tab::after {
             content:'';
             position:absolute; top:0; left:-100%;
             width:100%; height:100%;
-            background: linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);
-            transition: left .4s ease;
+            background: linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);
+            transition: left .5s ease;
         }
         .nav-tab:hover::after { left:100%; }
         .nav-tab:active  { transform: scale(.93); }
-        .nav-tab:hover   { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.13); }
+        .nav-tab:hover   { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,.14); }
         .nav-tab.active  {
-            background: linear-gradient(145deg, #3f8b3a, #7cb86b, #a8e090);
+            background: linear-gradient(145deg, #3f8b3a, #7cb86b, #b3e6a0);
             color: var(--white);
-            box-shadow: 0 6px 14px rgba(40,85,34,.6);
+            box-shadow: 0 7px 16px rgba(45,90,39,.65);
             transform: translateY(-2px);
             border-color: var(--white);
-            text-shadow: 0 0 6px rgba(0,0,0,.4);
+            text-shadow: 0 0 7px rgba(0,0,0,.45);
         }
+        .nav-tab i { font-size: .95em; }
 
-        /* ═══════════════════════════════════════
-           MAIN CONTAINER
-        ═══════════════════════════════════════ */
+        /* ===== Main Container ===== */
         .menu-container {
             max-width: 1400px;
-            margin: 18px auto 36px;
-            padding: 0 14px;
+            margin: 20px auto 40px;
+            padding: 0 16px;
             flex: 1; width: 100%;
-            position: relative; z-index: 1;
         }
 
-        /* ═══ Skeleton ═══ */
+        /* ===== Skeleton Loading ===== */
         .skeleton-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 14px;
         }
         .skeleton-card {
-            background: rgba(255,255,255,.14);
+            background: rgba(255,255,255,.15);
             border-radius: var(--radius-card);
-            height: 104px;
+            height: 110px;
             display: flex;
             align-items: center;
             padding: 10px;
             gap: 12px;
-            border: 2px solid rgba(255,255,255,.22);
+            border: 2px solid rgba(255,255,255,.25);
             overflow: hidden;
             position: relative;
         }
         .skeleton-card::after {
             content:'';
             position:absolute; inset:0;
-            background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,.22) 50%, transparent 70%);
-            animation: shimmer 1.2s infinite;
-            background-size: 200% 100%;
+            background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,.25) 50%, transparent 70%);
+            animation: shimmer 1.5s infinite;
         }
         @keyframes shimmer {
-            0%   { background-position: -200% 0; }
-            100% { background-position:  200% 0; }
+            0%   { transform:translateX(-100%); }
+            100% { transform:translateX(100%); }
         }
-        .skel-img  { width:74px; height:74px; border-radius:16px; background:rgba(255,255,255,.18); flex-shrink:0; }
+        .skel-img  { width:78px; height:78px; border-radius:18px; background:rgba(255,255,255,.2); flex-shrink:0; }
         .skel-lines { flex:1; display:flex; flex-direction:column; gap:8px; padding-right:4px; }
-        .skel-line  { height:11px; background:rgba(255,255,255,.2); border-radius:28px; }
-        .skel-line.short { width:52%; }
-        .skel-line.price { width:32%; height:15px; }
+        .skel-line  { height:12px; background:rgba(255,255,255,.22); border-radius:30px; }
+        .skel-line.short { width:55%; }
+        .skel-line.price { width:35%; height:16px; }
 
-        /* ═══ Error State ═══ */
+        /* ===== Error State ===== */
         .error-state {
             text-align: center;
-            padding: 44px 18px;
+            padding: 50px 20px;
             color: var(--white);
         }
-        .error-state .error-icon { font-size: 3.2em; margin-bottom: 14px; }
-        .error-state h3 { font-size: 1.4em; margin-bottom: 8px; font-family:'Tajawal',sans-serif; }
-        .error-state p  { opacity: .8; margin-bottom: 22px; font-size: .92em; line-height:1.5; }
+        .error-state .error-icon { font-size: 3.5em; margin-bottom: 16px; }
+        .error-state h3 { font-size: 1.5em; margin-bottom: 10px; font-family:'Tajawal',sans-serif; }
+        .error-state p  { opacity: .8; margin-bottom: 24px; font-size: .95em; }
         .retry-btn {
-            background: linear-gradient(145deg, var(--white), #eef0eb);
+            background: linear-gradient(145deg, var(--white), #f0f2f5);
             color: var(--green-dark);
             border: none; border-radius: var(--radius-btn);
-            padding: 11px 30px;
-            font-size: 1em; font-weight: 900;
+            padding: 12px 32px;
+            font-size: 1.05em; font-weight: 800;
             font-family: 'Cairo', sans-serif;
             cursor: pointer;
-            box-shadow: 0 7px 18px rgba(0,0,0,.28);
-            transition: var(--tr);
+            box-shadow: 0 8px 20px rgba(0,0,0,.3);
+            transition: var(--transition);
         }
-        .retry-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(0,0,0,.32); }
-        .retry-btn i { margin-left: 6px; }
+        .retry-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 14px 28px rgba(0,0,0,.35); }
+        .retry-btn i { margin-left: 7px; }
 
-        /* شبكة الاتصال الضعيف */
-        .offline-banner {
-            background: rgba(255,180,0,.9);
-            color: #3b2800;
-            text-align: center;
-            padding: 7px 14px;
-            font-weight: 700;
-            font-size: .88em;
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 9000;
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-        }
-        .offline-banner.visible { display: block; }
-
-        /* ═══ Section Title ═══ */
+        /* ===== Section Title ===== */
         .section-title {
             font-family: 'Tajawal', sans-serif;
-            font-size: clamp(1.6em, 5vw, 2.2em);
-            font-weight: 900;
+            font-size: clamp(1.8em, 5vw, 2.4em);
             color: var(--white);
-            text-shadow: 0 0 20px #fff8, 2px 2px 0 rgba(0,0,0,.28);
-            margin-bottom: 24px; text-align: center;
+            text-shadow: 0 0 22px #fff, 0 0 42px #fff, 2px 2px 0 rgba(0,0,0,.3);
+            margin-bottom: 28px; text-align: center;
             position: relative;
         }
         .section-title::after {
             content:'';
-            position:absolute; bottom:-8px; left:50%; transform:translateX(-50%);
-            width:100px; height:3px;
-            background: linear-gradient(90deg,transparent,#fff,transparent);
-            border-radius:8px;
+            position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
+            width:120px; height:4px;
+            background: linear-gradient(90deg,#fff,#f0f0f0,#fff);
+            border-radius:8px; box-shadow: 0 0 16px #fff;
         }
 
-        /* ═══ Products Grid ═══ */
+        /* ===== Products Grid ===== */
         .products-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-            contain: layout;
+            gap: 14px;
         }
 
-        /* ═══ Product Card ═══ */
+        /* ===== Product Card ===== */
         .product-card {
             position: relative;
             background: #fefefe;
             border-radius: var(--radius-card);
             overflow: hidden;
             box-shadow: var(--shadow-card);
-            border: 2.5px solid var(--white);
-            transition: transform .28s var(--ease-bounce), box-shadow .28s ease;
+            border: 3px solid var(--white);
+            transition: var(--transition);
             display: flex;
             flex-direction: row;
             align-items: center;
-            padding: 7px;
-            opacity: 0;
-            transform: translateY(14px);
-            animation: cardIn .35s ease-out forwards;
-            will-change: transform;
-            contain: layout paint;
+            padding: 8px;
+            opacity: 0; transform: translateY(18px);
+            animation: cardIn .4s ease-out forwards;
         }
         @keyframes cardIn {
             to { opacity:1; transform:translateY(0); }
         }
         .product-card:hover {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: 0 18px 36px -8px rgba(40,90,30,.55), 0 0 0 3px var(--white);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 40px -8px #3f6b35, 0 0 0 4px var(--white);
         }
 
-        /* صورة المنتج — lazy مع placeholder موحّد اللون */
         .product-image {
-            width: 78px; height: 78px;
+            width: 80px; height: 80px;
             object-fit: cover;
-            border-radius: 16px;
-            border: 2.5px solid var(--green-mid);
+            border-radius: 18px;
+            border: 3px solid var(--green-mid);
+            box-shadow: 0 0 12px rgba(255,255,255,.7);
+            transition: transform .35s ease;
             flex-shrink: 0;
             cursor: pointer;
-            transition: transform .28s ease;
-            background: #d8edcf;
-            /* تجنب layout shift */
-            aspect-ratio: 1;
         }
-        .product-card:hover .product-image { transform: scale(1.05); }
+        .product-card:hover .product-image { transform: scale(1.04); }
 
         .card-content {
-            padding: 3px 9px 3px 3px;
+            padding: 4px 10px 4px 4px;
             flex-grow: 1;
             display: flex; flex-direction: column;
             min-width: 0;
         }
 
         .product-title {
-            font-size: 1.05em;
+            font-size: 1.08em;
             color: var(--green-dark);
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             font-weight: 900;
-            display: flex; align-items: center; gap: 5px;
+            display: flex; align-items: center; gap: 6px;
             line-height: 1.2;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
         .new-tag {
-            background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+            background: linear-gradient(145deg, var(--green-mid), var(--green-light));
             color: var(--white);
-            padding: 1px 7px;
-            border-radius: 28px;
-            font-size: .48em;
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-size: .5em;
             flex-shrink: 0;
-            animation: tagPulse 2s infinite;
+            animation: tagPulse 1.8s infinite;
         }
         @keyframes tagPulse {
             0%,100% { opacity:1; transform:scale(1); }
-            50%      { opacity:.82; transform:scale(1.06); }
+            50%      { opacity:.8; transform:scale(1.05); }
         }
 
         .product-description {
-            color: #3a5a30;
-            font-size: .72em; line-height: 1.3;
+            color: var(--text-dark);
+            font-size: .73em; line-height: 1.3;
             flex-grow: 1;
             display: -webkit-box;
             -webkit-line-clamp: 1;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
         }
 
         .product-price {
-            font-size: 1.12em; font-weight: 900;
+            font-size: 1.18em; font-weight: 900;
             color: var(--green-dark);
+            text-shadow: 0 1px 3px rgba(255,255,255,.5);
         }
 
-        /* ═══ Image Modal ═══ */
+        /* ===== Image Modal ===== */
         .image-modal {
             display: none;
             position: fixed; inset: 0;
-            background: rgba(0,0,0,.85);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: rgba(0,0,0,.88);
+            backdrop-filter: blur(12px);
             z-index: 3000;
             justify-content: center; align-items: center;
         }
         .image-modal.active { display: flex; }
         .modal-img-wrap {
-            max-width: 88%; max-height: 80vh;
-            border-radius: 26px;
-            border: 4px solid var(--white);
-            box-shadow: 0 24px 60px #000c;
+            max-width: 90%; max-height: 82%;
+            border-radius: 30px;
+            border: 5px solid var(--white);
+            box-shadow: 0 28px 65px #000, 0 0 0 4px rgba(255,255,255,.25);
             overflow: hidden;
             background: var(--white);
-            animation: zoomIn .28s var(--ease-bounce);
+            animation: zoomIn .3s var(--ease-bounce);
         }
-        @keyframes zoomIn { from { transform:scale(.68); opacity:0; } to { transform:scale(1); opacity:1; } }
+        @keyframes zoomIn { from { transform:scale(.7); opacity:0; } to { transform:scale(1); opacity:1; } }
         .modal-img-wrap img { width:100%; height:100%; object-fit:contain; display:block; }
         .close-img-modal {
-            position: absolute; top: 18px; left: 18px;
-            font-size: 2.4em; color: var(--white);
+            position: absolute; top: 22px; left: 22px;
+            font-size: 2.6em; color: var(--white);
             cursor: pointer;
-            background: rgba(0,0,0,.35);
-            border-radius: 50%; width:52px; height:52px;
+            background: rgba(0,0,0,.3);
+            border-radius: 50%; width:56px; height:56px;
             display: flex; align-items:center; justify-content:center;
             backdrop-filter: blur(4px);
-            border: 2px solid rgba(255,255,255,.7);
-            transition: var(--tr);
+            border: 2px solid var(--white);
+            transition: var(--transition);
         }
-        .close-img-modal:hover { transform: rotate(90deg) scale(1.1); }
+        .close-img-modal:hover { transform: rotate(90deg) scale(1.1); background: rgba(255,255,255,.25); }
 
-        /* ═══ Empty State ═══ */
+        /* ===== Empty State ===== */
         .empty-state {
             text-align: center;
-            padding: 44px 18px;
-            color: rgba(255,255,255,.72);
-            font-size: 1.05em;
+            padding: 50px 20px;
+            color: rgba(255,255,255,.7);
+            font-size: 1.1em;
         }
 
-        /* ═══ Connection quality indicator ═══ */
-        .conn-badge {
-            position: fixed;
-            bottom: 80px; left: 14px;
-            padding: 5px 11px;
-            border-radius: 30px;
-            font-size: .72em;
-            font-weight: 700;
-            font-family: 'Cairo', sans-serif;
-            z-index: 500;
-            display: none;
-            align-items: center; gap: 5px;
-            box-shadow: 0 4px 12px rgba(0,0,0,.3);
-        }
-        .conn-badge.slow {
-            display: flex;
-            background: rgba(255,150,0,.92);
-            color: #3b2800;
-        }
-        .conn-badge.offline {
-            display: flex;
-            background: rgba(200,0,0,.88);
-            color: #fff;
-        }
-
-        /* ═══ Footer ═══ */
+        /* ===== Footer ===== */
         .footer {
-            background: linear-gradient(145deg, var(--green-dark), var(--green-mid));
+            background: linear-gradient(145deg, var(--green-dark), var(--green-mid), var(--green-light));
             color: var(--white);
-            padding: 10px 12px;
+            padding: 10px 14px;
             text-align: center;
             border-top: 2px solid var(--white);
-            border-radius: 18px 18px 0 0;
-            font-size: .85rem;
+            border-radius: 20px 20px 0 0;
+            font-size: .88rem;
             width: 100%; margin-top: auto;
-            position: relative; z-index: 1;
         }
         .instagram-btn {
             display: inline-flex; align-items:center; justify-content:center;
-            width: 32px; height: 32px;
+            width: 34px; height: 34px;
             border-radius: 50%;
-            background: var(--white);
+            background: linear-gradient(145deg, #fff, #f0f2f5);
             color: var(--green-dark);
-            font-size: 1.2em;
-            margin-bottom: 4px;
+            font-size: 1.25em;
+            margin-bottom: 5px;
             border: 2px solid var(--beige);
-            transition: var(--tr);
+            transition: var(--transition);
             text-decoration: none;
         }
-        .instagram-btn:hover { transform: scale(1.12) rotate(10deg); }
-        .footer p { font-size: .92em; margin: 2px 0; line-height: 1.3; }
+        .instagram-btn:hover { transform: scale(1.1) rotate(10deg); }
+        .footer p { font-size: .95em; margin: 3px 0; line-height: 1.3; }
 
-        /* ═══ Responsive ═══ */
+        /* ===== Responsive ===== */
         @media (max-width: 480px) {
-            .product-image { width: 68px; height: 68px; }
-            .product-title  { font-size: .95em; }
-            .product-price  { font-size: 1.05em; }
-            .nav-tab        { padding: 4px 9px; font-size: .76em; }
+            .product-image { width:72px; height:72px; }
+            .product-title  { font-size: .98em; }
+            .product-price  { font-size: 1.08em; }
+            .footer         { padding: 8px 10px; font-size:.8rem; }
+            .nav-tab        { padding: 5px 10px; font-size:.78em; }
         }
-        @media (min-width: 600px) {
+        @media (min-width: 640px) {
             .products-grid { grid-template-columns: repeat(2, 1fr); }
-            .skeleton-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (min-width: 1020px) {
+        @media (min-width: 1024px) {
             .products-grid { grid-template-columns: repeat(3, 1fr); }
-            .skeleton-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
 
-<!-- شبكة ضعيفة -->
-<div class="offline-banner" id="offlineBanner">
-    ⚠️ لا يوجد اتصال بالإنترنت — يتم عرض البيانات المحفوظة
-</div>
-<div class="conn-badge" id="connBadge"></div>
-
+<div id="forest-bg"></div>
 <canvas id="leaves-canvas"></canvas>
 
-<!-- ═══════════════════════════════════════
-     شاشة البداية
-═══════════════════════════════════════ -->
-<div id="intro-screen" role="status" aria-label="جاري التحميل">
+<!-- ===== شاشة البداية ===== -->
+<div id="intro-screen">
     <div id="burst-container" style="position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none;"></div>
+
     <div class="intro-logo">
-        <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" fetchpriority="high" decoding="async">
+        <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" fetchpriority="high">
     </div>
+
     <div class="intro-title">🌲 تل السنديان</div>
+
     <div class="loader-wrap">
         <div class="branch">
             <div class="squirrel-home">
@@ -692,20 +617,17 @@
     </div>
 </div>
 
-<!-- ═══════════════════════════════════════
-     الهيدر
-═══════════════════════════════════════ -->
+<!-- ===== الهيدر ===== -->
 <header class="header" id="main-header">
     <video autoplay loop muted playsinline class="header-video"
-           poster="" preload="none"
-           aria-hidden="true">
+           poster="https://via.placeholder.com/1920x600/2D5A27/FFFFFF?text=">
         <source src="https://cdn.pixabay.com/video/2023/11/19/189813-887078786_medium.mp4" type="video/mp4">
     </video>
-    <div class="video-overlay" aria-hidden="true"></div>
+    <div class="video-overlay"></div>
 
     <div class="header-content">
-        <div class="logo-circle" role="img" aria-label="شعار تل السنديان">
-            <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" loading="eager" fetchpriority="high" decoding="async">
+        <div class="logo-circle">
+            <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" loading="eager">
         </div>
         <h1 class="restaurant-name">
             تل السنديان
@@ -716,147 +638,109 @@
     <nav class="nav-tabs" id="navTabs" role="tablist" aria-label="أقسام القائمة"></nav>
 </header>
 
-<!-- ═══════════════════════════════════════
-     المحتوى الرئيسي
-═══════════════════════════════════════ -->
-<main class="menu-container" id="menuContainer" role="main" aria-live="polite"></main>
+<!-- ===== المحتوى الرئيسي ===== -->
+<main class="menu-container" id="menuContainer" role="main">
+    <!-- يُملأ ديناميكياً -->
+</main>
 
 <!-- مودال الصورة -->
-<div class="image-modal" id="imageModal" role="dialog" aria-modal="true" aria-label="عرض صورة المنتج">
-    <span class="close-img-modal" id="closeImgBtn" tabindex="0" role="button" aria-label="إغلاق الصورة">&times;</span>
+<div class="image-modal" id="imageModal" role="dialog" aria-modal="true" aria-label="عرض الصورة">
+    <span class="close-img-modal" id="closeImgBtn" tabindex="0" aria-label="إغلاق">&times;</span>
     <div class="modal-img-wrap">
-        <img id="modalImg" src="" alt="صورة المنتج" loading="lazy">
+        <img id="modalImg" src="" alt="صورة المنتج">
     </div>
 </div>
 
-<!-- ═══ الفوتر ═══ -->
+<!-- ===== الفوتر ===== -->
 <footer class="footer">
     <a href="https://www.instagram.com/tal_sindian_cafe/" target="_blank" rel="noopener noreferrer"
-       class="instagram-btn" aria-label="تابعنا على إنستغرام">
-        <i class="fab fa-instagram" aria-hidden="true"></i>
+       class="instagram-btn" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
     </a>
     <p>© 2026 تل السنديان — جميع الحقوق محفوظة</p>
-    <p style="font-size:.7em; opacity:.7; margin-top:1px;">نظام القائمة الذكي v5.0 ⚡</p>
+    <p style="font-size:.72em; opacity:.75; margin-top:2px;">نظام القائمة الذكي v4.0</p>
 </footer>
 
-<!-- ═══════════════════════════════════════
-     JAVASCRIPT — v5.0 Ultra-Fast Edition
-═══════════════════════════════════════ -->
 <script>
+/* =============================================================
+   TEL AL-SINDIAN MENU — Production v4.0
+   Fixes: Canvas-based leaves, retry logic, caching, skeleton
+          loading, intersection observer, error states, a11y
+============================================================= */
+
 'use strict';
 
-/* ─────────────────────────────────────────
-   CONFIG
-───────────────────────────────────────── */
+/* ── Config ── */
 const CFG = {
-    API_URL:          'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
-    CACHE_KEY:        'ts_menu_v5',
-    CACHE_TTL_MS:     8 * 60 * 1000,       // 8 دقائق
-    STALE_TTL_MS:     30 * 60 * 1000,      // 30 دق — stale-while-revalidate
-    FETCH_TIMEOUT:    10000,               // 10 ث
-    SLOW_TIMEOUT:     4000,               // 4 ث → slow-net fallback
-    MAX_RETRIES:      3,
-    RETRY_BASE_MS:    600,
-    INTRO_FAST_MS:    2800,               // أسرع بكثير من قبل
-    PLACEHOLDER_IMG:  'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80"%3E%3Crect width="80" height="80" rx="16" fill="%23d8edcf"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".35em" font-size="28" fill="%234a8f3a"%3E🌿%3C/text%3E%3C/svg%3E',
+    API_URL:       'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
+    CACHE_KEY:     'talsindian_menu_v4',
+    CACHE_TTL_MS:  10 * 60 * 1000,   // 10 دقائق
+    MAX_RETRIES:   3,
+    RETRY_BASE_MS: 800,
+    FETCH_TIMEOUT: 12000,
+    INTRO_HIDE_MS: 4200,
 };
 
-/* ─────────────────────────────────────────
-   IN-MEMORY CACHE (بدون localStorage أو sessionStorage)
-   استخدام: Map مع TTL — أسرع من Web Storage
-───────────────────────────────────────── */
-const MemCache = (() => {
-    const store = new Map();
-    return {
-        get(key) {
-            const e = store.get(key);
-            if (!e) return null;
-            if (Date.now() > e.expires) { store.delete(key); return null; }
-            return e.data;
-        },
-        // ttl بالملي-ثانية
-        set(key, data, ttl) {
-            store.set(key, { data, expires: Date.now() + ttl });
-        },
-        // بيانات قديمة (stale) — نعيدها ونجدد في الخلفية
-        getStale(key) {
-            const e = store.get(key);
-            return e ? e.data : null;
-        },
-        has(key) { return store.has(key); },
-        del(key) { store.delete(key); },
-    };
+/* ── State ── */
+const state = {
+    categories:    [],
+    products:      [],
+    activeCatId:   null,
+    loading:       false,
+    retryCount:    0,
+};
+
+/* ── Prevent zoom ── */
+(function () {
+    document.addEventListener('wheel',       e => { if (e.ctrlKey)  e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart',e => e.preventDefault());
+    document.addEventListener('keydown',     e => {
+        if (e.ctrlKey && ['+','-','=','_','0'].includes(e.key)) e.preventDefault();
+    });
 })();
 
-/* ─────────────────────────────────────────
-   STATE
-───────────────────────────────────────── */
-const state = {
-    categories:  [],
-    products:    [],
-    activeCatId: null,
-    loading:     false,
-    isOnline:    navigator.onLine,
-};
-
-/* ─────────────────────────────────────────
-   PREVENT PINCH-ZOOM
-───────────────────────────────────────── */
-document.addEventListener('wheel',        e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
-document.addEventListener('gesturestart', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-    if (e.ctrlKey && ['+', '-', '=', '_', '0'].includes(e.key)) e.preventDefault();
-});
-
-/* ─────────────────────────────────────────
-   CANVAS FALLING LEAVES (GPU-optimised)
-───────────────────────────────────────── */
+/* ── Canvas Falling Leaves (GPU-friendly, zero DOM nodes) ── */
 (function initLeaves() {
     const canvas = document.getElementById('leaves-canvas');
-    const ctx    = canvas.getContext('2d', { alpha: true });
-    const EMOJIS = ['🌿', '🍂', '🍃', '🌱'];
-    let W, H, leaves = [];
-    let rafId = null;
+    const ctx    = canvas.getContext('2d');
+    const EMOJIS = ['🌿','🍂','🍃'];
+    let   W, H, leaves = [];
 
     function resize() {
         W = canvas.width  = window.innerWidth;
         H = canvas.height = window.innerHeight;
     }
 
-    function mkLeaf(startY = null) {
+    function mkLeaf() {
         return {
-            x:     Math.random() * W,
-            y:     startY !== null ? startY : -Math.random() * H * .4,
-            size:  Math.random() * 16 + 11,
-            spd:   Math.random() * 1.1 + .55,
-            rot:   Math.random() * Math.PI * 2,
-            rotV:  (Math.random() - .5) * .035,
-            driftX:(Math.random() - .5) * .5,
+            x:    Math.random() * W,
+            y:    -Math.random() * H * .5,
+            size: Math.random() * 18 + 12,
+            spd:  Math.random() * 1.2 + .7,
+            rot:  Math.random() * Math.PI * 2,
+            rotV: (Math.random() - .5) * .04,
+            driftX: (Math.random() - .5) * .6,
             emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-            alpha: Math.random() * .38 + .5,
+            alpha: Math.random() * .4 + .55,
         };
     }
 
     function init() {
         resize();
-        leaves = [];
-        for (let i = 0; i < 26; i++) leaves.push(mkLeaf(Math.random() * H));
+        for (let i = 0; i < 28; i++) {
+            const l = mkLeaf();
+            l.y = Math.random() * H;
+            leaves.push(l);
+        }
     }
 
-    // تشغيل متقطع لتوفير الطاقة
-    let lastFrame = 0;
-    function tick(ts) {
-        // 30fps يكفي للأوراق — يوفّر CPU للمهام الأهم
-        if (ts - lastFrame < 33) { rafId = requestAnimationFrame(tick); return; }
-        lastFrame = ts;
-
+    function tick() {
         ctx.clearRect(0, 0, W, H);
-        for (let i = 0; i < leaves.length; i++) {
-            const l = leaves[i];
+        leaves.forEach((l, i) => {
             l.y   += l.spd;
             l.x   += l.driftX;
             l.rot += l.rotV;
-            if (l.y > H + 28) { leaves[i] = mkLeaf(); continue; }
+            if (l.y > H + 30) leaves[i] = mkLeaf();
             ctx.save();
             ctx.globalAlpha = l.alpha;
             ctx.translate(l.x, l.y);
@@ -865,98 +749,67 @@ document.addEventListener('keydown', e => {
             ctx.textAlign = 'center';
             ctx.fillText(l.emoji, 0, 0);
             ctx.restore();
-        }
-        rafId = requestAnimationFrame(tick);
+        });
+        requestAnimationFrame(tick);
     }
 
-    // إيقاف عند إخفاء الصفحة لتوفير الطاقة
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-            if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-        } else {
-            if (!rafId) rafId = requestAnimationFrame(tick);
-        }
-    });
-
-    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('resize', resize);
     init();
-    rafId = requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
 })();
 
-/* ─────────────────────────────────────────
-   BURST PARTICLES (intro)
-───────────────────────────────────────── */
+/* ── Intro burst particles ── */
 (function spawnBurst() {
     const container = document.getElementById('burst-container');
-    const items = ['🌿', '🍂', '🌱', '🍃', '🌲', '🌳', '🍀', '🌾'];
+    const items = ['🌿','🍂','🌱','🍃','🌲','🌳'];
     const offsets = [
-        [-115, -175], [145, -145], [-175, 95], [195, 165],
-        [-85, 205], [125, -215], [-215, -75], [175, 125],
+        [-120,-180],[150,-150],[-180,100],[200,170],
+        [-90,210],[130,-220],[-220,-80],[180,130],
     ];
-    const frag = document.createDocumentFragment();
     offsets.forEach(([bx, by], i) => {
         const el = document.createElement('span');
         el.className = 'burst-particle';
         el.textContent = items[i % items.length];
-        const sz = 30 + Math.random() * 20;
-        el.style.cssText = `font-size:${sz}px;--bx:${bx}px;--by:${by}px;animation-delay:${.08 + i * .055}s;left:50%;top:50%;transform:translate(-50%,-50%)`;
-        frag.appendChild(el);
+        const sz = 34 + Math.random() * 22;
+        Object.assign(el.style, {
+            fontSize:        sz + 'px',
+            '--bx':          bx + 'px',
+            '--by':          by + 'px',
+            animationDelay:  (0.1 + i * 0.06) + 's',
+            left: '50%', top: '50%',
+            transform: 'translate(-50%,-50%)',
+        });
+        container.appendChild(el);
     });
-    container.appendChild(frag);
 })();
 
-/* ─────────────────────────────────────────
-   NETWORK STATUS MONITOR
-───────────────────────────────────────── */
-function updateNetworkUI(isOnline, isSlow = false) {
-    const banner = document.getElementById('offlineBanner');
-    const badge  = document.getElementById('connBadge');
-    state.isOnline = isOnline;
-
-    if (!isOnline) {
-        banner.classList.add('visible');
-        badge.className = 'conn-badge offline';
-        badge.innerHTML = '📵 غير متصل';
-        badge.style.display = 'flex';
-    } else {
-        banner.classList.remove('visible');
-        if (isSlow) {
-            badge.className = 'conn-badge slow';
-            badge.innerHTML = '🐢 اتصال بطيء';
-            badge.style.display = 'flex';
-            setTimeout(() => { badge.style.display = 'none'; }, 4000);
-        } else {
-            badge.style.display = 'none';
-        }
-    }
+/* ── Cache helpers ── */
+function cacheGet(key) {
+    try {
+        const raw = sessionStorage.getItem(key);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (Date.now() - obj.ts > CFG.CACHE_TTL_MS) { sessionStorage.removeItem(key); return null; }
+        return obj.data;
+    } catch { return null; }
+}
+function cacheSet(key, data) {
+    try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch {}
 }
 
-window.addEventListener('online',  () => updateNetworkUI(true));
-window.addEventListener('offline', () => updateNetworkUI(false));
-
-/* ─────────────────────────────────────────
-   FETCH ENGINE — Race Strategy
-   مزودان: الطلب الأصلي + Race مع timeout متدرج
-───────────────────────────────────────── */
-async function fetchWithRace(url) {
-    const attemptFetch = (timeout) => {
-        const ctrl = new AbortController();
-        const tid  = setTimeout(() => ctrl.abort(), timeout);
-        return fetch(url, { signal: ctrl.signal, cache: 'no-store' })
-            .then(res => { clearTimeout(tid); if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
-            .catch(err => { clearTimeout(tid); throw err; });
-    };
-
-    // جولة 1: timeout سريع (6 ث)
-    for (let i = 0; i < CFG.MAX_RETRIES; i++) {
+/* ── Fetch with timeout + retry ── */
+async function fetchWithRetry(url, retries = CFG.MAX_RETRIES) {
+    for (let attempt = 0; attempt <= retries; attempt++) {
         try {
-            const timeout = i === 0 ? 6000 : CFG.FETCH_TIMEOUT;
-            const data    = await attemptFetch(timeout);
-            return data;
+            const ctrl = new AbortController();
+            const tid  = setTimeout(() => ctrl.abort(), CFG.FETCH_TIMEOUT);
+            const res  = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
+            clearTimeout(tid);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return await res.json();
         } catch (err) {
-            if (i < CFG.MAX_RETRIES - 1) {
-                const delay = CFG.RETRY_BASE_MS * (1 << i); // 600, 1200, 2400
-                await new Promise(r => setTimeout(r, delay));
+            if (attempt < retries) {
+                await new Promise(r => setTimeout(r, CFG.RETRY_BASE_MS * Math.pow(2, attempt)));
             } else {
                 throw err;
             }
@@ -964,94 +817,67 @@ async function fetchWithRace(url) {
     }
 }
 
-/* ─────────────────────────────────────────
-   SKELETON
-───────────────────────────────────────── */
+/* ── Skeleton HTML ── */
 function renderSkeleton(count = 6) {
-    const cards = Array.from({ length: count }, () =>
-        `<div class="skeleton-card" aria-hidden="true">
-            <div class="skel-img"></div>
-            <div class="skel-lines">
-                <div class="skel-line"></div>
-                <div class="skel-line short"></div>
-                <div class="skel-line price"></div>
-            </div>
-        </div>`
-    ).join('');
-    return `<div class="skeleton-grid" role="status" aria-label="جاري التحميل">${cards}</div>`;
+    return `
+        <div class="skeleton-grid">
+            ${Array.from({ length: count }, () => `
+                <div class="skeleton-card">
+                    <div class="skel-img"></div>
+                    <div class="skel-lines">
+                        <div class="skel-line"></div>
+                        <div class="skel-line short"></div>
+                        <div class="skel-line price"></div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
-/* ─────────────────────────────────────────
-   ERROR STATE
-───────────────────────────────────────── */
-function renderError(msg = 'تعذّر تحميل البيانات') {
-    return `<div class="error-state">
-        <div class="error-icon" aria-hidden="true">⚠️</div>
-        <h3>عذراً، حدث خطأ</h3>
-        <p>${msg}</p>
-        <button class="retry-btn" onclick="window.retryLoad()" aria-label="إعادة المحاولة">
-            <i class="fas fa-redo-alt" aria-hidden="true"></i> إعادة المحاولة
-        </button>
-    </div>`;
+/* ── Error state HTML ── */
+function renderError(message = 'تعذّر تحميل البيانات') {
+    return `
+        <div class="error-state">
+            <div class="error-icon">⚠️</div>
+            <h3>عذراً، حدث خطأ</h3>
+            <p>${message}</p>
+            <button class="retry-btn" onclick="retryLoad()">
+                <i class="fas fa-redo-alt"></i> إعادة المحاولة
+            </button>
+        </div>
+    `;
 }
 
-/* ─────────────────────────────────────────
-   CATEGORY ICON MAP
-───────────────────────────────────────── */
-const iconMap = [
-    [['ساندويش','ساندويتش','برجر'],        'fa-burger'],
-    [['طبق','رئيسية','مشاوي','لحم'],       'fa-drumstick-bite'],
-    [['صينية','صواني','وجبة'],             'fa-utensils'],
-    [['مقبلات','سلطة','فطور'],             'fa-leaf'],
-    [['مشروب','عصير','قهوة','شاي','كوك'],  'fa-glass-water'],
-    [['حلو','ديسرت','كيك','حلويات'],       'fa-ice-cream'],
-];
-
+/* ── Category icon map ── */
 function catIcon(name) {
     const n = name.toLowerCase();
-    for (const [keys, icon] of iconMap) {
-        if (keys.some(k => n.includes(k))) return icon;
-    }
+    if (n.includes('ساندويش') || n.includes('ساندويتش')) return 'fa-burger';
+    if (n.includes('طبق')     || n.includes('رئيسية'))   return 'fa-drumstick-bite';
+    if (n.includes('صينية')   || n.includes('صواني'))    return 'fa-utensils';
+    if (n.includes('مقبلات')  || n.includes('سلطة'))     return 'fa-leaf';
+    if (n.includes('مشروب')   || n.includes('عصير'))     return 'fa-glass-water';
+    if (n.includes('حلو')     || n.includes('ديسرت'))    return 'fa-ice-cream';
     return 'fa-utensils';
 }
 
-/* ─────────────────────────────────────────
-   ESCAPE ATTR (XSS safe)
-───────────────────────────────────────── */
-function esc(s) {
-    return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-}
-
-/* ─────────────────────────────────────────
-   RENDER NAV TABS
-───────────────────────────────────────── */
+/* ── Render nav tabs ── */
 function renderTabs() {
-    const nav  = document.getElementById('navTabs');
-    const frag = document.createDocumentFragment();
-    state.categories.forEach((cat, i) => {
-        const btn = document.createElement('div');
-        btn.className = `nav-tab${i === 0 ? ' active' : ''}`;
-        btn.setAttribute('role', 'tab');
-        btn.setAttribute('tabindex', i === 0 ? '0' : '-1');
-        btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-        btn.dataset.cat = cat.id;
-        btn.innerHTML = `<i class="fas ${catIcon(cat.name)}" aria-hidden="true"></i><span>${cat.name}</span>`;
-        btn.addEventListener('click', () => switchCat(cat.id, btn));
-        btn.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchCat(cat.id, btn); } });
-        frag.appendChild(btn);
-    });
-    nav.innerHTML = '';
-    nav.appendChild(frag);
+    const nav = document.getElementById('navTabs');
+    nav.innerHTML = state.categories.map((cat, i) => `
+        <div class="nav-tab ${i === 0 ? 'active' : ''}"
+             role="tab"
+             tabindex="${i === 0 ? '0' : '-1'}"
+             aria-selected="${i === 0}"
+             data-cat="${cat.id}"
+             onclick="switchCat('${cat.id}', this)">
+            <i class="fas ${catIcon(cat.name)}"></i>
+            <span>${cat.name}</span>
+        </div>
+    `).join('');
 }
 
-/* ─────────────────────────────────────────
-   SWITCH CATEGORY
-───────────────────────────────────────── */
+/* ── Switch category ── */
 function switchCat(catId, el) {
     if (state.activeCatId === catId) return;
     state.activeCatId = catId;
@@ -1064,337 +890,177 @@ function switchCat(catId, el) {
     el.classList.add('active');
     el.setAttribute('aria-selected', 'true');
     el.tabIndex = 0;
+
+    // Scroll tab into view smoothly
     el.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
 
     renderProducts(catId);
-
-    // Pre-warm images للفئة التالية
-    const idx = state.categories.findIndex(c => c.id === catId);
-    const next = state.categories[idx + 1];
-    if (next) preloadCategoryImages(next.id);
 }
 
-/* ─────────────────────────────────────────
-   PRELOAD IMAGES — غير مؤلم على الشبكة الضعيفة
-───────────────────────────────────────── */
-function preloadCategoryImages(catId) {
-    // نستخدم IntersectionObserver + link rel=prefetch بدلاً من Image()
-    const items = state.products.filter(p => p.categoryId === catId).slice(0, 4);
-    if (!items.length) return;
-
-    // prefetch خفيف عبر requestIdleCallback
-    const doPrefetch = () => {
-        items.forEach(p => {
-            if (!p.image) return;
-            const link = document.createElement('link');
-            link.rel  = 'prefetch';
-            link.as   = 'image';
-            link.href = p.image;
-            document.head.appendChild(link);
-        });
-    };
-
-    if ('requestIdleCallback' in window) {
-        requestIdleCallback(doPrefetch, { timeout: 2000 });
-    } else {
-        setTimeout(doPrefetch, 1000);
-    }
-}
-
-/* ─────────────────────────────────────────
-   RENDER PRODUCTS — DocumentFragment لأداء أفضل
-───────────────────────────────────────── */
+/* ── Render products ── */
 function renderProducts(catId) {
     const container = document.getElementById('menuContainer');
-    const cat   = state.categories.find(c => c.id === catId);
-    const items = state.products
+    const cat       = state.categories.find(c => c.id === catId);
+    const items     = state.products
         .filter(p => p.categoryId === catId)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
     if (!items.length) {
         container.innerHTML = `
-            <h2 class="section-title">${cat?.name || ''}</h2>
-            <div class="empty-state">لا توجد منتجات في هذا القسم حالياً 🌿</div>
+            <div class="section-title">${cat?.name || ''}</div>
+            <div class="empty-state">لا توجد منتجات في هذا القسم حالياً</div>
         `;
         return;
     }
 
-    // بناء HTML عبر template string واحدة — أسرع من DOM nodes فردية
-    const cardsHTML = items.map((p, i) => {
-        const imgSrc = p.image || CFG.PLACEHOLDER_IMG;
-        const delay  = Math.min(i * 0.045, 0.6); // حد أقصى للـ delay
-        return `<article class="product-card" style="animation-delay:${delay}s">
-            <img
-                class="product-image"
-                src="${esc(imgSrc)}"
-                alt="${esc(p.name)}"
-                loading="${i < 4 ? 'eager' : 'lazy'}"
-                decoding="async"
-                width="78" height="78"
-                data-src="${esc(imgSrc)}"
-                onerror="this.src='${CFG.PLACEHOLDER_IMG}';this.onerror=null"
-                onclick="window.openImg('${esc(imgSrc)}','${esc(p.name)}')"
-            >
-            <div class="card-content">
-                <h3 class="product-title">
-                    ${esc(p.name)}
-                    ${p.isNew ? '<span class="new-tag" aria-label="منتج جديد">جديد ✨</span>' : ''}
-                </h3>
-                <p class="product-description">${esc(p.description || '')}</p>
-                <div class="product-price" aria-label="السعر: ${Number(p.price).toFixed(2)} دينار أردني">${Number(p.price).toFixed(2)} د.أ</div>
-            </div>
-        </article>`;
-    }).join('');
-
     container.innerHTML = `
         <h2 class="section-title">${cat?.name || ''}</h2>
-        <div class="products-grid" id="productsGrid">${cardsHTML}</div>
+        <div class="products-grid" id="productsGrid">
+            ${items.map((p, i) => `
+                <div class="product-card" style="animation-delay:${i * 0.055}s">
+                    <img
+                        class="product-image"
+                        src="${p.image}"
+                        alt="${p.name}"
+                        loading="lazy"
+                        decoding="async"
+                        onclick="openImg('${escAttr(p.image)}', '${escAttr(p.name)}')"
+                        onerror="this.src='https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86'"
+                    >
+                    <div class="card-content">
+                        <h3 class="product-title">
+                            ${p.name}
+                            ${p.isNew ? '<span class="new-tag">جديد</span>' : ''}
+                        </h3>
+                        <p class="product-description">${p.description || ''}</p>
+                        <div class="product-price">${Number(p.price).toFixed(2)} د.أ</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
     `;
 
-    // Intersection Observer — كشف الكارد عند الظهور فقط
+    // Intersection Observer للأنيميشن عند الظهور
     initCardObserver();
-
-    // Scroll to top عند تغيير الفئة
-    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ─────────────────────────────────────────
-   INTERSECTION OBSERVER — كارد reveal
-───────────────────────────────────────── */
-let cardObserver = null;
-
+/* ── Card reveal observer ── */
 function initCardObserver() {
-    if (cardObserver) cardObserver.disconnect();
-
-    if (!('IntersectionObserver' in window)) {
-        // fallback: أظهر كل الكاردات مباشرة
-        document.querySelectorAll('.product-card').forEach(c => {
-            c.style.opacity = '1';
-            c.style.transform = 'none';
-        });
-        return;
-    }
-
-    cardObserver = new IntersectionObserver(entries => {
+    if (!('IntersectionObserver' in window)) return;
+    const obs = new IntersectionObserver(entries => {
         entries.forEach(e => {
             if (e.isIntersecting) {
                 e.target.style.animationPlayState = 'running';
-                cardObserver.unobserve(e.target);
+                obs.unobserve(e.target);
             }
         });
-    }, { threshold: 0.08, rootMargin: '0px 0px 40px 0px' });
+    }, { threshold: 0.1 });
 
     document.querySelectorAll('.product-card').forEach(card => {
         card.style.animationPlayState = 'paused';
-        cardObserver.observe(card);
+        obs.observe(card);
     });
 }
 
-/* ─────────────────────────────────────────
-   IMAGE MODAL
-───────────────────────────────────────── */
-window.openImg = function(src, alt) {
+/* ── Image modal ── */
+function openImg(src, alt) {
     const modal = document.getElementById('imageModal');
     const img   = document.getElementById('modalImg');
     img.src = src;
     img.alt = alt;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-};
-
+}
 function closeImg() {
-    const modal = document.getElementById('imageModal');
-    modal.classList.remove('active');
+    document.getElementById('imageModal').classList.remove('active');
     document.getElementById('modalImg').src = '';
     document.body.style.overflow = '';
 }
 
+/* ── Modal close events ── */
 document.getElementById('imageModal').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeImg();
 });
 document.getElementById('closeImgBtn').addEventListener('click', closeImg);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImg(); });
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeImg();
+});
 
-/* ─────────────────────────────────────────
-   APPLY DATA
-───────────────────────────────────────── */
-function applyData(data) {
-    state.categories = (data.categories || []).sort((a, b) => (a.order || 0) - (b.order || 0));
-    state.products   = data.products || [];
-
-    if (!state.categories.length) {
-        document.getElementById('menuContainer').innerHTML =
-            '<div class="empty-state">لا توجد أقسام متاحة حالياً 🌿</div>';
-        return;
-    }
-
-    renderTabs();
-    state.activeCatId = state.categories[0].id;
-    renderProducts(state.activeCatId);
-
-    // Pre-warm الفئة الثانية
-    if (state.categories[1]) preloadCategoryImages(state.categories[1].id);
+/* ── Escape attr ── */
+function escAttr(s) {
+    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }
 
-/* ─────────────────────────────────────────
-   BACKGROUND REVALIDATE — Stale-While-Revalidate
-───────────────────────────────────────── */
-async function revalidateInBackground() {
-    try {
-        const data = await fetchWithRace(`${CFG.API_URL}?action=getMenuData&_t=${Date.now()}`);
-        if (data?.success) {
-            MemCache.set(CFG.CACHE_KEY, data, CFG.STALE_TTL_MS);
-            // لا نعيد رسم الواجهة إلا لو تغيّر شيء
-            const fresh = JSON.stringify(data);
-            const curr  = JSON.stringify({ categories: state.categories, products: state.products });
-            if (fresh !== curr) applyData(data);
-        }
-    } catch (_) {
-        // صامت — لا نزعج المستخدم إذا التحديث الخلفي فشل
-    }
-}
-
-/* ─────────────────────────────────────────
-   LOAD MENU — استراتيجية ثلاثية المراحل
-   1) Cache Hit: عرض فوري من الذاكرة
-   2) Stale Hit: عرض فوري + تجديد خلفي
-   3) Miss: طلب شبكة + skeleton
-───────────────────────────────────────── */
+/* ── Load menu data ── */
 async function loadMenu() {
     if (state.loading) return;
     state.loading = true;
-    const container = document.getElementById('menuContainer');
 
-    // ── مرحلة 1: Cache حار ──
-    const cached = MemCache.get(CFG.CACHE_KEY);
+    const container = document.getElementById('menuContainer');
+    container.innerHTML = renderSkeleton(6);
+
+    // Intenta del caché primero
+    const cached = cacheGet(CFG.CACHE_KEY);
     if (cached) {
         applyData(cached);
         state.loading = false;
         return;
     }
 
-    // ── مرحلة 2: Cache قديم (stale) ──
-    const stale = MemCache.getStale(CFG.CACHE_KEY);
-    if (stale) {
-        applyData(stale);
-        state.loading = false;
-        // تجديد خلفي بعد الرسم
-        requestAnimationFrame(() => revalidateInBackground());
-        return;
-    }
-
-    // ── مرحلة 3: طلب شبكة ──
-    if (!navigator.onLine) {
-        container.innerHTML = renderError('لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة والمحاولة مجدداً.');
-        updateNetworkUI(false);
-        state.loading = false;
-        return;
-    }
-
-    container.innerHTML = renderSkeleton(6);
-
-    // مؤقت الشبكة البطيئة
-    const slowTimer = setTimeout(() => updateNetworkUI(true, true), CFG.SLOW_TIMEOUT);
-
     try {
-        const data = await fetchWithRace(`${CFG.API_URL}?action=getMenuData&_t=${Date.now()}`);
-        clearTimeout(slowTimer);
-
+        const data = await fetchWithRetry(`${CFG.API_URL}?action=getMenuData`);
         if (data?.success) {
-            MemCache.set(CFG.CACHE_KEY, data, CFG.STALE_TTL_MS);
+            cacheSet(CFG.CACHE_KEY, data);
             applyData(data);
         } else {
-            throw new Error('البيانات غير صحيحة من الخادم');
+            throw new Error('البيانات غير صحيحة');
         }
     } catch (err) {
-        clearTimeout(slowTimer);
-        console.warn('[TelSindian] Load error:', err.message);
-
-        const msg = !navigator.onLine
-            ? 'لا يوجد اتصال بالإنترنت. يرجى التحقق من شبكتك.'
-            : err.name === 'AbortError'
-                ? 'انتهت مهلة الاتصال. الشبكة بطيئة جداً — سنحاول تلقائياً.'
-                : 'تعذّر الاتصال بالخادم. يرجى الضغط على إعادة المحاولة.';
-
-        container.innerHTML = renderError(msg);
-        updateNetworkUI(navigator.onLine, err.name === 'AbortError');
-
-        // إعادة محاولة تلقائية بعد 5 ثوانٍ إذا كان timeout
-        if (err.name === 'AbortError') {
-            setTimeout(() => {
-                if (document.getElementById('menuContainer').querySelector('.error-state')) {
-                    loadMenu();
-                }
-            }, 5000);
-        }
+        console.error('[TelSindian] Load error:', err);
+        container.innerHTML = renderError(
+            err.name === 'AbortError'
+                ? 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.'
+                : 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.'
+        );
     } finally {
         state.loading = false;
     }
 }
 
-/* ─────────────────────────────────────────
-   RETRY (global)
-───────────────────────────────────────── */
-window.retryLoad = function() {
-    MemCache.del(CFG.CACHE_KEY);
+function applyData(data) {
+    state.categories = (data.categories || []).sort((a, b) => (a.order || 0) - (b.order || 0));
+    state.products   = data.products || [];
+
+    if (!state.categories.length) {
+        document.getElementById('menuContainer').innerHTML =
+            '<div class="empty-state">لا توجد أقسام متاحة حالياً</div>';
+        return;
+    }
+
+    renderTabs();
+    state.activeCatId = state.categories[0].id;
+    renderProducts(state.activeCatId);
+}
+
+/* ── Retry (exposed to HTML) ── */
+window.retryLoad = function () {
+    sessionStorage.removeItem(CFG.CACHE_KEY);
+    state.retryCount++;
     loadMenu();
 };
 
-/* ─────────────────────────────────────────
-   HIDE INTRO — تتم بشكل مستقل عن تحميل البيانات
-   البيانات تُحمَّل فوراً في الخلفية بدون انتظار الإنترو
-───────────────────────────────────────── */
-function hideIntro() {
-    const intro = document.getElementById('intro-screen');
-    intro.classList.add('hidden');
-    // حذف من DOM بعد انتهاء الـ transition لتوفير الذاكرة
-    intro.addEventListener('transitionend', () => intro.remove(), { once: true });
-}
+/* ── Expose openImg to HTML ── */
+window.openImg = openImg;
 
-/* ─────────────────────────────────────────
-   AUTO-REFRESH — كل 8 دقائق إذا الصفحة مفتوحة
-───────────────────────────────────────── */
-let refreshInterval = null;
-
-function startAutoRefresh() {
-    if (refreshInterval) clearInterval(refreshInterval);
-    refreshInterval = setInterval(() => {
-        if (!document.hidden && navigator.onLine) {
-            revalidateInBackground();
-        }
-    }, CFG.CACHE_TTL_MS);
-}
-
-/* ─────────────────────────────────────────
-   BOOT — تتوازى جميع العمليات
-───────────────────────────────────────── */
+/* ── Boot ── */
 document.addEventListener('DOMContentLoaded', () => {
-    // 1) بدء تحميل البيانات فوراً
+    // إخفاء شاشة البداية
+    setTimeout(() => {
+        document.getElementById('intro-screen').classList.add('hidden');
+    }, CFG.INTRO_HIDE_MS);
+
+    // تحميل البيانات فوراً بدون انتظار الإنترو
     loadMenu();
-
-    // 2) إخفاء الإنترو بشكل مستقل (أسرع)
-    const introDelay = CFG.INTRO_FAST_MS;
-    setTimeout(hideIntro, introDelay);
-
-    // 3) Auto refresh
-    startAutoRefresh();
-
-    // 4) عند عودة الاتصال — إعادة المحاولة تلقائياً
-    window.addEventListener('online', () => {
-        updateNetworkUI(true);
-        // إذا كان المحتوى يعرض error state → حاول مجدداً
-        if (document.getElementById('menuContainer').querySelector('.error-state')) {
-            setTimeout(loadMenu, 800);
-        }
-    });
-
-    // 5) تحسين الأداء عند استئناف الصفحة
-    document.addEventListener('visibilitychange', () => {
-        if (!document.hidden && navigator.onLine) {
-            const cached = MemCache.get(CFG.CACHE_KEY);
-            if (!cached) revalidateInBackground();
-        }
-    });
 });
 </script>
 </body>
