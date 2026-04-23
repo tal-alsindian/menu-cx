@@ -38,7 +38,7 @@
 
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-        /* إصلاح التمرير الأفقي على الموبايل */
+        /* إصلاح التمرير الأفقي العام */
         html, body {
             overflow-x: hidden;
             width: 100%;
@@ -193,7 +193,7 @@
         .s-leg-b { position:absolute; width:9px; height:11px; background:#b58b5a; border-radius:30% 30% 20% 20%; bottom:3px; left:19px; border:1px solid #7b572e; animation:legAnim .15s infinite alternate-reverse; }
         @keyframes legAnim { from{transform:rotate(0) translateY(0)} to{transform:rotate(10deg) translateY(-3px)} }
 
-        /* ===== الهيدر (تم تعديله ليطابق menu1.html) ===== */
+        /* ===== الهيدر ===== */
         .header {
             width: 100%;
             z-index: 1000;
@@ -257,7 +257,7 @@
             to   { text-shadow: 0 0 32px #fff, 0 0 65px #f0fff0; }
         }
 
-        /* ===== Nav Tabs (تم تعديله ليصبح مثل menu1.html) ===== */
+        /* ===== Nav Tabs - مع تحسين التمرير ومنع التنشيط العرضي ===== */
         .nav-tabs {
             display: flex;
             flex-wrap: nowrap;
@@ -275,6 +275,7 @@
             border-radius: 40px 40px 24px 24px;
             direction: rtl;
             position: relative; z-index: 2;
+            touch-action: pan-x;  /* يسمح بالتمرير الأفقي فقط ولا يعيق النقر */
         }
         .nav-tabs::-webkit-scrollbar { display: none; }
 
@@ -325,14 +326,13 @@
         .nav-tab i { font-size: .95em; pointer-events: none; }
         .nav-tab span { pointer-events: none; }
 
-        /* ===== باقي الأنماط محفوظة كما هي من menu2.html ===== */
+        /* باقي الأنماط تحتفظ بنفس ما كان في menu2.html */
         .menu-container {
             max-width: 1400px;
             margin: 20px auto 40px;
             padding: 0 16px;
             flex: 1; width: 100%;
         }
-
         .skeleton-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -365,22 +365,6 @@
         .skel-line  { height:12px; background:rgba(255,255,255,.22); border-radius:30px; }
         .skel-line.short { width:55%; }
         .skel-line.price { width:35%; height:16px; }
-
-        .loading-overlay {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-        }
-        .spinner {
-            width: 48px; height: 48px;
-            border: 5px solid rgba(255,255,255,.3);
-            border-top-color: var(--white);
-            border-radius: 50%;
-            animation: spin .7s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
         .error-state {
             text-align: center;
             padding: 50px 20px;
@@ -403,7 +387,6 @@
         }
         .retry-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 14px 28px rgba(0,0,0,.35); }
         .retry-btn i { margin-left: 7px; }
-
         .section-title {
             font-family: 'Tajawal', sans-serif;
             font-size: clamp(1.8em, 5vw, 2.4em);
@@ -419,13 +402,11 @@
             background: linear-gradient(90deg,#fff,#f0f0f0,#fff);
             border-radius:8px; box-shadow: 0 0 16px #fff;
         }
-
         .products-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
         }
-
         .product-card {
             position: relative;
             background: #fefefe;
@@ -449,7 +430,6 @@
             transform: translateY(-4px) scale(1.01);
             box-shadow: 0 20px 40px -8px #3f6b35, 0 0 0 4px var(--white);
         }
-
         .product-image {
             width: 80px; height: 80px;
             object-fit: cover;
@@ -462,14 +442,12 @@
             background: #eee;
         }
         .product-card:hover .product-image { transform: scale(1.04); }
-
         .card-content {
             padding: 4px 10px 4px 4px;
             flex-grow: 1;
             display: flex; flex-direction: column;
             min-width: 0;
         }
-
         .product-title {
             font-size: 1.08em;
             color: var(--green-dark);
@@ -479,7 +457,6 @@
             line-height: 1.2;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-
         .new-tag {
             background: linear-gradient(145deg, var(--green-mid), var(--green-light));
             color: var(--white);
@@ -493,7 +470,6 @@
             0%,100% { opacity:1; transform:scale(1); }
             50%      { opacity:.8; transform:scale(1.05); }
         }
-
         .product-description {
             color: var(--text-dark);
             font-size: .73em; line-height: 1.3;
@@ -505,13 +481,11 @@
             text-overflow: ellipsis;
             margin-bottom: 5px;
         }
-
         .product-price {
             font-size: 1.18em; font-weight: 900;
             color: var(--green-dark);
             text-shadow: 0 1px 3px rgba(255,255,255,.5);
         }
-
         .image-modal {
             display: none;
             position: fixed; inset: 0;
@@ -545,14 +519,12 @@
             touch-action: manipulation;
         }
         .close-img-modal:hover { transform: rotate(90deg) scale(1.1); background: rgba(255,255,255,.25); }
-
         .empty-state {
             text-align: center;
             padding: 50px 20px;
             color: rgba(255,255,255,.7);
             font-size: 1.1em;
         }
-
         .footer {
             background: linear-gradient(145deg, var(--green-dark), var(--green-mid), var(--green-light));
             color: var(--white);
@@ -600,13 +572,10 @@
 <!-- ===== شاشة البداية ===== -->
 <div id="intro-screen">
     <div id="burst-container" style="position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none;"></div>
-
     <div class="intro-logo">
         <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" fetchpriority="high">
     </div>
-
     <div class="intro-title">🌲 تل السنديان</div>
-
     <div class="loader-wrap">
         <div class="branch">
             <div class="squirrel-home">
@@ -639,7 +608,6 @@
         <source src="https://cdn.pixabay.com/video/2023/11/19/189813-887078786_medium.mp4" type="video/mp4">
     </video>
     <div class="video-overlay"></div>
-
     <div class="header-content">
         <div class="logo-circle">
             <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" loading="eager">
@@ -649,13 +617,11 @@
             <small>Tel AlSindian</small>
         </h1>
     </div>
-
     <nav class="nav-tabs" id="navTabs" role="tablist" aria-label="أقسام القائمة"></nav>
 </header>
 
 <!-- ===== المحتوى الرئيسي ===== -->
-<main class="menu-container" id="menuContainer" role="main">
-</main>
+<main class="menu-container" id="menuContainer" role="main"></main>
 
 <!-- مودال الصورة -->
 <div class="image-modal" id="imageModal" role="dialog" aria-modal="true" aria-label="عرض الصورة">
@@ -672,7 +638,7 @@
         <i class="fab fa-instagram"></i>
     </a>
     <p>© 2026 تل السنديان — جميع الحقوق محفوظة</p>
-    <p style="font-size:.72em; opacity:.75; margin-top:2px;">نظام القائمة الذكي v4.2</p>
+    <p style="font-size:.72em; opacity:.75; margin-top:2px;">نظام القائمة الذكي v4.3 | تجربة لمس سلسة</p>
 </footer>
 
 <script>
@@ -685,6 +651,7 @@ const CFG = {
     CACHE_TTL_MS: 10 * 60 * 1000,
     FETCH_TIMEOUT: 15000,
     INTRO_HIDE_MS: 4200,
+    SCROLL_THRESHOLD_PX: 8
 };
 
 /* ── State ── */
@@ -693,17 +660,16 @@ const state = {
     products:     [],
     activeCatId:  null,
     loading:      false,
-    renderedCats: new Set(),
 };
 
-/* ── Prevent zoom ── */
+/* ── منع تكبير الصفحة باللمس ── */
 document.addEventListener('wheel',        e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
 document.addEventListener('gesturestart', e => e.preventDefault());
 document.addEventListener('keydown', e => {
     if (e.ctrlKey && ['+','-','=','_','0'].includes(e.key)) e.preventDefault();
 });
 
-/* ── Burst particles (intro فقط) ── */
+/* ── Burst particles (intro) ── */
 (function spawnBurst() {
     const container = document.getElementById('burst-container');
     if (!container) return;
@@ -756,19 +722,16 @@ function fetchViaJSONP(url, timeoutMs) {
             cleanup();
             reject(new Error('timeout'));
         }, timeoutMs);
-
         function cleanup() {
             clearTimeout(timer);
             delete window[cbName];
             const s = document.getElementById(cbName);
             if (s) s.parentNode.removeChild(s);
         }
-
         window[cbName] = function(data) {
             cleanup();
             resolve(data);
         };
-
         const script = document.createElement('script');
         script.id = cbName;
         script.src = url + '&callback=' + cbName;
@@ -780,17 +743,14 @@ function fetchViaJSONP(url, timeoutMs) {
     });
 }
 
-/* ── Fetch with fallback: JSONP → fetch ── */
 async function fetchMenu() {
     const url = CFG.API_URL + '?action=getMenuData';
-
     try {
         const data = await fetchViaJSONP(url, CFG.FETCH_TIMEOUT);
         return data;
     } catch (jsonpErr) {
         console.warn('[JSONP failed, trying fetch]', jsonpErr.message);
     }
-
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), CFG.FETCH_TIMEOUT);
     try {
@@ -804,7 +764,6 @@ async function fetchMenu() {
     }
 }
 
-/* ── استخراج الكاتيغوريز من الـ products ── */
 function extractCategories(products) {
     const map = new Map();
     products.forEach(p => {
@@ -821,7 +780,6 @@ function extractCategories(products) {
     return Array.from(map.values()).sort((a, b) => (a.order || 0) - (b.order || 0));
 }
 
-/* ── Skeleton HTML ── */
 function renderSkeleton(count = 6) {
     return `<div class="skeleton-grid">${
         Array.from({ length: count }, () => `
@@ -837,7 +795,6 @@ function renderSkeleton(count = 6) {
     }</div>`;
 }
 
-/* ── Error state HTML ── */
 function renderError(message) {
     return `
         <div class="error-state">
@@ -851,7 +808,6 @@ function renderError(message) {
     `;
 }
 
-/* ── Category icon ── */
 function catIcon(name) {
     if (!name) return 'fa-utensils';
     const n = name.toLowerCase();
@@ -864,7 +820,33 @@ function catIcon(name) {
     return 'fa-utensils';
 }
 
-/* ── Render nav tabs ── */
+/* ========= حل مشكلة التمرير العرضي ========= */
+let touchStartX = 0, touchStartY = 0, isScrollingFlag = false;
+
+function resetScrollFlag() { isScrollingFlag = false; }
+
+function onTouchStart(e) {
+    const touch = e.touches[0];
+    if (touch) {
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        isScrollingFlag = false;
+    }
+}
+
+function onTouchMove(e) {
+    if (touchStartX === 0 && touchStartY === 0) return;
+    const dx = Math.abs(e.touches[0].clientX - touchStartX);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY);
+    // إذا تجاوزت الحركة الحد الأدنى، نعتبر أن المستخدم يقوم بالتمرير (سحب)
+    if (dx > CFG.SCROLL_THRESHOLD_PX || dy > CFG.SCROLL_THRESHOLD_PX) {
+        isScrollingFlag = true;
+    }
+}
+
+/* ── Render nav tabs وإضافة مستمعي اللمس لتجنب التنشيط أثناء التمرير ── */
+let tabsContainer = null;
+
 function renderTabs() {
     const nav = document.getElementById('navTabs');
     nav.innerHTML = state.categories.map((cat, i) => `
@@ -878,18 +860,39 @@ function renderTabs() {
         </div>
     `).join('');
 
-    nav.addEventListener('click', handleTabClick);
-    nav.addEventListener('touchend', handleTabClick, { passive: true });
+    // إزالة أي مستمعات سابقة لتجنب التكرار
+    if (tabsContainer) {
+        tabsContainer.removeEventListener('touchstart', onTouchStart);
+        tabsContainer.removeEventListener('touchmove', onTouchMove);
+        tabsContainer.removeEventListener('touchend', resetScrollFlag);
+        tabsContainer.removeEventListener('click', handleTabClick);
+    }
+    tabsContainer = nav;
+    // إضافة مستمعات اللمس لتعقب حركة التمرير
+    tabsContainer.addEventListener('touchstart', onTouchStart, { passive: true });
+    tabsContainer.addEventListener('touchmove', onTouchMove, { passive: true });
+    tabsContainer.addEventListener('touchend', resetScrollFlag);
+    // مستمع النقر الأساسي: نتحقق من isScrollingFlag
+    tabsContainer.addEventListener('click', handleTabClick);
 }
 
-/* ── Tab click handler ── */
 function handleTabClick(e) {
+    // إذا كان المستخدم قد قام بحركة (تمرير/سحب) نتجاهل النقر تماماً
+    if (isScrollingFlag) {
+        // إعادة تعيين العلم لتجنب التأثير على النقرات اللاحقة
+        isScrollingFlag = false;
+        e.preventDefault();
+        return;
+    }
+
     const tab = e.target.closest('.nav-tab');
     if (!tab) return;
-    e.preventDefault && e.preventDefault();
 
     const catId = tab.dataset.catId;
     if (!catId || catId === state.activeCatId) return;
+
+    // منع تكرار التحديث السريع
+    e.preventDefault();
 
     document.querySelectorAll('#navTabs .nav-tab').forEach(t => {
         t.classList.remove('active');
@@ -900,13 +903,13 @@ function handleTabClick(e) {
     tab.setAttribute('aria-selected', 'true');
     tab.tabIndex = 0;
 
+    // تمرير التاب إلى مركز الرؤية بلطف
     tab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
 
     state.activeCatId = catId;
     renderProducts(catId);
 }
 
-/* ── escAttr ── */
 function escAttr(s) {
     return String(s)
         .replace(/&/g, '&amp;')
@@ -916,10 +919,9 @@ function escAttr(s) {
         .replace(/>/g, '&gt;');
 }
 
-/* ── Render products ── */
 function renderProducts(catId) {
     const container = document.getElementById('menuContainer');
-    const cat   = state.categories.find(c => c.id === catId);
+    const cat = state.categories.find(c => c.id === catId);
     const items = state.products
         .filter(p => String(p.categoryId) === String(catId))
         .sort((a, b) => (a.order || 0) - (b.order || 0));
@@ -970,7 +972,6 @@ function renderProducts(catId) {
     }
 }
 
-/* ── Image modal ── */
 function openImg(src, alt) {
     if (!src) return;
     const modal = document.getElementById('imageModal');
@@ -996,46 +997,35 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeImg();
 });
 
-/* ── applyData ── */
 function applyData(data) {
     const products = data.products || [];
     let categories = data.categories || [];
-
     if (!categories.length && products.length) {
         categories = extractCategories(products);
     }
-
     categories.sort((a, b) => (a.order || 0) - (b.order || 0));
-
     state.categories = categories;
     state.products   = products;
-
     if (!categories.length) {
-        document.getElementById('menuContainer').innerHTML =
-            '<div class="empty-state">لا توجد أقسام متاحة حالياً</div>';
+        document.getElementById('menuContainer').innerHTML = '<div class="empty-state">لا توجد أقسام متاحة حالياً</div>';
         return;
     }
-
     renderTabs();
     state.activeCatId = categories[0].id;
     renderProducts(state.activeCatId);
 }
 
-/* ── loadMenu ── */
 async function loadMenu() {
     if (state.loading) return;
     state.loading = true;
-
     const container = document.getElementById('menuContainer');
     container.innerHTML = renderSkeleton(6);
-
     const cached = cacheGet(CFG.CACHE_KEY);
     if (cached) {
         applyData(cached);
         state.loading = false;
         return;
     }
-
     try {
         const data = await fetchMenu();
         if (data && data.success) {
@@ -1049,7 +1039,6 @@ async function loadMenu() {
         let msg = 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.';
         if (err.message === 'timeout') msg = 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.';
         container.innerHTML = renderError(msg);
-
         const btn = document.getElementById('retryBtn');
         if (btn) btn.addEventListener('click', () => {
             sessionStorage.removeItem(CFG.CACHE_KEY);
@@ -1059,7 +1048,6 @@ async function loadMenu() {
         state.loading = false;
         return;
     }
-
     state.loading = false;
 }
 
@@ -1069,7 +1057,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const intro = document.getElementById('intro-screen');
         if (intro) intro.classList.add('hidden');
     }, CFG.INTRO_HIDE_MS);
-
     loadMenu().catch(err => {
         console.error('[Boot] Fatal:', err);
         clearTimeout(introTimer);
