@@ -7,10 +7,14 @@
     <meta name="description" content="قائمة طعام تل السنديان - مطعم طبيعي أصيل">
     <title>🌲 تل السنديان | قائمة الطعام</title>
 
+    <!-- Preconnect لتسريع تحميل الخطوط -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Preload للشعار -->
     <link rel="preload" href="https://iili.io/qfhk5Pt.png" as="image">
+
     <link rel="apple-touch-icon" href="https://iili.io/qfhk5Pt.png">
     <link rel="icon" href="https://iili.io/qfhk5Pt.png">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
@@ -32,23 +36,17 @@
             --radius-btn:   60px;
             --radius-modal: 45px;
             --shadow-card:  0 12px 35px -8px rgba(30,70,10,.45), 0 0 0 2px rgba(255,255,255,.6) inset;
-            --ease-bounce:  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --ease-bounce:  cubic-bezier(.175,.885,.32,1.275);
             --transition:   all .35s var(--ease-bounce);
         }
 
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-        /* إصلاح التمرير الأفقي العام */
-        html, body {
-            overflow-x: hidden;
-            width: 100%;
-            position: relative;
-        }
-
         body {
             font-family: 'Cairo', sans-serif;
             background: radial-gradient(circle at 15% 20%, #386f2e, #1f4a18);
             color: var(--text-dark);
+            overflow-x: hidden;
             direction: rtl;
             text-align: right;
             min-height: 100vh;
@@ -64,6 +62,15 @@
             z-index: -2;
         }
 
+        /* ===== قماش الأوراق (أداء عالي) ===== */
+        #leaves-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            opacity: .85;
+        }
+
         /* ===== شاشة البداية ===== */
         #intro-screen {
             position: fixed;
@@ -74,14 +81,10 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 1s ease-out, visibility 1s ease-out;
+            transition: opacity 1.2s ease-out;
             overflow: hidden;
         }
-        #intro-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+        #intro-screen.hidden { opacity: 0; pointer-events: none; }
 
         /* دقائق الانفجار */
         .burst-particle {
@@ -131,10 +134,10 @@
             width: min(90%, 580px);
             margin-top: 40px;
             opacity: 0;
-            animation: fadeInAnim .8s ease forwards 1.5s;
+            animation: fadeIn .8s ease forwards 1.5s;
             z-index: 20;
         }
-        @keyframes fadeInAnim { to { opacity:1; } }
+        @keyframes fadeIn { to { opacity:1; } }
 
         .branch {
             width: 100%; height: 26px;
@@ -257,7 +260,7 @@
             to   { text-shadow: 0 0 32px #fff, 0 0 65px #f0fff0; }
         }
 
-        /* ===== Nav Tabs - مع تحسين التمرير ومنع التنشيط العرضي ===== */
+        /* ===== Nav Tabs ===== */
         .nav-tabs {
             display: flex;
             flex-wrap: nowrap;
@@ -275,7 +278,6 @@
             border-radius: 40px 40px 24px 24px;
             direction: rtl;
             position: relative; z-index: 2;
-            touch-action: pan-x;  /* يسمح بالتمرير الأفقي فقط ولا يعيق النقر */
         }
         .nav-tabs::-webkit-scrollbar { display: none; }
 
@@ -296,8 +298,6 @@
             white-space: nowrap;
             flex: 0 0 auto;
             position: relative; overflow: hidden;
-            user-select: none;
-            touch-action: manipulation;
         }
         .nav-tab::after {
             content:'';
@@ -307,15 +307,9 @@
             transition: left .5s ease;
         }
         .nav-tab:hover::after { left:100%; }
-        .nav-tab:active {
-            transform: scale(0.93);
-            transition-duration: 0.08s;
-        }
-        .nav-tab:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0,0,0,.14);
-        }
-        .nav-tab.active {
+        .nav-tab:active  { transform: scale(.93); }
+        .nav-tab:hover   { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,.14); }
+        .nav-tab.active  {
             background: linear-gradient(145deg, #3f8b3a, #7cb86b, #b3e6a0);
             color: var(--white);
             box-shadow: 0 7px 16px rgba(45,90,39,.65);
@@ -323,16 +317,17 @@
             border-color: var(--white);
             text-shadow: 0 0 7px rgba(0,0,0,.45);
         }
-        .nav-tab i { font-size: .95em; pointer-events: none; }
-        .nav-tab span { pointer-events: none; }
+        .nav-tab i { font-size: .95em; }
 
-        /* باقي الأنماط تحتفظ بنفس ما كان في menu2.html */
+        /* ===== Main Container ===== */
         .menu-container {
             max-width: 1400px;
             margin: 20px auto 40px;
             padding: 0 16px;
             flex: 1; width: 100%;
         }
+
+        /* ===== Skeleton Loading ===== */
         .skeleton-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -365,6 +360,8 @@
         .skel-line  { height:12px; background:rgba(255,255,255,.22); border-radius:30px; }
         .skel-line.short { width:55%; }
         .skel-line.price { width:35%; height:16px; }
+
+        /* ===== Error State ===== */
         .error-state {
             text-align: center;
             padding: 50px 20px;
@@ -383,10 +380,11 @@
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(0,0,0,.3);
             transition: var(--transition);
-            touch-action: manipulation;
         }
         .retry-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 14px 28px rgba(0,0,0,.35); }
         .retry-btn i { margin-left: 7px; }
+
+        /* ===== Section Title ===== */
         .section-title {
             font-family: 'Tajawal', sans-serif;
             font-size: clamp(1.8em, 5vw, 2.4em);
@@ -402,11 +400,15 @@
             background: linear-gradient(90deg,#fff,#f0f0f0,#fff);
             border-radius:8px; box-shadow: 0 0 16px #fff;
         }
+
+        /* ===== Products Grid ===== */
         .products-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
         }
+
+        /* ===== Product Card ===== */
         .product-card {
             position: relative;
             background: #fefefe;
@@ -421,7 +423,6 @@
             padding: 8px;
             opacity: 0; transform: translateY(18px);
             animation: cardIn .4s ease-out forwards;
-            will-change: opacity, transform;
         }
         @keyframes cardIn {
             to { opacity:1; transform:translateY(0); }
@@ -430,6 +431,7 @@
             transform: translateY(-4px) scale(1.01);
             box-shadow: 0 20px 40px -8px #3f6b35, 0 0 0 4px var(--white);
         }
+
         .product-image {
             width: 80px; height: 80px;
             object-fit: cover;
@@ -439,15 +441,16 @@
             transition: transform .35s ease;
             flex-shrink: 0;
             cursor: pointer;
-            background: #eee;
         }
         .product-card:hover .product-image { transform: scale(1.04); }
+
         .card-content {
             padding: 4px 10px 4px 4px;
             flex-grow: 1;
             display: flex; flex-direction: column;
             min-width: 0;
         }
+
         .product-title {
             font-size: 1.08em;
             color: var(--green-dark);
@@ -457,6 +460,7 @@
             line-height: 1.2;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+
         .new-tag {
             background: linear-gradient(145deg, var(--green-mid), var(--green-light));
             color: var(--white);
@@ -470,6 +474,7 @@
             0%,100% { opacity:1; transform:scale(1); }
             50%      { opacity:.8; transform:scale(1.05); }
         }
+
         .product-description {
             color: var(--text-dark);
             font-size: .73em; line-height: 1.3;
@@ -481,11 +486,14 @@
             text-overflow: ellipsis;
             margin-bottom: 5px;
         }
+
         .product-price {
             font-size: 1.18em; font-weight: 900;
             color: var(--green-dark);
             text-shadow: 0 1px 3px rgba(255,255,255,.5);
         }
+
+        /* ===== Image Modal ===== */
         .image-modal {
             display: none;
             position: fixed; inset: 0;
@@ -516,15 +524,18 @@
             backdrop-filter: blur(4px);
             border: 2px solid var(--white);
             transition: var(--transition);
-            touch-action: manipulation;
         }
         .close-img-modal:hover { transform: rotate(90deg) scale(1.1); background: rgba(255,255,255,.25); }
+
+        /* ===== Empty State ===== */
         .empty-state {
             text-align: center;
             padding: 50px 20px;
             color: rgba(255,255,255,.7);
             font-size: 1.1em;
         }
+
+        /* ===== Footer ===== */
         .footer {
             background: linear-gradient(145deg, var(--green-dark), var(--green-mid), var(--green-light));
             color: var(--white);
@@ -550,6 +561,7 @@
         .instagram-btn:hover { transform: scale(1.1) rotate(10deg); }
         .footer p { font-size: .95em; margin: 3px 0; line-height: 1.3; }
 
+        /* ===== Responsive ===== */
         @media (max-width: 480px) {
             .product-image { width:72px; height:72px; }
             .product-title  { font-size: .98em; }
@@ -568,14 +580,18 @@
 <body>
 
 <div id="forest-bg"></div>
+<canvas id="leaves-canvas"></canvas>
 
 <!-- ===== شاشة البداية ===== -->
 <div id="intro-screen">
     <div id="burst-container" style="position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none;"></div>
+
     <div class="intro-logo">
         <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" fetchpriority="high">
     </div>
+
     <div class="intro-title">🌲 تل السنديان</div>
+
     <div class="loader-wrap">
         <div class="branch">
             <div class="squirrel-home">
@@ -608,6 +624,7 @@
         <source src="https://cdn.pixabay.com/video/2023/11/19/189813-887078786_medium.mp4" type="video/mp4">
     </video>
     <div class="video-overlay"></div>
+
     <div class="header-content">
         <div class="logo-circle">
             <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" loading="eager">
@@ -617,11 +634,14 @@
             <small>Tel AlSindian</small>
         </h1>
     </div>
+
     <nav class="nav-tabs" id="navTabs" role="tablist" aria-label="أقسام القائمة"></nav>
 </header>
 
 <!-- ===== المحتوى الرئيسي ===== -->
-<main class="menu-container" id="menuContainer" role="main"></main>
+<main class="menu-container" id="menuContainer" role="main">
+    <!-- يُملأ ديناميكياً -->
+</main>
 
 <!-- مودال الصورة -->
 <div class="image-modal" id="imageModal" role="dialog" aria-modal="true" aria-label="عرض الصورة">
@@ -638,41 +658,109 @@
         <i class="fab fa-instagram"></i>
     </a>
     <p>© 2026 تل السنديان — جميع الحقوق محفوظة</p>
-    <p style="font-size:.72em; opacity:.75; margin-top:2px;">نظام القائمة الذكي v4.3 | تجربة لمس سلسة</p>
+    <p style="font-size:.72em; opacity:.75; margin-top:2px;">نظام القائمة الذكي v4.0</p>
 </footer>
 
 <script>
+/* =============================================================
+   TEL AL-SINDIAN MENU — Production v4.0
+   Fixes: Canvas-based leaves, retry logic, caching, skeleton
+          loading, intersection observer, error states, a11y
+============================================================= */
+
 'use strict';
 
 /* ── Config ── */
 const CFG = {
-    API_URL:      'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
-    CACHE_KEY:    'talsindian_menu_v4',
-    CACHE_TTL_MS: 10 * 60 * 1000,
-    FETCH_TIMEOUT: 15000,
+    API_URL:       'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
+    CACHE_KEY:     'talsindian_menu_v4',
+    CACHE_TTL_MS:  10 * 60 * 1000,   // 10 دقائق
+    MAX_RETRIES:   3,
+    RETRY_BASE_MS: 800,
+    FETCH_TIMEOUT: 12000,
     INTRO_HIDE_MS: 4200,
-    SCROLL_THRESHOLD_PX: 8
 };
 
 /* ── State ── */
 const state = {
-    categories:   [],
-    products:     [],
-    activeCatId:  null,
-    loading:      false,
+    categories:    [],
+    products:      [],
+    activeCatId:   null,
+    loading:       false,
+    retryCount:    0,
 };
 
-/* ── منع تكبير الصفحة باللمس ── */
-document.addEventListener('wheel',        e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
-document.addEventListener('gesturestart', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-    if (e.ctrlKey && ['+','-','=','_','0'].includes(e.key)) e.preventDefault();
-});
+/* ── Prevent zoom ── */
+(function () {
+    document.addEventListener('wheel',       e => { if (e.ctrlKey)  e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart',e => e.preventDefault());
+    document.addEventListener('keydown',     e => {
+        if (e.ctrlKey && ['+','-','=','_','0'].includes(e.key)) e.preventDefault();
+    });
+})();
 
-/* ── Burst particles (intro) ── */
+/* ── Canvas Falling Leaves (GPU-friendly, zero DOM nodes) ── */
+(function initLeaves() {
+    const canvas = document.getElementById('leaves-canvas');
+    const ctx    = canvas.getContext('2d');
+    const EMOJIS = ['🌿','🍂','🍃'];
+    let   W, H, leaves = [];
+
+    function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+    }
+
+    function mkLeaf() {
+        return {
+            x:    Math.random() * W,
+            y:    -Math.random() * H * .5,
+            size: Math.random() * 18 + 12,
+            spd:  Math.random() * 1.2 + .7,
+            rot:  Math.random() * Math.PI * 2,
+            rotV: (Math.random() - .5) * .04,
+            driftX: (Math.random() - .5) * .6,
+            emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+            alpha: Math.random() * .4 + .55,
+        };
+    }
+
+    function init() {
+        resize();
+        for (let i = 0; i < 28; i++) {
+            const l = mkLeaf();
+            l.y = Math.random() * H;
+            leaves.push(l);
+        }
+    }
+
+    function tick() {
+        ctx.clearRect(0, 0, W, H);
+        leaves.forEach((l, i) => {
+            l.y   += l.spd;
+            l.x   += l.driftX;
+            l.rot += l.rotV;
+            if (l.y > H + 30) leaves[i] = mkLeaf();
+            ctx.save();
+            ctx.globalAlpha = l.alpha;
+            ctx.translate(l.x, l.y);
+            ctx.rotate(l.rot);
+            ctx.font = `${l.size}px serif`;
+            ctx.textAlign = 'center';
+            ctx.fillText(l.emoji, 0, 0);
+            ctx.restore();
+        });
+        requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', resize);
+    init();
+    requestAnimationFrame(tick);
+})();
+
+/* ── Intro burst particles ── */
 (function spawnBurst() {
     const container = document.getElementById('burst-container');
-    if (!container) return;
     const items = ['🌿','🍂','🌱','🍃','🌲','🌳'];
     const offsets = [
         [-120,-180],[150,-150],[-180,100],[200,170],
@@ -684,10 +772,10 @@ document.addEventListener('keydown', e => {
         el.textContent = items[i % items.length];
         const sz = 34 + Math.random() * 22;
         Object.assign(el.style, {
-            fontSize:       sz + 'px',
-            '--bx':         bx + 'px',
-            '--by':         by + 'px',
-            animationDelay: (0.1 + i * 0.06) + 's',
+            fontSize:        sz + 'px',
+            '--bx':          bx + 'px',
+            '--by':          by + 'px',
+            animationDelay:  (0.1 + i * 0.06) + 's',
             left: '50%', top: '50%',
             transform: 'translate(-50%,-50%)',
         });
@@ -701,115 +789,68 @@ function cacheGet(key) {
         const raw = sessionStorage.getItem(key);
         if (!raw) return null;
         const obj = JSON.parse(raw);
-        if (Date.now() - obj.ts > CFG.CACHE_TTL_MS) {
-            sessionStorage.removeItem(key);
-            return null;
-        }
+        if (Date.now() - obj.ts > CFG.CACHE_TTL_MS) { sessionStorage.removeItem(key); return null; }
         return obj.data;
     } catch { return null; }
 }
 function cacheSet(key, data) {
-    try {
-        sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data }));
-    } catch {}
+    try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch {}
 }
 
-/* ── JSONP Fetch ── */
-function fetchViaJSONP(url, timeoutMs) {
-    return new Promise((resolve, reject) => {
-        const cbName = '__gsMenu_' + Date.now() + '_' + Math.random().toString(36).slice(2);
-        const timer = setTimeout(() => {
-            cleanup();
-            reject(new Error('timeout'));
-        }, timeoutMs);
-        function cleanup() {
-            clearTimeout(timer);
-            delete window[cbName];
-            const s = document.getElementById(cbName);
-            if (s) s.parentNode.removeChild(s);
+/* ── Fetch with timeout + retry ── */
+async function fetchWithRetry(url, retries = CFG.MAX_RETRIES) {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            const ctrl = new AbortController();
+            const tid  = setTimeout(() => ctrl.abort(), CFG.FETCH_TIMEOUT);
+            const res  = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
+            clearTimeout(tid);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return await res.json();
+        } catch (err) {
+            if (attempt < retries) {
+                await new Promise(r => setTimeout(r, CFG.RETRY_BASE_MS * Math.pow(2, attempt)));
+            } else {
+                throw err;
+            }
         }
-        window[cbName] = function(data) {
-            cleanup();
-            resolve(data);
-        };
-        const script = document.createElement('script');
-        script.id = cbName;
-        script.src = url + '&callback=' + cbName;
-        script.onerror = () => {
-            cleanup();
-            reject(new Error('script_error'));
-        };
-        document.head.appendChild(script);
-    });
-}
-
-async function fetchMenu() {
-    const url = CFG.API_URL + '?action=getMenuData';
-    try {
-        const data = await fetchViaJSONP(url, CFG.FETCH_TIMEOUT);
-        return data;
-    } catch (jsonpErr) {
-        console.warn('[JSONP failed, trying fetch]', jsonpErr.message);
-    }
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), CFG.FETCH_TIMEOUT);
-    try {
-        const res = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
-        clearTimeout(tid);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
-    } catch (fetchErr) {
-        clearTimeout(tid);
-        throw fetchErr;
     }
 }
 
-function extractCategories(products) {
-    const map = new Map();
-    products.forEach(p => {
-        const cid = String(p.categoryId || '').trim();
-        if (!cid) return;
-        if (!map.has(cid)) {
-            map.set(cid, {
-                id:    cid,
-                name:  p.categoryName || cid,
-                order: p.categoryOrder || map.size,
-            });
-        }
-    });
-    return Array.from(map.values()).sort((a, b) => (a.order || 0) - (b.order || 0));
-}
-
+/* ── Skeleton HTML ── */
 function renderSkeleton(count = 6) {
-    return `<div class="skeleton-grid">${
-        Array.from({ length: count }, () => `
-            <div class="skeleton-card">
-                <div class="skel-img"></div>
-                <div class="skel-lines">
-                    <div class="skel-line"></div>
-                    <div class="skel-line short"></div>
-                    <div class="skel-line price"></div>
+    return `
+        <div class="skeleton-grid">
+            ${Array.from({ length: count }, () => `
+                <div class="skeleton-card">
+                    <div class="skel-img"></div>
+                    <div class="skel-lines">
+                        <div class="skel-line"></div>
+                        <div class="skel-line short"></div>
+                        <div class="skel-line price"></div>
+                    </div>
                 </div>
-            </div>
-        `).join('')
-    }</div>`;
+            `).join('')}
+        </div>
+    `;
 }
 
-function renderError(message) {
+/* ── Error state HTML ── */
+function renderError(message = 'تعذّر تحميل البيانات') {
     return `
         <div class="error-state">
             <div class="error-icon">⚠️</div>
             <h3>عذراً، حدث خطأ</h3>
             <p>${message}</p>
-            <button class="retry-btn" id="retryBtn">
+            <button class="retry-btn" onclick="retryLoad()">
                 <i class="fas fa-redo-alt"></i> إعادة المحاولة
             </button>
         </div>
     `;
 }
 
+/* ── Category icon map ── */
 function catIcon(name) {
-    if (!name) return 'fa-utensils';
     const n = name.toLowerCase();
     if (n.includes('ساندويش') || n.includes('ساندويتش')) return 'fa-burger';
     if (n.includes('طبق')     || n.includes('رئيسية'))   return 'fa-drumstick-bite';
@@ -820,33 +861,7 @@ function catIcon(name) {
     return 'fa-utensils';
 }
 
-/* ========= حل مشكلة التمرير العرضي ========= */
-let touchStartX = 0, touchStartY = 0, isScrollingFlag = false;
-
-function resetScrollFlag() { isScrollingFlag = false; }
-
-function onTouchStart(e) {
-    const touch = e.touches[0];
-    if (touch) {
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
-        isScrollingFlag = false;
-    }
-}
-
-function onTouchMove(e) {
-    if (touchStartX === 0 && touchStartY === 0) return;
-    const dx = Math.abs(e.touches[0].clientX - touchStartX);
-    const dy = Math.abs(e.touches[0].clientY - touchStartY);
-    // إذا تجاوزت الحركة الحد الأدنى، نعتبر أن المستخدم يقوم بالتمرير (سحب)
-    if (dx > CFG.SCROLL_THRESHOLD_PX || dy > CFG.SCROLL_THRESHOLD_PX) {
-        isScrollingFlag = true;
-    }
-}
-
-/* ── Render nav tabs وإضافة مستمعي اللمس لتجنب التنشيط أثناء التمرير ── */
-let tabsContainer = null;
-
+/* ── Render nav tabs ── */
 function renderTabs() {
     const nav = document.getElementById('navTabs');
     nav.innerHTML = state.categories.map((cat, i) => `
@@ -854,76 +869,40 @@ function renderTabs() {
              role="tab"
              tabindex="${i === 0 ? '0' : '-1'}"
              aria-selected="${i === 0}"
-             data-cat-id="${cat.id}">
+             data-cat="${cat.id}"
+             onclick="switchCat('${cat.id}', this)">
             <i class="fas ${catIcon(cat.name)}"></i>
             <span>${cat.name}</span>
         </div>
     `).join('');
-
-    // إزالة أي مستمعات سابقة لتجنب التكرار
-    if (tabsContainer) {
-        tabsContainer.removeEventListener('touchstart', onTouchStart);
-        tabsContainer.removeEventListener('touchmove', onTouchMove);
-        tabsContainer.removeEventListener('touchend', resetScrollFlag);
-        tabsContainer.removeEventListener('click', handleTabClick);
-    }
-    tabsContainer = nav;
-    // إضافة مستمعات اللمس لتعقب حركة التمرير
-    tabsContainer.addEventListener('touchstart', onTouchStart, { passive: true });
-    tabsContainer.addEventListener('touchmove', onTouchMove, { passive: true });
-    tabsContainer.addEventListener('touchend', resetScrollFlag);
-    // مستمع النقر الأساسي: نتحقق من isScrollingFlag
-    tabsContainer.addEventListener('click', handleTabClick);
 }
 
-function handleTabClick(e) {
-    // إذا كان المستخدم قد قام بحركة (تمرير/سحب) نتجاهل النقر تماماً
-    if (isScrollingFlag) {
-        // إعادة تعيين العلم لتجنب التأثير على النقرات اللاحقة
-        isScrollingFlag = false;
-        e.preventDefault();
-        return;
-    }
+/* ── Switch category ── */
+function switchCat(catId, el) {
+    if (state.activeCatId === catId) return;
+    state.activeCatId = catId;
 
-    const tab = e.target.closest('.nav-tab');
-    if (!tab) return;
-
-    const catId = tab.dataset.catId;
-    if (!catId || catId === state.activeCatId) return;
-
-    // منع تكرار التحديث السريع
-    e.preventDefault();
-
-    document.querySelectorAll('#navTabs .nav-tab').forEach(t => {
+    document.querySelectorAll('.nav-tab').forEach(t => {
         t.classList.remove('active');
         t.setAttribute('aria-selected', 'false');
         t.tabIndex = -1;
     });
-    tab.classList.add('active');
-    tab.setAttribute('aria-selected', 'true');
-    tab.tabIndex = 0;
+    el.classList.add('active');
+    el.setAttribute('aria-selected', 'true');
+    el.tabIndex = 0;
 
-    // تمرير التاب إلى مركز الرؤية بلطف
-    tab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+    // Scroll tab into view smoothly
+    el.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
 
-    state.activeCatId = catId;
     renderProducts(catId);
 }
 
-function escAttr(s) {
-    return String(s)
-        .replace(/&/g, '&amp;')
-        .replace(/'/g, '&#39;')
-        .replace(/"/g, '&quot;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-}
-
+/* ── Render products ── */
 function renderProducts(catId) {
     const container = document.getElementById('menuContainer');
-    const cat = state.categories.find(c => c.id === catId);
-    const items = state.products
-        .filter(p => String(p.categoryId) === String(catId))
+    const cat       = state.categories.find(c => c.id === catId);
+    const items     = state.products
+        .filter(p => p.categoryId === catId)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
     if (!items.length) {
@@ -934,61 +913,71 @@ function renderProducts(catId) {
         return;
     }
 
-    const cardsHtml = items.map((p, i) => `
-        <div class="product-card" style="animation-delay:${i * 0.045}s">
-            <img
-                class="product-image"
-                src="${escAttr(p.image || '')}"
-                alt="${escAttr(p.name)}"
-                loading="lazy"
-                decoding="async"
-                data-img-src="${escAttr(p.image || '')}"
-                data-img-alt="${escAttr(p.name)}"
-                onerror="this.onerror=null;this.src='https://placehold.co/200x200/2D5A27/FFFFFF?text=%D8%AA%D9%84'"
-            >
-            <div class="card-content">
-                <h3 class="product-title">
-                    ${escAttr(p.name)}
-                    ${p.isNew ? '<span class="new-tag">جديد</span>' : ''}
-                </h3>
-                <p class="product-description">${escAttr(p.description || '')}</p>
-                <div class="product-price">${Number(p.price || 0).toFixed(2)} د.أ</div>
-            </div>
-        </div>
-    `).join('');
-
     container.innerHTML = `
         <h2 class="section-title">${cat?.name || ''}</h2>
-        <div class="products-grid" id="productsGrid">${cardsHtml}</div>
+        <div class="products-grid" id="productsGrid">
+            ${items.map((p, i) => `
+                <div class="product-card" style="animation-delay:${i * 0.055}s">
+                    <img
+                        class="product-image"
+                        src="${p.image}"
+                        alt="${p.name}"
+                        loading="lazy"
+                        decoding="async"
+                        onclick="openImg('${escAttr(p.image)}', '${escAttr(p.name)}')"
+                        onerror="this.src='https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86'"
+                    >
+                    <div class="card-content">
+                        <h3 class="product-title">
+                            ${p.name}
+                            ${p.isNew ? '<span class="new-tag">جديد</span>' : ''}
+                        </h3>
+                        <p class="product-description">${p.description || ''}</p>
+                        <div class="product-price">${Number(p.price).toFixed(2)} د.أ</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
     `;
 
-    const grid = document.getElementById('productsGrid');
-    if (grid) {
-        grid.addEventListener('click', e => {
-            const img = e.target.closest('.product-image');
-            if (!img) return;
-            openImg(img.dataset.imgSrc, img.dataset.imgAlt);
-        });
-    }
+    // Intersection Observer للأنيميشن عند الظهور
+    initCardObserver();
 }
 
+/* ── Card reveal observer ── */
+function initCardObserver() {
+    if (!('IntersectionObserver' in window)) return;
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.style.animationPlayState = 'running';
+                obs.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.style.animationPlayState = 'paused';
+        obs.observe(card);
+    });
+}
+
+/* ── Image modal ── */
 function openImg(src, alt) {
-    if (!src) return;
     const modal = document.getElementById('imageModal');
     const img   = document.getElementById('modalImg');
     img.src = src;
-    img.alt = alt || '';
+    img.alt = alt;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
-
 function closeImg() {
-    const modal = document.getElementById('imageModal');
-    modal.classList.remove('active');
-    setTimeout(() => { document.getElementById('modalImg').src = ''; }, 300);
+    document.getElementById('imageModal').classList.remove('active');
+    document.getElementById('modalImg').src = '';
     document.body.style.overflow = '';
 }
 
+/* ── Modal close events ── */
 document.getElementById('imageModal').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeImg();
 });
@@ -997,72 +986,81 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeImg();
 });
 
-function applyData(data) {
-    const products = data.products || [];
-    let categories = data.categories || [];
-    if (!categories.length && products.length) {
-        categories = extractCategories(products);
-    }
-    categories.sort((a, b) => (a.order || 0) - (b.order || 0));
-    state.categories = categories;
-    state.products   = products;
-    if (!categories.length) {
-        document.getElementById('menuContainer').innerHTML = '<div class="empty-state">لا توجد أقسام متاحة حالياً</div>';
-        return;
-    }
-    renderTabs();
-    state.activeCatId = categories[0].id;
-    renderProducts(state.activeCatId);
+/* ── Escape attr ── */
+function escAttr(s) {
+    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
 }
 
+/* ── Load menu data ── */
 async function loadMenu() {
     if (state.loading) return;
     state.loading = true;
+
     const container = document.getElementById('menuContainer');
     container.innerHTML = renderSkeleton(6);
+
+    // Intenta del caché primero
     const cached = cacheGet(CFG.CACHE_KEY);
     if (cached) {
         applyData(cached);
         state.loading = false;
         return;
     }
+
     try {
-        const data = await fetchMenu();
-        if (data && data.success) {
+        const data = await fetchWithRetry(`${CFG.API_URL}?action=getMenuData`);
+        if (data?.success) {
             cacheSet(CFG.CACHE_KEY, data);
             applyData(data);
         } else {
-            throw new Error(data?.error || 'البيانات غير صحيحة');
+            throw new Error('البيانات غير صحيحة');
         }
     } catch (err) {
         console.error('[TelSindian] Load error:', err);
-        let msg = 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.';
-        if (err.message === 'timeout') msg = 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.';
-        container.innerHTML = renderError(msg);
-        const btn = document.getElementById('retryBtn');
-        if (btn) btn.addEventListener('click', () => {
-            sessionStorage.removeItem(CFG.CACHE_KEY);
-            state.loading = false;
-            loadMenu();
-        });
+        container.innerHTML = renderError(
+            err.name === 'AbortError'
+                ? 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.'
+                : 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.'
+        );
+    } finally {
         state.loading = false;
+    }
+}
+
+function applyData(data) {
+    state.categories = (data.categories || []).sort((a, b) => (a.order || 0) - (b.order || 0));
+    state.products   = data.products || [];
+
+    if (!state.categories.length) {
+        document.getElementById('menuContainer').innerHTML =
+            '<div class="empty-state">لا توجد أقسام متاحة حالياً</div>';
         return;
     }
-    state.loading = false;
+
+    renderTabs();
+    state.activeCatId = state.categories[0].id;
+    renderProducts(state.activeCatId);
 }
+
+/* ── Retry (exposed to HTML) ── */
+window.retryLoad = function () {
+    sessionStorage.removeItem(CFG.CACHE_KEY);
+    state.retryCount++;
+    loadMenu();
+};
+
+/* ── Expose openImg to HTML ── */
+window.openImg = openImg;
 
 /* ── Boot ── */
 document.addEventListener('DOMContentLoaded', () => {
-    const introTimer = setTimeout(() => {
-        const intro = document.getElementById('intro-screen');
-        if (intro) intro.classList.add('hidden');
+    // إخفاء شاشة البداية
+    setTimeout(() => {
+        document.getElementById('intro-screen').classList.add('hidden');
     }, CFG.INTRO_HIDE_MS);
-    loadMenu().catch(err => {
-        console.error('[Boot] Fatal:', err);
-        clearTimeout(introTimer);
-        const intro = document.getElementById('intro-screen');
-        if (intro) intro.classList.add('hidden');
-    });
+
+    // تحميل البيانات فوراً بدون انتظار الإنترو
+    loadMenu();
 });
 </script>
 </body>
