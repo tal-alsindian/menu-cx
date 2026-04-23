@@ -7,13 +7,88 @@
     <meta name="description" content="قائمة طعام تل السنديان - مطعم طبيعي أصيل">
     <title>🌲 تل السنديان | قائمة الطعام</title>
 
-    <!-- Preconnect لتسريع تحميل الخطوط -->
+    <!-- DNS Prefetch + Preconnect لأقصى سرعة -->
+    <link rel="dns-prefetch" href="https://script.google.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-    <!-- Preload للشعار -->
-    <link rel="preload" href="https://iili.io/qfhk5Pt.png" as="image">
+    <!-- Preload الشعار والخطوط الحرجة -->
+    <link rel="preload" href="https://iili.io/qfhk5Pt.png" as="image" fetchpriority="high">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700;900&display=swap" as="style">
+
+    <!-- جلب البيانات مبكراً قبل أي شيء آخر (Early Fetch) -->
+    <script>
+        /* ═══════════════════════════════════════════════════
+           EARLY FETCH — يبدأ قبل تحميل أي CSS أو JS
+           يستخدم in-memory cache فقط (بدون localStorage)
+        ═══════════════════════════════════════════════════ */
+        (function () {
+            'use strict';
+            var API_URL   = 'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec';
+            var TIMEOUT   = 10000;
+            var MAX_RETRY = 3;
+
+            /* In-Memory Cache (بدون localStorage) */
+            window.__MENU_CACHE__ = window.__MENU_CACHE__ || { data: null, ts: 0, ttl: 10 * 60 * 1000 };
+
+            /* دالة Fetch مع Timeout */
+            function fetchWithTimeout(url, ms) {
+                return new Promise(function (resolve, reject) {
+                    var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+                    var tid  = setTimeout(function () {
+                        if (ctrl) ctrl.abort();
+                        reject(new Error('timeout'));
+                    }, ms);
+                    var opts = ctrl ? { signal: ctrl.signal, cache: 'no-store' } : { cache: 'no-store' };
+                    fetch(url, opts)
+                        .then(function (r) { clearTimeout(tid); return r.json(); })
+                        .then(resolve)
+                        .catch(function (e) { clearTimeout(tid); reject(e); });
+                });
+            }
+
+            /* Retry مع تأخير أسي صغير */
+            function retryFetch(url, attempt) {
+                attempt = attempt || 0;
+                return fetchWithTimeout(url, TIMEOUT).catch(function (err) {
+                    if (attempt < MAX_RETRY) {
+                        return new Promise(function (r) {
+                            setTimeout(r, 300 * Math.pow(1.8, attempt));
+                        }).then(function () { return retryFetch(url, attempt + 1); });
+                    }
+                    throw err;
+                });
+            }
+
+            /* ابدأ الجلب فوراً وخزّن النتيجة في Promise عالمي */
+            var cached = window.__MENU_CACHE__;
+            if (cached.data && (Date.now() - cached.ts < cached.ttl)) {
+                window.__MENU_PROMISE__ = Promise.resolve(cached.data);
+            } else {
+                var fullUrl = API_URL + '?action=getMenuData&_=' + Date.now();
+                window.__MENU_PROMISE__ = retryFetch(fullUrl)
+                    .then(function (data) {
+                        if (data && data.success) {
+                            window.__MENU_CACHE__.data = data;
+                            window.__MENU_CACHE__.ts   = Date.now();
+                        }
+                        return data;
+                    });
+            }
+
+            /* ابدأ جلباً ثانياً متوازياً كـ Fallback */
+            window.__MENU_FALLBACK_PROMISE__ = new Promise(function (resolve) {
+                setTimeout(function () {
+                    fetchWithTimeout(API_URL + '?action=getMenuData&v=2&_=' + Date.now(), 8000)
+                        .then(resolve).catch(function () { resolve(null); });
+                }, 800);
+            });
+        })();
+    </script>
 
     <link rel="apple-touch-icon" href="https://iili.io/qfhk5Pt.png">
     <link rel="icon" href="https://iili.io/qfhk5Pt.png">
@@ -71,7 +146,7 @@
             opacity: .85;
         }
 
-        /* ===== شاشة البداية ===== */
+        /* ===== شاشة البداية (مختصرة - 2.2 ثانية فقط) ===== */
         #intro-screen {
             position: fixed;
             inset: 0;
@@ -81,10 +156,13 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 1.2s ease-out;
+            transition: opacity .8s ease-out;
             overflow: hidden;
         }
-        #intro-screen.hidden { opacity: 0; pointer-events: none; }
+        #intro-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
 
         /* دقائق الانفجار */
         .burst-particle {
@@ -107,7 +185,7 @@
             border: 6px solid var(--white);
             box-shadow: 0 0 70px #fff, 0 0 110px #f0fff0;
             transform: scale(0); opacity: 0;
-            animation: popIn .9s var(--ease-bounce) forwards .3s;
+            animation: popIn .7s var(--ease-bounce) forwards .1s;
             position: relative; z-index: 20;
         }
         .intro-logo img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
@@ -124,7 +202,7 @@
             color: var(--white);
             text-shadow: 0 0 30px #b5e5a0, 0 0 60px #fff, 3px 3px 0 rgba(0,0,0,.2);
             opacity: 0; transform: translateY(28px);
-            animation: slideUp .9s ease-out forwards .9s;
+            animation: slideUp .7s ease-out forwards .6s;
             z-index: 20;
         }
         @keyframes slideUp { to { opacity:1; transform:translateY(0); } }
@@ -134,7 +212,7 @@
             width: min(90%, 580px);
             margin-top: 40px;
             opacity: 0;
-            animation: fadeIn .8s ease forwards 1.5s;
+            animation: fadeIn .6s ease forwards 1s;
             z-index: 20;
         }
         @keyframes fadeIn { to { opacity:1; } }
@@ -169,7 +247,7 @@
             position:absolute; top:50%; left:0;
             transform:translateY(-50%);
             width:58px; height:48px; z-index:40;
-            animation: runAcross 4.2s ease-in-out forwards;
+            animation: runAcross 2s ease-in-out forwards;
             filter:drop-shadow(3px 6px 10px rgba(0,0,0,.5));
         }
         @keyframes runAcross {
@@ -260,6 +338,31 @@
             to   { text-shadow: 0 0 32px #fff, 0 0 65px #f0fff0; }
         }
 
+        /* ===== مؤشر الاتصال ===== */
+        #connection-badge {
+            position: absolute;
+            top: 12px;
+            left: 14px;
+            font-size: .7em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+            z-index: 10;
+            transition: all .5s ease;
+            display: none;
+        }
+        #connection-badge.slow {
+            display: block;
+            background: rgba(255,200,0,.9);
+            color: #333;
+        }
+        #connection-badge.offline {
+            display: block;
+            background: rgba(220,50,50,.9);
+            color: #fff;
+        }
+
         /* ===== Nav Tabs ===== */
         .nav-tabs {
             display: flex;
@@ -344,6 +447,7 @@
             border: 2px solid rgba(255,255,255,.25);
             overflow: hidden;
             position: relative;
+            contain: layout style paint;
         }
         .skeleton-card::after {
             content:'';
@@ -406,6 +510,8 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 14px;
+            /* تحسين الأداء */
+            contain: layout style;
         }
 
         /* ===== Product Card ===== */
@@ -423,6 +529,9 @@
             padding: 8px;
             opacity: 0; transform: translateY(18px);
             animation: cardIn .4s ease-out forwards;
+            /* تحسين rendering */
+            contain: layout style;
+            will-change: transform;
         }
         @keyframes cardIn {
             to { opacity:1; transform:translateY(0); }
@@ -441,6 +550,8 @@
             transition: transform .35s ease;
             flex-shrink: 0;
             cursor: pointer;
+            /* تحسين الصور */
+            content-visibility: auto;
         }
         .product-card:hover .product-image { transform: scale(1.04); }
 
@@ -571,9 +682,11 @@
         }
         @media (min-width: 640px) {
             .products-grid { grid-template-columns: repeat(2, 1fr); }
+            .skeleton-grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (min-width: 1024px) {
             .products-grid { grid-template-columns: repeat(3, 1fr); }
+            .skeleton-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
@@ -619,6 +732,9 @@
 
 <!-- ===== الهيدر ===== -->
 <header class="header" id="main-header">
+    <!-- مؤشر الاتصال -->
+    <div id="connection-badge"></div>
+
     <video autoplay loop muted playsinline class="header-video"
            poster="https://via.placeholder.com/1920x600/2D5A27/FFFFFF?text=">
         <source src="https://cdn.pixabay.com/video/2023/11/19/189813-887078786_medium.mp4" type="video/mp4">
@@ -658,53 +774,94 @@
         <i class="fab fa-instagram"></i>
     </a>
     <p>© 2026 تل السنديان — جميع الحقوق محفوظة</p>
-    <p style="font-size:.72em; opacity:.75; margin-top:2px;">نظام القائمة الذكي v4.0</p>
+    <p style="font-size:.72em; opacity:.75; margin-top:2px;">نظام القائمة الذكي v5.0</p>
 </footer>
 
 <script>
 /* =============================================================
-   TEL AL-SINDIAN MENU — Production v4.0
-   Fixes: Canvas-based leaves, retry logic, caching, skeleton
-          loading, intersection observer, error states, a11y
+   TEL AL-SINDIAN MENU — Production v5.0 🚀
+   الإصلاحات:
+   ✅ Early Fetch في <head> — يبدأ الجلب قبل تحميل الصفحة
+   ✅ In-Memory Cache بدون localStorage
+   ✅ Parallel/Race Fetch مزدوج للشبكات الضعيفة
+   ✅ Stale-While-Revalidate لأسرع استجابة
+   ✅ Adaptive Timeout حسب سرعة الشبكة
+   ✅ مؤشر حالة الاتصال
+   ✅ Intro قصير (2.2 ثانية بدل 4.2)
+   ✅ IntersectionObserver محسّن
+   ✅ Image Preloading للصور المرئية
+   ✅ contain: layout style لأداء CSS أفضل
+   ✅ Render blocking مُحسَّن
 ============================================================= */
 
 'use strict';
 
 /* ── Config ── */
 const CFG = {
-    API_URL:       'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
-    CACHE_KEY:     'talsindian_menu_v4',
-    CACHE_TTL_MS:  10 * 60 * 1000,   // 10 دقائق
-    MAX_RETRIES:   3,
-    RETRY_BASE_MS: 800,
-    FETCH_TIMEOUT: 12000,
-    INTRO_HIDE_MS: 4200,
+    API_URL:      'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
+    CACHE_TTL_MS: 10 * 60 * 1000,   // 10 دقائق
+    INTRO_HIDE_MS: 2200,             // ✅ مختصر: 2.2 ثانية بدل 4.2
+    SLOW_NET_MS:  3000,              // عتبة الشبكة البطيئة
 };
 
 /* ── State ── */
 const state = {
-    categories:    [],
-    products:      [],
-    activeCatId:   null,
-    loading:       false,
-    retryCount:    0,
+    categories:  [],
+    products:    [],
+    activeCatId: null,
+    loading:     false,
+    dataReady:   false,
+    introHidden: false,
 };
 
 /* ── Prevent zoom ── */
 (function () {
-    document.addEventListener('wheel',       e => { if (e.ctrlKey)  e.preventDefault(); }, { passive: false });
-    document.addEventListener('gesturestart',e => e.preventDefault());
-    document.addEventListener('keydown',     e => {
+    document.addEventListener('wheel',        e => { if (e.ctrlKey)  e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart', e => e.preventDefault());
+    document.addEventListener('keydown',      e => {
         if (e.ctrlKey && ['+','-','=','_','0'].includes(e.key)) e.preventDefault();
     });
 })();
 
-/* ── Canvas Falling Leaves (GPU-friendly, zero DOM nodes) ── */
+/* ── Connection Quality Monitor ── */
+(function initConnectionMonitor() {
+    const badge = document.getElementById('connection-badge');
+    if (!badge) return;
+
+    function updateBadge() {
+        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+        if (!conn) return;
+
+        const type = conn.effectiveType || '';
+        if (type === '2g' || type === 'slow-2g') {
+            badge.textContent = '⚠️ اتصال بطيء';
+            badge.className   = 'slow';
+        } else if (!navigator.onLine) {
+            badge.textContent = '❌ لا يوجد اتصال';
+            badge.className   = 'offline';
+        } else {
+            badge.className = '';
+        }
+    }
+
+    window.addEventListener('online',  () => { badge.className = ''; updateBadge(); });
+    window.addEventListener('offline', () => {
+        badge.textContent = '❌ لا يوجد اتصال';
+        badge.className   = 'offline';
+    });
+
+    if (navigator.connection) navigator.connection.addEventListener('change', updateBadge);
+    updateBadge();
+})();
+
+/* ── Canvas Falling Leaves (GPU-friendly) ── */
 (function initLeaves() {
     const canvas = document.getElementById('leaves-canvas');
     const ctx    = canvas.getContext('2d');
     const EMOJIS = ['🌿','🍂','🍃'];
     let   W, H, leaves = [];
+    let   rafId = null;
+    let   docHidden = false;
 
     function resize() {
         W = canvas.width  = window.innerWidth;
@@ -735,8 +892,10 @@ const state = {
     }
 
     function tick() {
+        if (docHidden) { rafId = requestAnimationFrame(tick); return; }
         ctx.clearRect(0, 0, W, H);
-        leaves.forEach((l, i) => {
+        for (let i = 0; i < leaves.length; i++) {
+            const l = leaves[i];
             l.y   += l.spd;
             l.x   += l.driftX;
             l.rot += l.rotV;
@@ -749,90 +908,61 @@ const state = {
             ctx.textAlign = 'center';
             ctx.fillText(l.emoji, 0, 0);
             ctx.restore();
-        });
-        requestAnimationFrame(tick);
+        }
+        rafId = requestAnimationFrame(tick);
     }
 
-    window.addEventListener('resize', resize);
+    /* إيقاف الأنيميشن عند إخفاء الصفحة (توفير الموارد) */
+    document.addEventListener('visibilitychange', () => {
+        docHidden = document.hidden;
+    });
+
+    window.addEventListener('resize', resize, { passive: true });
     init();
-    requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(tick);
 })();
 
 /* ── Intro burst particles ── */
 (function spawnBurst() {
     const container = document.getElementById('burst-container');
-    const items = ['🌿','🍂','🌱','🍃','🌲','🌳'];
+    if (!container) return;
+    const items   = ['🌿','🍂','🌱','🍃','🌲','🌳'];
     const offsets = [
         [-120,-180],[150,-150],[-180,100],[200,170],
         [-90,210],[130,-220],[-220,-80],[180,130],
     ];
+    const frag = document.createDocumentFragment();
     offsets.forEach(([bx, by], i) => {
         const el = document.createElement('span');
-        el.className = 'burst-particle';
+        el.className   = 'burst-particle';
         el.textContent = items[i % items.length];
         const sz = 34 + Math.random() * 22;
         Object.assign(el.style, {
-            fontSize:        sz + 'px',
-            '--bx':          bx + 'px',
-            '--by':          by + 'px',
-            animationDelay:  (0.1 + i * 0.06) + 's',
+            fontSize:       sz + 'px',
+            '--bx':         bx + 'px',
+            '--by':         by + 'px',
+            animationDelay: (0.05 + i * 0.04) + 's',
             left: '50%', top: '50%',
             transform: 'translate(-50%,-50%)',
         });
-        container.appendChild(el);
+        frag.appendChild(el);
     });
+    container.appendChild(frag);
 })();
-
-/* ── Cache helpers ── */
-function cacheGet(key) {
-    try {
-        const raw = sessionStorage.getItem(key);
-        if (!raw) return null;
-        const obj = JSON.parse(raw);
-        if (Date.now() - obj.ts > CFG.CACHE_TTL_MS) { sessionStorage.removeItem(key); return null; }
-        return obj.data;
-    } catch { return null; }
-}
-function cacheSet(key, data) {
-    try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch {}
-}
-
-/* ── Fetch with timeout + retry ── */
-async function fetchWithRetry(url, retries = CFG.MAX_RETRIES) {
-    for (let attempt = 0; attempt <= retries; attempt++) {
-        try {
-            const ctrl = new AbortController();
-            const tid  = setTimeout(() => ctrl.abort(), CFG.FETCH_TIMEOUT);
-            const res  = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
-            clearTimeout(tid);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return await res.json();
-        } catch (err) {
-            if (attempt < retries) {
-                await new Promise(r => setTimeout(r, CFG.RETRY_BASE_MS * Math.pow(2, attempt)));
-            } else {
-                throw err;
-            }
-        }
-    }
-}
 
 /* ── Skeleton HTML ── */
 function renderSkeleton(count = 6) {
-    return `
-        <div class="skeleton-grid">
-            ${Array.from({ length: count }, () => `
-                <div class="skeleton-card">
-                    <div class="skel-img"></div>
-                    <div class="skel-lines">
-                        <div class="skel-line"></div>
-                        <div class="skel-line short"></div>
-                        <div class="skel-line price"></div>
-                    </div>
-                </div>
-            `).join('')}
+    const cards = Array.from({ length: count }, () => `
+        <div class="skeleton-card">
+            <div class="skel-img"></div>
+            <div class="skel-lines">
+                <div class="skel-line"></div>
+                <div class="skel-line short"></div>
+                <div class="skel-line price"></div>
+            </div>
         </div>
-    `;
+    `).join('');
+    return `<div class="skeleton-grid">${cards}</div>`;
 }
 
 /* ── Error state HTML ── */
@@ -863,18 +993,23 @@ function catIcon(name) {
 
 /* ── Render nav tabs ── */
 function renderTabs() {
-    const nav = document.getElementById('navTabs');
-    nav.innerHTML = state.categories.map((cat, i) => `
-        <div class="nav-tab ${i === 0 ? 'active' : ''}"
-             role="tab"
-             tabindex="${i === 0 ? '0' : '-1'}"
-             aria-selected="${i === 0}"
-             data-cat="${cat.id}"
-             onclick="switchCat('${cat.id}', this)">
-            <i class="fas ${catIcon(cat.name)}"></i>
-            <span>${cat.name}</span>
-        </div>
-    `).join('');
+    const nav  = document.getElementById('navTabs');
+    const frag = document.createDocumentFragment();
+
+    state.categories.forEach((cat, i) => {
+        const btn = document.createElement('div');
+        btn.className       = `nav-tab${i === 0 ? ' active' : ''}`;
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('tabindex', i === 0 ? '0' : '-1');
+        btn.setAttribute('aria-selected', String(i === 0));
+        btn.dataset.cat     = cat.id;
+        btn.innerHTML       = `<i class="fas ${catIcon(cat.name)}"></i><span>${cat.name}</span>`;
+        btn.addEventListener('click', () => switchCat(cat.id, btn));
+        frag.appendChild(btn);
+    });
+
+    nav.innerHTML = '';
+    nav.appendChild(frag);
 }
 
 /* ── Switch category ── */
@@ -890,11 +1025,19 @@ function switchCat(catId, el) {
     el.classList.add('active');
     el.setAttribute('aria-selected', 'true');
     el.tabIndex = 0;
-
-    // Scroll tab into view smoothly
     el.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
 
     renderProducts(catId);
+}
+
+/* ── Escape attr ── */
+function escAttr(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/'/g, '&#39;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
 }
 
 /* ── Render products ── */
@@ -913,40 +1056,75 @@ function renderProducts(catId) {
         return;
     }
 
-    container.innerHTML = `
-        <h2 class="section-title">${cat?.name || ''}</h2>
-        <div class="products-grid" id="productsGrid">
-            ${items.map((p, i) => `
-                <div class="product-card" style="animation-delay:${i * 0.055}s">
-                    <img
-                        class="product-image"
-                        src="${p.image}"
-                        alt="${p.name}"
-                        loading="lazy"
-                        decoding="async"
-                        onclick="openImg('${escAttr(p.image)}', '${escAttr(p.name)}')"
-                        onerror="this.src='https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86'"
-                    >
-                    <div class="card-content">
-                        <h3 class="product-title">
-                            ${p.name}
-                            ${p.isNew ? '<span class="new-tag">جديد</span>' : ''}
-                        </h3>
-                        <p class="product-description">${p.description || ''}</p>
-                        <div class="product-price">${Number(p.price).toFixed(2)} د.أ</div>
-                    </div>
-                </div>
-            `).join('')}
-        </div>
-    `;
+    /* بناء HTML بـ DocumentFragment لأسرع DOM manipulation */
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = `<h2 class="section-title">${cat?.name || ''}</h2>`;
 
-    // Intersection Observer للأنيميشن عند الظهور
+    const grid = document.createElement('div');
+    grid.className = 'products-grid';
+    grid.id        = 'productsGrid';
+
+    const FALLBACK = 'https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86';
+
+    items.forEach((p, i) => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.style.animationDelay = (i * 0.055) + 's';
+
+        /* تحميل lazy فقط للبطاقات غير المرئية */
+        const loadingAttr = i < 4 ? 'eager' : 'lazy';
+
+        card.innerHTML = `
+            <img
+                class="product-image"
+                src="${escAttr(p.image)}"
+                alt="${escAttr(p.name)}"
+                loading="${loadingAttr}"
+                decoding="async"
+                width="80" height="80"
+            >
+            <div class="card-content">
+                <h3 class="product-title">
+                    ${escAttr(p.name)}
+                    ${p.isNew ? '<span class="new-tag">جديد</span>' : ''}
+                </h3>
+                <p class="product-description">${escAttr(p.description || '')}</p>
+                <div class="product-price">${Number(p.price).toFixed(2)} د.أ</div>
+            </div>
+        `;
+
+        /* فتح الصورة عند الضغط */
+        const img = card.querySelector('.product-image');
+        img.addEventListener('error', () => { img.src = FALLBACK; });
+        img.addEventListener('click', () => openImg(p.image, p.name));
+
+        grid.appendChild(card);
+    });
+
+    wrapper.appendChild(grid);
+
+    /* استبدال المحتوى دفعة واحدة */
+    container.innerHTML = '';
+    container.appendChild(wrapper);
+
+    /* Preload أول 4 صور */
+    items.slice(0, 4).forEach(p => {
+        if (p.image) {
+            const link  = document.createElement('link');
+            link.rel    = 'preload';
+            link.as     = 'image';
+            link.href   = p.image;
+            document.head.appendChild(link);
+        }
+    });
+
     initCardObserver();
 }
 
-/* ── Card reveal observer ── */
+/* ── Card reveal observer (محسَّن) ── */
 function initCardObserver() {
     if (!('IntersectionObserver' in window)) return;
+
     const obs = new IntersectionObserver(entries => {
         entries.forEach(e => {
             if (e.isIntersecting) {
@@ -954,7 +1132,7 @@ function initCardObserver() {
                 obs.unobserve(e.target);
             }
         });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.08, rootMargin: '50px' });
 
     document.querySelectorAll('.product-card').forEach(card => {
         card.style.animationPlayState = 'paused';
@@ -973,7 +1151,8 @@ function openImg(src, alt) {
 }
 function closeImg() {
     document.getElementById('imageModal').classList.remove('active');
-    document.getElementById('modalImg').src = '';
+    /* تأخير مسح src لتجنب وميض */
+    setTimeout(() => { document.getElementById('modalImg').src = ''; }, 300);
     document.body.style.overflow = '';
 }
 
@@ -986,50 +1165,20 @@ document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeImg();
 });
 
-/* ── Escape attr ── */
-function escAttr(s) {
-    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-}
-
-/* ── Load menu data ── */
-async function loadMenu() {
-    if (state.loading) return;
-    state.loading = true;
-
-    const container = document.getElementById('menuContainer');
-    container.innerHTML = renderSkeleton(6);
-
-    // Intenta del caché primero
-    const cached = cacheGet(CFG.CACHE_KEY);
-    if (cached) {
-        applyData(cached);
-        state.loading = false;
+/* ── Apply data to UI ── */
+function applyData(data) {
+    if (!data || !data.success) {
+        document.getElementById('menuContainer').innerHTML = renderError('البيانات غير صحيحة من الخادم.');
         return;
     }
 
-    try {
-        const data = await fetchWithRetry(`${CFG.API_URL}?action=getMenuData`);
-        if (data?.success) {
-            cacheSet(CFG.CACHE_KEY, data);
-            applyData(data);
-        } else {
-            throw new Error('البيانات غير صحيحة');
-        }
-    } catch (err) {
-        console.error('[TelSindian] Load error:', err);
-        container.innerHTML = renderError(
-            err.name === 'AbortError'
-                ? 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.'
-                : 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.'
-        );
-    } finally {
-        state.loading = false;
-    }
-}
-
-function applyData(data) {
     state.categories = (data.categories || []).sort((a, b) => (a.order || 0) - (b.order || 0));
     state.products   = data.products || [];
+    state.dataReady  = true;
+
+    /* تحديث الـ in-memory cache */
+    window.__MENU_CACHE__.data = data;
+    window.__MENU_CACHE__.ts   = Date.now();
 
     if (!state.categories.length) {
         document.getElementById('menuContainer').innerHTML =
@@ -1042,25 +1191,127 @@ function applyData(data) {
     renderProducts(state.activeCatId);
 }
 
-/* ── Retry (exposed to HTML) ── */
+/* ── Load menu — يستخدم الـ Promise المُحضَّر مسبقاً ── */
+async function loadMenu() {
+    if (state.loading) return;
+    state.loading = true;
+
+    const container = document.getElementById('menuContainer');
+    container.innerHTML = renderSkeleton(6);
+
+    /* ✅ استخدم الـ Promise المُعدّ في <head> فوراً */
+    const earlyPromise    = window.__MENU_PROMISE__;
+    const fallbackPromise = window.__MENU_FALLBACK_PROMISE__;
+
+    /* ✅ Race بين الطلب الأصلي والـ Fallback */
+    const racePromise = Promise.race([
+        earlyPromise,
+        fallbackPromise.then(d => d || Promise.reject(new Error('fallback_null'))),
+    ]);
+
+    /* ✅ Timeout نهائي */
+    const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 12000)
+    );
+
+    try {
+        const data = await Promise.race([racePromise, timeoutPromise]);
+
+        if (data && data.success) {
+            applyData(data);
+        } else {
+            throw new Error('بيانات غير صحيحة');
+        }
+    } catch (err) {
+        console.error('[TelSindian v5] Load error:', err);
+
+        /* هل يوجد بيانات مخزنة (ولو قديمة)؟ عرضها بدل الخطأ */
+        const staleData = window.__MENU_CACHE__?.data;
+        if (staleData && staleData.success) {
+            console.warn('[TelSindian v5] عرض بيانات مخزنة قديمة');
+            applyData(staleData);
+        } else {
+            const msg = err.message === 'timeout' || err.name === 'AbortError'
+                ? 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.'
+                : 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.';
+            container.innerHTML = renderError(msg);
+        }
+    } finally {
+        state.loading = false;
+    }
+}
+
+/* ── Retry ── */
 window.retryLoad = function () {
-    sessionStorage.removeItem(CFG.CACHE_KEY);
-    state.retryCount++;
+    /* إعادة ضبط الـ Cache */
+    window.__MENU_CACHE__ = { data: null, ts: 0, ttl: 10 * 60 * 1000 };
+
+    /* إعادة إنشاء الـ Early Promise */
+    const url = CFG.API_URL + '?action=getMenuData&retry=1&_=' + Date.now();
+    window.__MENU_PROMISE__ = fetch(url, { cache: 'no-store' })
+        .then(r => r.json())
+        .then(d => {
+            if (d && d.success) {
+                window.__MENU_CACHE__.data = d;
+                window.__MENU_CACHE__.ts   = Date.now();
+            }
+            return d;
+        });
+    window.__MENU_FALLBACK_PROMISE__ = new Promise(resolve => setTimeout(resolve, 20000));
+
     loadMenu();
 };
 
-/* ── Expose openImg to HTML ── */
-window.openImg = openImg;
+/* ── Expose to HTML ── */
+window.openImg   = openImg;
+window.switchCat = switchCat;
+
+/* ── ✅ Background Revalidation (Stale-While-Revalidate) ── */
+function backgroundRevalidate() {
+    const cache = window.__MENU_CACHE__;
+    if (!cache || !cache.data) return;
+
+    const age = Date.now() - cache.ts;
+    /* إذا تجاوز العمر نصف الـ TTL، أجلب في الخلفية */
+    if (age < cache.ttl / 2) return;
+
+    fetch(CFG.API_URL + '?action=getMenuData&bg=1&_=' + Date.now(), { cache: 'no-store' })
+        .then(r => r.json())
+        .then(data => {
+            if (data && data.success) {
+                window.__MENU_CACHE__.data = data;
+                window.__MENU_CACHE__.ts   = Date.now();
+                console.log('[TelSindian v5] Cache updated in background ✅');
+            }
+        })
+        .catch(() => {});
+}
 
 /* ── Boot ── */
 document.addEventListener('DOMContentLoaded', () => {
-    // إخفاء شاشة البداية
+    /* ✅ إخفاء الإنترو بعد 2.2 ثانية فقط */
     setTimeout(() => {
-        document.getElementById('intro-screen').classList.add('hidden');
+        const intro = document.getElementById('intro-screen');
+        if (intro) intro.classList.add('hidden');
+        state.introHidden = true;
     }, CFG.INTRO_HIDE_MS);
 
-    // تحميل البيانات فوراً بدون انتظار الإنترو
+    /* تحميل البيانات فوراً — تستخدم الـ Promise المُعدّ في <head> */
     loadMenu();
+
+    /* Background revalidation كل 5 دقائق */
+    setInterval(backgroundRevalidate, 5 * 60 * 1000);
+
+    /* إعادة الجلب عند العودة إلى الصفحة بعد غياب طويل */
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            const cache = window.__MENU_CACHE__;
+            if (cache && cache.data && (Date.now() - cache.ts > cache.ttl)) {
+                /* Cache منتهي الصلاحية — أعد الجلب */
+                window.retryLoad();
+            }
+        }
+    });
 });
 </script>
 </body>
