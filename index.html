@@ -32,8 +32,10 @@
             --radius-btn:   60px;
             --radius-modal: 45px;
             --shadow-card:  0 12px 35px -8px rgba(30,70,10,.45), 0 0 0 2px rgba(255,255,255,.6) inset;
-            --ease-bounce:  cubic-bezier(.175,.885,.32,1.275);
+            --ease-bounce:  cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --ease-smooth:  cubic-bezier(0.2, 0.9, 0.4, 1.1); /* تحسين إضافي لحركة الأزرار */
             --transition:   all .35s var(--ease-bounce);
+            --transition-tab: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1); /* حركة مخصصة للأزرار أكثر سلاسة */
         }
 
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -251,7 +253,7 @@
             to   { text-shadow: 0 0 32px #fff, 0 0 65px #f0fff0; }
         }
 
-        /* ===== Nav Tabs ===== */
+        /* ===== Nav Tabs (تحسين حركة الأزرار) ===== */
         .nav-tabs {
             display: flex;
             flex-wrap: nowrap;
@@ -282,7 +284,10 @@
             color: #2b4d24;
             font-weight: 800;
             border-radius: 30px;
-            transition: var(--transition);
+            /* تحسين شامل للحركة مع منع الاهتزاز */
+            transition: var(--transition-tab);
+            transition-property: transform, background, box-shadow, border-color, text-shadow, color;
+            will-change: transform;
             display: flex; align-items: center; justify-content: center;
             gap: 5px;
             box-shadow: 0 4px 10px rgba(0,0,0,.09);
@@ -292,6 +297,8 @@
             user-select: none;
             -webkit-user-select: none;
             touch-action: manipulation;
+            backface-visibility: hidden;
+            transform: translateZ(0);
         }
         .nav-tab::after {
             content:'';
@@ -301,9 +308,16 @@
             transition: left .5s ease;
         }
         .nav-tab:hover::after { left:100%; }
-        .nav-tab:active  { transform: scale(.93); }
-        .nav-tab:hover   { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,.14); }
-        .nav-tab.active  {
+        /* تحسين تفاعلات النقر واللمس */
+        .nav-tab:active {
+            transform: scale(0.94);
+            transition-duration: 0.08s;
+        }
+        .nav-tab:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 18px rgba(0,0,0,.15);
+        }
+        .nav-tab.active {
             background: linear-gradient(145deg, #3f8b3a, #7cb86b, #b3e6a0);
             color: var(--white);
             box-shadow: 0 7px 16px rgba(45,90,39,.65);
@@ -692,7 +706,7 @@ const state = {
     products:     [],
     activeCatId:  null,
     loading:      false,
-    renderedCats: new Set(), // كاش الـ tabs المرسومة
+    renderedCats: new Set(),
 };
 
 /* ── Prevent zoom ── */
@@ -770,7 +784,6 @@ function fetchViaJSONP(url, timeoutMs) {
 
         const script = document.createElement('script');
         script.id = cbName;
-        // Google Apps Script يدعم callback= تلقائياً
         script.src = url + '&callback=' + cbName;
         script.onerror = () => {
             cleanup();
@@ -784,7 +797,6 @@ function fetchViaJSONP(url, timeoutMs) {
 async function fetchMenu() {
     const url = CFG.API_URL + '?action=getMenuData';
 
-    // محاولة JSONP أولاً (أسرع وبلا CORS)
     try {
         const data = await fetchViaJSONP(url, CFG.FETCH_TIMEOUT);
         return data;
@@ -792,7 +804,6 @@ async function fetchMenu() {
         console.warn('[JSONP failed, trying fetch]', jsonpErr.message);
     }
 
-    // fallback: fetch العادي
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), CFG.FETCH_TIMEOUT);
     try {
@@ -813,7 +824,6 @@ function extractCategories(products) {
         const cid = String(p.categoryId || '').trim();
         if (!cid) return;
         if (!map.has(cid)) {
-            // اسم الكاتيغوري: إذا كان موجوداً في حقل categoryName استخدمه، وإلا استخدم الـ id
             map.set(cid, {
                 id:    cid,
                 name:  p.categoryName || cid,
@@ -881,14 +891,12 @@ function renderTabs() {
         </div>
     `).join('');
 
-    // ربط أحداث النقر مرة واحدة على الـ nav container (event delegation)
     nav.addEventListener('click', handleTabClick);
     nav.addEventListener('touchend', handleTabClick, { passive: true });
 }
 
 /* ── Tab click handler (event delegation) ── */
 function handleTabClick(e) {
-    // إيجاد الـ tab الذي نُقر عليه
     const tab = e.target.closest('.nav-tab');
     if (!tab) return;
     e.preventDefault && e.preventDefault();
@@ -896,7 +904,6 @@ function handleTabClick(e) {
     const catId = tab.dataset.catId;
     if (!catId || catId === state.activeCatId) return;
 
-    // تحديث الـ active class
     document.querySelectorAll('#navTabs .nav-tab').forEach(t => {
         t.classList.remove('active');
         t.setAttribute('aria-selected', 'false');
@@ -906,7 +913,6 @@ function handleTabClick(e) {
     tab.setAttribute('aria-selected', 'true');
     tab.tabIndex = 0;
 
-    // scroll tab into view
     tab.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
 
     state.activeCatId = catId;
@@ -939,7 +945,6 @@ function renderProducts(catId) {
         return;
     }
 
-    // بناء الـ HTML بشكل synchronous دون IntersectionObserver لتسريع الاستجابة
     const cardsHtml = items.map((p, i) => `
         <div class="product-card" style="animation-delay:${i * 0.045}s">
             <img
@@ -968,7 +973,6 @@ function renderProducts(catId) {
         <div class="products-grid" id="productsGrid">${cardsHtml}</div>
     `;
 
-    // ربط حدث النقر على الصور عبر event delegation
     const grid = document.getElementById('productsGrid');
     if (grid) {
         grid.addEventListener('click', e => {
@@ -1007,7 +1011,6 @@ document.addEventListener('keydown', e => {
 
 /* ── applyData ── */
 function applyData(data) {
-    // الـ API قد يرجع categories مباشرة أو نستخرجها من products
     const products = data.products || [];
     let categories = data.categories || [];
 
@@ -1039,7 +1042,6 @@ async function loadMenu() {
     const container = document.getElementById('menuContainer');
     container.innerHTML = renderSkeleton(6);
 
-    // من الكاش أولاً
     const cached = cacheGet(CFG.CACHE_KEY);
     if (cached) {
         applyData(cached);
@@ -1049,7 +1051,6 @@ async function loadMenu() {
 
     try {
         const data = await fetchMenu();
-
         if (data && data.success) {
             cacheSet(CFG.CACHE_KEY, data);
             applyData(data);
@@ -1062,7 +1063,6 @@ async function loadMenu() {
         if (err.message === 'timeout') msg = 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.';
         container.innerHTML = renderError(msg);
 
-        // ربط زر الإعادة
         const btn = document.getElementById('retryBtn');
         if (btn) btn.addEventListener('click', () => {
             sessionStorage.removeItem(CFG.CACHE_KEY);
@@ -1078,16 +1078,13 @@ async function loadMenu() {
 
 /* ── Boot ── */
 document.addEventListener('DOMContentLoaded', () => {
-    // إخفاء شاشة البداية — بغض النظر عن نجاح الـ fetch
     const introTimer = setTimeout(() => {
         const intro = document.getElementById('intro-screen');
         if (intro) intro.classList.add('hidden');
     }, CFG.INTRO_HIDE_MS);
 
-    // تحميل البيانات فوراً
     loadMenu().catch(err => {
         console.error('[Boot] Fatal:', err);
-        // ضمان إخفاء الإنترو حتى في حالة الخطأ الكارثي
         clearTimeout(introTimer);
         const intro = document.getElementById('intro-screen');
         if (intro) intro.classList.add('hidden');
