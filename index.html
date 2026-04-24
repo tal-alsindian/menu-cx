@@ -7,12 +7,9 @@
     <meta name="description" content="قائمة طعام تل السنديان - مطعم طبيعي أصيل">
     <title>🌲 تل السنديان | قائمة الطعام</title>
 
-    <!-- Preconnect لتسريع تحميل الخطوط -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-    <!-- Preload للشعار -->
     <link rel="preload" href="https://iili.io/qfhk5Pt.png" as="image">
 
     <link rel="apple-touch-icon" href="https://iili.io/qfhk5Pt.png">
@@ -62,7 +59,7 @@
             z-index: -2;
         }
 
-        /* ===== قماش الأوراق (أداء عالي) ===== */
+        /* ===== قماش الأوراق ===== */
         #leaves-canvas {
             position: fixed;
             inset: 0;
@@ -663,83 +660,81 @@
 
 <script>
 /* =============================================================
-   TEL AL-SINDIAN MENU — Production v4.0
-   Fixes: Canvas-based leaves, retry logic, caching, skeleton
-          loading, intersection observer, error states, a11y
+   TEL AL-SINDIAN MENU — Production v4.1
+   ✅ localStorage للبيانات (بدون الصور — روابط مباشرة)
+   ✅ تحديث تلقائي في الخلفية بعد انتهاء TTL
+   ✅ عرض فوري من الكاش عند التوفر
+   ✅ Retry مع Exponential Backoff
+   ✅ IntersectionObserver لأنيميشن البطاقات
+   ✅ منع الزوم + Canvas أوراق GPU-friendly
 ============================================================= */
 
 'use strict';
 
 /* ── Config ── */
 const CFG = {
-    API_URL:       'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
-    CACHE_KEY:     'talsindian_menu_v4',
-    CACHE_TTL_MS:  10 * 60 * 1000,   // 10 دقائق
-    MAX_RETRIES:   3,
-    RETRY_BASE_MS: 800,
-    FETCH_TIMEOUT: 12000,
-    INTRO_HIDE_MS: 4200,
+    API_URL:        'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
+    LS_KEY:         'talsindian_menu_v4',        // مفتاح localStorage
+    LS_KEY_TS:      'talsindian_menu_v4_ts',     // طابع الوقت منفصل للسرعة
+    CACHE_TTL_MS:   30 * 60 * 1000,             // 30 دقيقة
+    BG_REFRESH_MS:  5  * 60 * 1000,             // تحديث خلفي بعد 5 دقائق من عمر الكاش
+    MAX_RETRIES:    3,
+    RETRY_BASE_MS:  800,
+    FETCH_TIMEOUT:  12000,
+    INTRO_HIDE_MS:  4200,
+    PLACEHOLDER_IMG:'https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86',
 };
 
 /* ── State ── */
 const state = {
-    categories:    [],
-    products:      [],
-    activeCatId:   null,
-    loading:       false,
-    retryCount:    0,
+    categories:   [],
+    products:     [],
+    activeCatId:  null,
+    loading:      false,
 };
 
-/* ── Prevent zoom ── */
+/* ── منع الزوم ── */
 (function () {
-    document.addEventListener('wheel',       e => { if (e.ctrlKey)  e.preventDefault(); }, { passive: false });
-    document.addEventListener('gesturestart',e => e.preventDefault());
-    document.addEventListener('keydown',     e => {
+    document.addEventListener('wheel',        e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+    document.addEventListener('gesturestart', e => e.preventDefault());
+    document.addEventListener('keydown',      e => {
         if (e.ctrlKey && ['+','-','=','_','0'].includes(e.key)) e.preventDefault();
     });
 })();
 
-/* ── Canvas Falling Leaves (GPU-friendly, zero DOM nodes) ── */
+/* ── Canvas Falling Leaves (GPU-friendly) ── */
 (function initLeaves() {
     const canvas = document.getElementById('leaves-canvas');
     const ctx    = canvas.getContext('2d');
     const EMOJIS = ['🌿','🍂','🍃'];
-    let   W, H, leaves = [];
+    let W, H, leaves = [];
 
     function resize() {
         W = canvas.width  = window.innerWidth;
         H = canvas.height = window.innerHeight;
     }
-
     function mkLeaf() {
         return {
-            x:    Math.random() * W,
-            y:    -Math.random() * H * .5,
-            size: Math.random() * 18 + 12,
-            spd:  Math.random() * 1.2 + .7,
-            rot:  Math.random() * Math.PI * 2,
-            rotV: (Math.random() - .5) * .04,
+            x:      Math.random() * W,
+            y:      -Math.random() * H * .5,
+            size:   Math.random() * 18 + 12,
+            spd:    Math.random() * 1.2 + .7,
+            rot:    Math.random() * Math.PI * 2,
+            rotV:   (Math.random() - .5) * .04,
             driftX: (Math.random() - .5) * .6,
-            emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-            alpha: Math.random() * .4 + .55,
+            emoji:  EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+            alpha:  Math.random() * .4 + .55,
         };
     }
-
     function init() {
         resize();
-        for (let i = 0; i < 28; i++) {
-            const l = mkLeaf();
-            l.y = Math.random() * H;
-            leaves.push(l);
-        }
+        for (let i = 0; i < 28; i++) { const l = mkLeaf(); l.y = Math.random() * H; leaves.push(l); }
     }
-
     function tick() {
         ctx.clearRect(0, 0, W, H);
-        leaves.forEach((l, i) => {
-            l.y   += l.spd;
-            l.x   += l.driftX;
-            l.rot += l.rotV;
+        for (let i = 0; i < leaves.length; i++) {
+            const l = leaves[i];
+            l.y += l.spd; l.x += l.driftX; l.rot += l.rotV;
             if (l.y > H + 30) leaves[i] = mkLeaf();
             ctx.save();
             ctx.globalAlpha = l.alpha;
@@ -749,19 +744,18 @@ const state = {
             ctx.textAlign = 'center';
             ctx.fillText(l.emoji, 0, 0);
             ctx.restore();
-        });
+        }
         requestAnimationFrame(tick);
     }
-
     window.addEventListener('resize', resize);
     init();
     requestAnimationFrame(tick);
 })();
 
-/* ── Intro burst particles ── */
+/* ── Burst Particles عند الإنترو ── */
 (function spawnBurst() {
     const container = document.getElementById('burst-container');
-    const items = ['🌿','🍂','🌱','🍃','🌲','🌳'];
+    const items   = ['🌿','🍂','🌱','🍃','🌲','🌳'];
     const offsets = [
         [-120,-180],[150,-150],[-180,100],[200,170],
         [-90,210],[130,-220],[-220,-80],[180,130],
@@ -772,10 +766,10 @@ const state = {
         el.textContent = items[i % items.length];
         const sz = 34 + Math.random() * 22;
         Object.assign(el.style, {
-            fontSize:        sz + 'px',
-            '--bx':          bx + 'px',
-            '--by':          by + 'px',
-            animationDelay:  (0.1 + i * 0.06) + 's',
+            fontSize:       sz + 'px',
+            '--bx':         bx + 'px',
+            '--by':         by + 'px',
+            animationDelay: (0.1 + i * 0.06) + 's',
             left: '50%', top: '50%',
             transform: 'translate(-50%,-50%)',
         });
@@ -783,21 +777,67 @@ const state = {
     });
 })();
 
-/* ── Cache helpers ── */
-function cacheGet(key) {
+/* ══════════════════════════════════════════
+   localStorage Helpers
+   - البيانات (categories + products) محفوظة بدون الصور
+   - الصور تُحمَّل مباشرة من روابطها في وقت الرندر
+   ══════════════════════════════════════════ */
+
+/**
+ * يحفظ البيانات في localStorage.
+ * الصور لا تُخزَّن — تبقى كروابط URL في كائن المنتج.
+ */
+function lsSet(data) {
     try {
-        const raw = sessionStorage.getItem(key);
-        if (!raw) return null;
-        const obj = JSON.parse(raw);
-        if (Date.now() - obj.ts > CFG.CACHE_TTL_MS) { sessionStorage.removeItem(key); return null; }
-        return obj.data;
-    } catch { return null; }
-}
-function cacheSet(key, data) {
-    try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch {}
+        const payload = JSON.stringify(data);
+        localStorage.setItem(CFG.LS_KEY,    payload);
+        localStorage.setItem(CFG.LS_KEY_TS, Date.now().toString());
+    } catch (e) {
+        // localStorage ممتلئ أو غير متاح — نتجاهل بصمت
+        console.warn('[TelSindian] localStorage write failed:', e.message);
+    }
 }
 
-/* ── Fetch with timeout + retry ── */
+/**
+ * يجلب البيانات من localStorage.
+ * يعيد null إذا لم تكن موجودة أو انتهت صلاحيتها.
+ */
+function lsGet() {
+    try {
+        const ts  = localStorage.getItem(CFG.LS_KEY_TS);
+        const raw = localStorage.getItem(CFG.LS_KEY);
+        if (!ts || !raw) return null;
+        if (Date.now() - Number(ts) > CFG.CACHE_TTL_MS) {
+            // انتهت الصلاحية — احذف وأعد null
+            localStorage.removeItem(CFG.LS_KEY);
+            localStorage.removeItem(CFG.LS_KEY_TS);
+            return null;
+        }
+        return JSON.parse(raw);
+    } catch { return null; }
+}
+
+/** عمر الكاش الحالي بالمللي ثانية، أو Infinity إذا لا يوجد */
+function lsAge() {
+    try {
+        const ts = localStorage.getItem(CFG.LS_KEY_TS);
+        return ts ? Date.now() - Number(ts) : Infinity;
+    } catch { return Infinity; }
+}
+
+/** حذف الكاش قسراً (مثلاً عند الضغط على إعادة المحاولة) */
+function lsClear() {
+    try {
+        localStorage.removeItem(CFG.LS_KEY);
+        localStorage.removeItem(CFG.LS_KEY_TS);
+    } catch {}
+}
+
+/* ══════════════════════════════════════════
+   Network Helpers
+   ══════════════════════════════════════════ */
+
+/** Fetch مع timeout وإعادة محاولة تلقائية */
 async function fetchWithRetry(url, retries = CFG.MAX_RETRIES) {
     for (let attempt = 0; attempt <= retries; attempt++) {
         try {
@@ -817,25 +857,24 @@ async function fetchWithRetry(url, retries = CFG.MAX_RETRIES) {
     }
 }
 
-/* ── Skeleton HTML ── */
+/* ══════════════════════════════════════════
+   UI Helpers
+   ══════════════════════════════════════════ */
+
 function renderSkeleton(count = 6) {
-    return `
-        <div class="skeleton-grid">
-            ${Array.from({ length: count }, () => `
-                <div class="skeleton-card">
-                    <div class="skel-img"></div>
-                    <div class="skel-lines">
-                        <div class="skel-line"></div>
-                        <div class="skel-line short"></div>
-                        <div class="skel-line price"></div>
-                    </div>
+    return `<div class="skeleton-grid">${
+        Array.from({ length: count }, () => `
+            <div class="skeleton-card">
+                <div class="skel-img"></div>
+                <div class="skel-lines">
+                    <div class="skel-line"></div>
+                    <div class="skel-line short"></div>
+                    <div class="skel-line price"></div>
                 </div>
-            `).join('')}
-        </div>
-    `;
+            </div>`).join('')
+    }</div>`;
 }
 
-/* ── Error state HTML ── */
 function renderError(message = 'تعذّر تحميل البيانات') {
     return `
         <div class="error-state">
@@ -845,11 +884,9 @@ function renderError(message = 'تعذّر تحميل البيانات') {
             <button class="retry-btn" onclick="retryLoad()">
                 <i class="fas fa-redo-alt"></i> إعادة المحاولة
             </button>
-        </div>
-    `;
+        </div>`;
 }
 
-/* ── Category icon map ── */
 function catIcon(name) {
     const n = name.toLowerCase();
     if (n.includes('ساندويش') || n.includes('ساندويتش')) return 'fa-burger';
@@ -861,7 +898,14 @@ function catIcon(name) {
     return 'fa-utensils';
 }
 
-/* ── Render nav tabs ── */
+function escAttr(s) {
+    return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+}
+
+/* ══════════════════════════════════════════
+   Render
+   ══════════════════════════════════════════ */
+
 function renderTabs() {
     const nav = document.getElementById('navTabs');
     nav.innerHTML = state.categories.map((cat, i) => `
@@ -870,18 +914,16 @@ function renderTabs() {
              tabindex="${i === 0 ? '0' : '-1'}"
              aria-selected="${i === 0}"
              data-cat="${cat.id}"
-             onclick="switchCat('${cat.id}', this)">
+             onclick="switchCat('${escAttr(cat.id)}', this)">
             <i class="fas ${catIcon(cat.name)}"></i>
             <span>${cat.name}</span>
         </div>
     `).join('');
 }
 
-/* ── Switch category ── */
 function switchCat(catId, el) {
     if (state.activeCatId === catId) return;
     state.activeCatId = catId;
-
     document.querySelectorAll('.nav-tab').forEach(t => {
         t.classList.remove('active');
         t.setAttribute('aria-selected', 'false');
@@ -890,29 +932,25 @@ function switchCat(catId, el) {
     el.classList.add('active');
     el.setAttribute('aria-selected', 'true');
     el.tabIndex = 0;
-
-    // Scroll tab into view smoothly
     el.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
-
     renderProducts(catId);
 }
 
-/* ── Render products ── */
 function renderProducts(catId) {
     const container = document.getElementById('menuContainer');
-    const cat       = state.categories.find(c => c.id === catId);
-    const items     = state.products
+    const cat   = state.categories.find(c => c.id === catId);
+    const items = state.products
         .filter(p => p.categoryId === catId)
         .sort((a, b) => (a.order || 0) - (b.order || 0));
 
     if (!items.length) {
         container.innerHTML = `
             <div class="section-title">${cat?.name || ''}</div>
-            <div class="empty-state">لا توجد منتجات في هذا القسم حالياً</div>
-        `;
+            <div class="empty-state">لا توجد منتجات في هذا القسم حالياً</div>`;
         return;
     }
 
+    /* الصور: نستخدم src مباشرة من الرابط المخزَّن في البيانات */
     container.innerHTML = `
         <h2 class="section-title">${cat?.name || ''}</h2>
         <div class="products-grid" id="productsGrid">
@@ -920,12 +958,12 @@ function renderProducts(catId) {
                 <div class="product-card" style="animation-delay:${i * 0.055}s">
                     <img
                         class="product-image"
-                        src="${p.image}"
-                        alt="${p.name}"
+                        src="${escAttr(p.image)}"
+                        alt="${escAttr(p.name)}"
                         loading="lazy"
                         decoding="async"
-                        onclick="openImg('${escAttr(p.image)}', '${escAttr(p.name)}')"
-                        onerror="this.src='https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86'"
+                        onclick="openImg('${escAttr(p.image)}','${escAttr(p.name)}')"
+                        onerror="this.onerror=null;this.src='${CFG.PLACEHOLDER_IMG}'"
                     >
                     <div class="card-content">
                         <h3 class="product-title">
@@ -935,16 +973,12 @@ function renderProducts(catId) {
                         <p class="product-description">${p.description || ''}</p>
                         <div class="product-price">${Number(p.price).toFixed(2)} د.أ</div>
                     </div>
-                </div>
-            `).join('')}
-        </div>
-    `;
+                </div>`).join('')}
+        </div>`;
 
-    // Intersection Observer للأنيميشن عند الظهور
     initCardObserver();
 }
 
-/* ── Card reveal observer ── */
 function initCardObserver() {
     if (!('IntersectionObserver' in window)) return;
     const obs = new IntersectionObserver(entries => {
@@ -962,12 +996,14 @@ function initCardObserver() {
     });
 }
 
-/* ── Image modal ── */
+/* ══════════════════════════════════════════
+   Image Modal
+   ══════════════════════════════════════════ */
+
 function openImg(src, alt) {
     const modal = document.getElementById('imageModal');
     const img   = document.getElementById('modalImg');
-    img.src = src;
-    img.alt = alt;
+    img.src = src; img.alt = alt;
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -977,56 +1013,17 @@ function closeImg() {
     document.body.style.overflow = '';
 }
 
-/* ── Modal close events ── */
 document.getElementById('imageModal').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeImg();
 });
 document.getElementById('closeImgBtn').addEventListener('click', closeImg);
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeImg();
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImg(); });
 
-/* ── Escape attr ── */
-function escAttr(s) {
-    return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-}
+/* ══════════════════════════════════════════
+   Data Layer
+   ══════════════════════════════════════════ */
 
-/* ── Load menu data ── */
-async function loadMenu() {
-    if (state.loading) return;
-    state.loading = true;
-
-    const container = document.getElementById('menuContainer');
-    container.innerHTML = renderSkeleton(6);
-
-    // Intenta del caché primero
-    const cached = cacheGet(CFG.CACHE_KEY);
-    if (cached) {
-        applyData(cached);
-        state.loading = false;
-        return;
-    }
-
-    try {
-        const data = await fetchWithRetry(`${CFG.API_URL}?action=getMenuData`);
-        if (data?.success) {
-            cacheSet(CFG.CACHE_KEY, data);
-            applyData(data);
-        } else {
-            throw new Error('البيانات غير صحيحة');
-        }
-    } catch (err) {
-        console.error('[TelSindian] Load error:', err);
-        container.innerHTML = renderError(
-            err.name === 'AbortError'
-                ? 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.'
-                : 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.'
-        );
-    } finally {
-        state.loading = false;
-    }
-}
-
+/** يطبّق البيانات على الـ state ويرندر الواجهة */
 function applyData(data) {
     state.categories = (data.categories || []).sort((a, b) => (a.order || 0) - (b.order || 0));
     state.products   = data.products || [];
@@ -1036,30 +1033,87 @@ function applyData(data) {
             '<div class="empty-state">لا توجد أقسام متاحة حالياً</div>';
         return;
     }
-
     renderTabs();
     state.activeCatId = state.categories[0].id;
     renderProducts(state.activeCatId);
 }
 
-/* ── Retry (exposed to HTML) ── */
+/** يجلب البيانات من الشبكة، يحفظها في localStorage، ثم يطبّقها */
+async function fetchAndStore(showSkeletonFirst = false) {
+    if (showSkeletonFirst) {
+        document.getElementById('menuContainer').innerHTML = renderSkeleton(6);
+    }
+    try {
+        const data = await fetchWithRetry(`${CFG.API_URL}?action=getMenuData`);
+        if (!data?.success) throw new Error('استجابة غير صحيحة من الخادم');
+        lsSet(data);         // حفظ في localStorage
+        applyData(data);     // تطبيق فوري
+    } catch (err) {
+        console.error('[TelSindian] Fetch error:', err);
+        // إذا كان هناك بيانات قديمة، اعرضها ولا تُظهر الخطأ
+        const stale = lsGet() || (() => { try { return JSON.parse(localStorage.getItem(CFG.LS_KEY)); } catch { return null; } })();
+        if (stale && stale.categories?.length) {
+            applyData(stale);
+            console.warn('[TelSindian] Showing stale cache after fetch failure');
+        } else if (showSkeletonFirst) {
+            document.getElementById('menuContainer').innerHTML = renderError(
+                err.name === 'AbortError'
+                    ? 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.'
+                    : 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.'
+            );
+        }
+    }
+}
+
+/**
+ * نقطة الدخول الرئيسية:
+ * 1. إذا وجد كاش صالح  → عرض فوري + تحديث خلفي إذا قارب الكاش على الانتهاء
+ * 2. إذا لا يوجد كاش   → Skeleton + جلب شبكة + حفظ
+ */
+async function loadMenu() {
+    if (state.loading) return;
+    state.loading = true;
+
+    const cached = lsGet();
+
+    if (cached) {
+        /* ✅ عرض فوري بدون أي skeleton */
+        applyData(cached);
+
+        /* تحديث خلفي إذا مرّ أكثر من BG_REFRESH_MS على الكاش */
+        if (lsAge() > CFG.BG_REFRESH_MS) {
+            fetchAndStore(false).finally(() => { state.loading = false; });
+        } else {
+            state.loading = false;
+        }
+    } else {
+        /* لا كاش → جلب مع Skeleton */
+        await fetchAndStore(true);
+        state.loading = false;
+    }
+}
+
+/** إعادة المحاولة يدوياً (زر الخطأ) */
 window.retryLoad = function () {
-    sessionStorage.removeItem(CFG.CACHE_KEY);
-    state.retryCount++;
+    lsClear();
+    state.loading = false;
     loadMenu();
 };
 
-/* ── Expose openImg to HTML ── */
-window.openImg = openImg;
+/* ── Expose للـ HTML inline handlers ── */
+window.openImg   = openImg;
+window.switchCat = switchCat;
 
-/* ── Boot ── */
+/* ══════════════════════════════════════════
+   Boot
+   ══════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-    // إخفاء شاشة البداية
+    /* إخفاء شاشة البداية بعد الوقت المحدد */
     setTimeout(() => {
         document.getElementById('intro-screen').classList.add('hidden');
     }, CFG.INTRO_HIDE_MS);
 
-    // تحميل البيانات فوراً بدون انتظار الإنترو
+    /* تحميل البيانات فوراً — لا ينتظر انتهاء الإنترو */
     loadMenu();
 });
 </script>
