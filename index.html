@@ -1,1121 +1,667 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#1f4a1a">
-    <meta name="description" content="قائمة طعام تل السنديان - مطعم طبيعي أصيل">
-    <title>🌲 تل السنديان | قائمة الطعام</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#1f4a1a">
+<meta name="description" content="قائمة طعام تل السنديان - مطعم طبيعي أصيل">
+<title>🌲 تل السنديان | قائمة الطعام</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="preload" href="https://iili.io/qfhk5Pt.png" as="image">
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preload" as="image" href="https://iili.io/qfhk5Pt.png" fetchpriority="high">
+<link rel="apple-touch-icon" href="https://iili.io/qfhk5Pt.png">
+<link rel="icon" href="https://iili.io/qfhk5Pt.png">
 
-    <link rel="apple-touch-icon" href="https://iili.io/qfhk5Pt.png">
-    <link rel="icon" href="https://iili.io/qfhk5Pt.png">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@700;900&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@700;900&display=swap"></noscript>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
 
-    <style>
-        /* ========= CSS Variables ========= */
-        :root {
-            --green-dark:   #1f4a1a;
-            --green-mid:    #3f8b3a;
-            --green-light:  #7cb86b;
-            --green-bright: #5cb85c;
-            --green-lime:   #8bc34a;
-            --beige:        #F5E6D3;
-            --white:        #FFFFFF;
-            --off-white:    #F8F9FA;
-            --text-dark:    #1e3b1a;
-            --radius-card:  24px;
-            --radius-btn:   60px;
-            --radius-modal: 45px;
-            --shadow-card:  0 12px 35px -8px rgba(30,70,10,.45), 0 0 0 2px rgba(255,255,255,.6) inset;
-            --ease-bounce:  cubic-bezier(.175,.885,.32,1.275);
-            --transition:   all .35s var(--ease-bounce);
-        }
+<style>
+:root{
+  --gd:#1f4a1a;--gm:#3f8b3a;--gl:#7cb86b;
+  --beige:#F5E6D3;--white:#fff;--td:#1e3b1a;
+  --rc:24px;--rb:60px;
+  --sc:0 12px 35px -8px rgba(30,70,10,.45),0 0 0 2px rgba(255,255,255,.6) inset;
+  --eb:cubic-bezier(.175,.885,.32,1.275);
+  --tr:all .35s var(--eb);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Cairo',sans-serif;
+  background:radial-gradient(circle at 15% 20%,#386f2e,#1f4a18);
+  color:var(--td);overflow-x:hidden;direction:rtl;text-align:right;
+  min-height:100vh;display:flex;flex-direction:column
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:linear-gradient(145deg,#1e4a1a,#3d7534,#68a355);
+  z-index:-2
+}
 
-        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+/* ── Intro ── */
+#is{
+  position:fixed;inset:0;
+  background:linear-gradient(145deg,#1f4a1a,#3f7a32,#65a34e);
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  z-index:9999;transition:opacity 1.2s ease-out;overflow:hidden
+}
+#is.hidden{opacity:0;pointer-events:none}
+.bp{
+  position:absolute;opacity:0;
+  animation:bO 1.2s ease-out forwards;
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.9));z-index:5
+}
+@keyframes bO{
+  0%{transform:scale(0) translate(0,0);opacity:0}
+  15%{opacity:1}
+  100%{transform:scale(2) translate(var(--bx),var(--by));opacity:0}
+}
+.il{
+  width:150px;height:150px;border-radius:50%;overflow:hidden;
+  border:6px solid var(--white);
+  box-shadow:0 0 70px #fff,0 0 110px #f0fff0;
+  transform:scale(0);opacity:0;
+  animation:pI .9s var(--eb) forwards .3s;
+  position:relative;z-index:20
+}
+.il img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+@keyframes pI{
+  0%{transform:scale(0);opacity:0}
+  80%{transform:scale(1.12);opacity:1}
+  100%{transform:scale(1);opacity:1}
+}
+.it{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(2em,6vw,2.8em);
+  color:var(--white);
+  text-shadow:0 0 30px #b5e5a0,0 0 60px #fff,3px 3px 0 rgba(0,0,0,.2);
+  opacity:0;transform:translateY(28px);
+  animation:sU .9s ease-out forwards .9s;z-index:20
+}
+@keyframes sU{to{opacity:1;transform:translateY(0)}}
+.lw{width:min(90%,580px);margin-top:40px;opacity:0;animation:fI .8s ease forwards 1.5s;z-index:20}
+@keyframes fI{to{opacity:1}}
 
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: radial-gradient(circle at 15% 20%, #386f2e, #1f4a18);
-            color: var(--text-dark);
-            overflow-x: hidden;
-            direction: rtl;
-            text-align: right;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+/* Branch + Squirrel */
+.br{
+  width:100%;height:26px;
+  background:linear-gradient(180deg,#b58b5a,#7b572e,#4a341c);
+  border-radius:40px 40px 14px 14px;position:relative;
+  box-shadow:0 8px 20px rgba(0,0,0,.6),inset 0 4px 8px rgba(255,220,140,.6);
+  border:2px solid #dbb38c
+}
+.br::before{
+  content:'';position:absolute;inset:0;
+  background-image:repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(0,0,0,.18) 18px,rgba(0,0,0,.18) 36px);
+  border-radius:inherit
+}
+.sh{position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:58px;height:62px;z-index:30;filter:drop-shadow(0 6px 12px rgba(0,0,0,.5))}
+.ht{position:absolute;width:42px;height:52px;background:linear-gradient(145deg,#b58b5a,#7b572e);border-radius:35% 35% 20% 20%;right:0;bottom:0;box-shadow:inset -4px -4px 8px #3e2a14,inset 4px 4px 10px #e0b58c;border:2px solid #7b572e}
+.hh{position:absolute;width:24px;height:30px;background:#3e2a14;border-radius:45% 45% 20% 20%;right:9px;top:11px;box-shadow:inset 0 0 12px #0a0602;border:2px solid #7b572e}
+.hr{position:absolute;width:52px;height:20px;background:#7b572e;top:-9px;right:-5px;border-radius:60% 60% 10% 10%;transform:rotate(2deg)}
+.hl{position:absolute;width:16px;height:16px;background:#7fb073;border-radius:70% 0 70% 0;top:-16px;right:17px;transform:rotate(45deg)}
+.hl2{right:0;top:-11px;transform:rotate(-14deg);background:#5cb85c;width:14px;height:14px}
+.sq{
+  position:absolute;top:50%;left:0;transform:translateY(-50%);
+  width:58px;height:48px;z-index:40;
+  animation:rA 4.2s ease-in-out forwards;
+  filter:drop-shadow(3px 6px 10px rgba(0,0,0,.5))
+}
+@keyframes rA{
+  0%{left:0;transform:translateY(-50%) scaleX(1)}
+  14%{transform:translateY(-58%) scaleX(1)}
+  28%{transform:translateY(-42%) scaleX(1)}
+  42%{transform:translateY(-54%) scaleX(1)}
+  56%{transform:translateY(-44%) scaleX(1)}
+  70%{transform:translateY(-53%) scaleX(1)}
+  85%{transform:translateY(-47%) scaleX(1)}
+  100%{left:calc(100% - 62px);transform:translateY(-50%) scaleX(1)}
+}
+.sb{position:absolute;width:34px;height:30px;background:linear-gradient(145deg,#b58b5a,#7b572e);border-radius:50% 40% 40% 50%;top:9px;left:14px;border:2px solid #7b572e}
+.sd{position:absolute;width:20px;height:20px;background:linear-gradient(145deg,#b58b5a,#7b572e);border-radius:50% 40% 50% 30%;top:2px;right:-1px;border:2px solid #7b572e}
+.se{position:absolute;width:8px;height:10px;background:#b58b5a;border-radius:50% 50% 0 0;top:-5px;right:2px;transform:rotate(-10deg);border:1px solid #7b572e}
+.sy{position:absolute;width:4px;height:4px;background:#fff;border-radius:50%;top:6px;right:5px;box-shadow:0 0 3px #000}
+.sy::before{content:'';position:absolute;width:2px;height:2px;background:#000;border-radius:50%;top:1px;right:1px}
+.sn{position:absolute;width:3px;height:3px;background:#000;border-radius:50%;top:10px;right:2px}
+.sv{position:absolute;width:16px;height:15px;background:#eac39b;border-radius:40% 20% 30% 40%;top:11px;left:19px;opacity:.7}
+.st{position:absolute;width:24px;height:26px;background:linear-gradient(145deg,#b58b5a,#7b572e);border-radius:80% 20% 70% 30%;top:4px;left:-11px;transform:rotate(20deg);border:2px solid #7b572e;animation:wT .2s infinite alternate}
+@keyframes wT{from{transform:rotate(14deg)}to{transform:rotate(28deg)}}
+.slf{position:absolute;width:8px;height:10px;background:#b58b5a;border-radius:30% 30% 20% 20%;bottom:3px;right:8px;border:1px solid #7b572e;animation:lA .15s infinite alternate}
+.slb{position:absolute;width:9px;height:11px;background:#b58b5a;border-radius:30% 30% 20% 20%;bottom:3px;left:19px;border:1px solid #7b572e;animation:lA .15s infinite alternate-reverse}
+@keyframes lA{from{transform:rotate(0) translateY(0)}to{transform:rotate(10deg) translateY(-3px)}}
 
-        /* ===== خلفية الغابة ===== */
-        #forest-bg {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(145deg, #1e4a1a, #3d7534, #68a355);
-            z-index: -2;
-        }
+/* ── Header ── */
+.hdr{
+  width:100%;z-index:1000;
+  display:flex;flex-direction:column;align-items:center;overflow:hidden;
+  background:linear-gradient(145deg,#2d6827,#4f9442,#7cb86b);
+  border-bottom:4px solid var(--white);
+  box-shadow:0 18px 38px -5px rgba(0,0,0,.55);
+  border-radius:0 0 40px 40px;position:relative
+}
+.hdr-video{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;z-index:-2;
+  filter:brightness(.68) saturate(1.4) hue-rotate(72deg) contrast(1.1)
+}
+.vo{position:absolute;inset:0;background:rgba(30,70,20,.52);z-index:-1}
+.hc{
+  position:relative;z-index:2;width:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:18px 18px 8px
+}
+.lc2{
+  width:82px;height:82px;border-radius:50%;overflow:hidden;
+  border:5px solid var(--white);
+  box-shadow:0 0 40px #fff,0 0 80px #f0fff0,0 5px 18px rgba(0,0,0,.3);
+  margin-bottom:10px;transition:var(--tr);cursor:pointer
+}
+.lc2:hover{transform:scale(1.08) rotate(3deg);box-shadow:0 0 65px #fff}
+.lc2 img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+.rn{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(1.6em,5vw,2.1em);color:var(--white);
+  text-shadow:0 0 20px #fff,0 0 38px #fff,3px 3px 0 rgba(0,0,0,.3);
+  text-align:center;line-height:1.2;
+  animation:nP 2.8s infinite alternate ease-in-out
+}
+.rn small{font-size:.5em;display:block;color:var(--beige);letter-spacing:1.5px;text-shadow:0 0 14px #000}
+@keyframes nP{
+  from{text-shadow:0 0 22px #fff,0 0 40px #fff}
+  to{text-shadow:0 0 32px #fff,0 0 65px #f0fff0}
+}
 
-        /* ===== قماش الأوراق ===== */
-        #leaves-canvas {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: -1;
-            opacity: .85;
-        }
+/* ── Nav Tabs ── */
+.nt{
+  display:flex;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;width:calc(100% - 28px);
+  padding:8px 14px 8px;margin:0 14px 10px;
+  background:rgba(255,255,255,.93);backdrop-filter:blur(14px);
+  border-top:1px solid rgba(255,255,255,.7);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+  gap:7px;border-radius:40px 40px 24px 24px;direction:rtl;
+  position:relative;z-index:2
+}
+.nt::-webkit-scrollbar{display:none}
+.ntb{
+  background:linear-gradient(145deg,#fff,#f8f9fa);
+  border:1.5px solid transparent;cursor:pointer;
+  padding:6px 14px;font-family:'Cairo',sans-serif;
+  font-size:.84em;color:#2b4d24;font-weight:800;
+  border-radius:30px;transition:var(--tr);
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  box-shadow:0 4px 10px rgba(0,0,0,.09);
+  white-space:nowrap;flex:0 0 auto;position:relative;overflow:hidden
+}
+.ntb::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);
+  transition:left .5s ease
+}
+.ntb:hover::after{left:100%}
+.ntb:active{transform:scale(.93)}
+.ntb:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.14)}
+.ntb.active{
+  background:linear-gradient(145deg,#3f8b3a,#7cb86b,#b3e6a0);
+  color:var(--white);box-shadow:0 7px 16px rgba(45,90,39,.65);
+  transform:translateY(-2px);border-color:var(--white);
+  text-shadow:0 0 7px rgba(0,0,0,.45)
+}
+.ntb i{font-size:.95em}
 
-        /* ===== شاشة البداية ===== */
-        #intro-screen {
-            position: fixed;
-            inset: 0;
-            background: linear-gradient(145deg, #1f4a1a, #3f7a32, #65a34e);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 1.2s ease-out;
-            overflow: hidden;
-        }
-        #intro-screen.hidden { opacity: 0; pointer-events: none; }
+/* ── Main ── */
+.mc{max-width:1400px;margin:20px auto 40px;padding:0 16px;flex:1;width:100%}
 
-        /* دقائق الانفجار */
-        .burst-particle {
-            position: absolute;
-            opacity: 0;
-            animation: burstOut 1.2s ease-out forwards;
-            filter: drop-shadow(0 0 12px rgba(255,255,255,.9));
-            z-index: 5;
-        }
-        @keyframes burstOut {
-            0%   { transform: scale(0) translate(0,0); opacity: 0; }
-            15%  { opacity: 1; }
-            100% { transform: scale(2) translate(var(--bx), var(--by)); opacity: 0; }
-        }
+/* ── Skeleton ── */
+.sk-g{display:grid;grid-template-columns:1fr;gap:14px}
+.sk-c{
+  background:rgba(255,255,255,.15);border-radius:var(--rc);
+  height:110px;display:flex;align-items:center;padding:10px;gap:12px;
+  border:2px solid rgba(255,255,255,.25);overflow:hidden;position:relative
+}
+.sk-c::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.25) 50%,transparent 70%);
+  animation:shim 1.5s infinite
+}
+@keyframes shim{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.sk-i{width:78px;height:78px;border-radius:18px;background:rgba(255,255,255,.2);flex-shrink:0}
+.sk-l{flex:1;display:flex;flex-direction:column;gap:8px;padding-right:4px}
+.sk-ln{height:12px;background:rgba(255,255,255,.22);border-radius:30px}
+.sk-ln.s{width:55%}
+.sk-ln.p{width:35%;height:16px}
 
-        .intro-logo {
-            width: 150px; height: 150px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 6px solid var(--white);
-            box-shadow: 0 0 70px #fff, 0 0 110px #f0fff0;
-            transform: scale(0); opacity: 0;
-            animation: popIn .9s var(--ease-bounce) forwards .3s;
-            position: relative; z-index: 20;
-        }
-        .intro-logo img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+/* ── Error ── */
+.es{text-align:center;padding:50px 20px;color:var(--white)}
+.es .ei{font-size:3.5em;margin-bottom:16px}
+.es h3{font-size:1.5em;margin-bottom:10px;font-family:'Tajawal',sans-serif}
+.es p{opacity:.8;margin-bottom:24px;font-size:.95em}
+.rb{
+  background:linear-gradient(145deg,var(--white),#f0f2f5);
+  color:var(--gd);border:none;border-radius:var(--rb);
+  padding:12px 32px;font-size:1.05em;font-weight:800;
+  font-family:'Cairo',sans-serif;cursor:pointer;
+  box-shadow:0 8px 20px rgba(0,0,0,.3);transition:var(--tr)
+}
+.rb:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 14px 28px rgba(0,0,0,.35)}
+.rb i{margin-left:7px}
 
-        @keyframes popIn {
-            0%   { transform:scale(0); opacity:0; }
-            80%  { transform:scale(1.12); opacity:1; }
-            100% { transform:scale(1); opacity:1; }
-        }
+/* ── Section title ── */
+.stl{
+  font-family:'Tajawal',sans-serif;
+  font-size:clamp(1.8em,5vw,2.4em);color:var(--white);
+  text-shadow:0 0 22px #fff,0 0 42px #fff,2px 2px 0 rgba(0,0,0,.3);
+  margin-bottom:28px;text-align:center;position:relative
+}
+.stl::after{
+  content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);
+  width:120px;height:4px;
+  background:linear-gradient(90deg,#fff,#f0f0f0,#fff);
+  border-radius:8px;box-shadow:0 0 16px #fff
+}
 
-        .intro-title {
-            font-family: 'Tajawal', sans-serif;
-            font-size: clamp(2em, 6vw, 2.8em);
-            color: var(--white);
-            text-shadow: 0 0 30px #b5e5a0, 0 0 60px #fff, 3px 3px 0 rgba(0,0,0,.2);
-            opacity: 0; transform: translateY(28px);
-            animation: slideUp .9s ease-out forwards .9s;
-            z-index: 20;
-        }
-        @keyframes slideUp { to { opacity:1; transform:translateY(0); } }
+/* ── Products grid ── */
+.pg{display:grid;grid-template-columns:1fr;gap:14px}
 
-        /* شريط التحميل بالسنجاب */
-        .loader-wrap {
-            width: min(90%, 580px);
-            margin-top: 40px;
-            opacity: 0;
-            animation: fadeIn .8s ease forwards 1.5s;
-            z-index: 20;
-        }
-        @keyframes fadeIn { to { opacity:1; } }
+/* ── Product card — مرئية بالكامل فوراً، بدون أي تأخير أو تأثير ظهور ── */
+.pc{
+  position:relative;background:#fefefe;border-radius:var(--rc);
+  overflow:hidden;box-shadow:var(--sc);border:3px solid var(--white);
+  transition:var(--tr);display:flex;flex-direction:row;
+  align-items:center;padding:8px
+}
+.pc:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 20px 40px -8px #3f6b35,0 0 0 4px var(--white)}
+.pi{
+  width:80px;height:80px;object-fit:cover;border-radius:18px;
+  border:3px solid var(--gm);box-shadow:0 0 12px rgba(255,255,255,.7);
+  transition:transform .35s ease;flex-shrink:0;cursor:pointer;
+  aspect-ratio:1/1
+}
+.pc:hover .pi{transform:scale(1.04)}
+.cc{padding:4px 10px 4px 4px;flex-grow:1;display:flex;flex-direction:column;min-width:0}
+.pt{
+  font-size:1.08em;color:var(--gd);margin-bottom:4px;font-weight:900;
+  display:flex;align-items:center;gap:6px;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.nt2{
+  background:linear-gradient(145deg,var(--gm),var(--gl));
+  color:var(--white);padding:2px 8px;border-radius:30px;
+  font-size:.5em;flex-shrink:0;animation:tP 1.8s infinite
+}
+@keyframes tP{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(1.05)}}
+.pd{
+  color:var(--td);font-size:.73em;line-height:1.3;flex-grow:1;
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;
+  overflow:hidden;text-overflow:ellipsis;margin-bottom:5px
+}
+.pp{font-size:1.18em;font-weight:900;color:var(--gd);text-shadow:0 1px 3px rgba(255,255,255,.5)}
 
-        .branch {
-            width: 100%; height: 26px;
-            background: linear-gradient(180deg, #b58b5a, #7b572e, #4a341c);
-            border-radius: 40px 40px 14px 14px;
-            position: relative;
-            box-shadow: 0 8px 20px rgba(0,0,0,.6), inset 0 4px 8px rgba(255,220,140,.6);
-            border: 2px solid #dbb38c;
-        }
-        .branch::before {
-            content:'';
-            position:absolute; inset:0;
-            background-image: repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(0,0,0,.18) 18px,rgba(0,0,0,.18) 36px);
-            border-radius:inherit;
-        }
+/* ── Image modal ── */
+.im{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.88);backdrop-filter:blur(12px);
+  z-index:3000;justify-content:center;align-items:center
+}
+.im.active{display:flex}
+.miw{
+  max-width:90%;max-height:82%;border-radius:30px;
+  border:5px solid var(--white);
+  box-shadow:0 28px 65px #000,0 0 0 4px rgba(255,255,255,.25);
+  overflow:hidden;background:var(--white);
+  animation:zI .3s var(--eb)
+}
+@keyframes zI{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.miw img{width:100%;height:100%;object-fit:contain;display:block}
+.cim{
+  position:absolute;top:22px;left:22px;font-size:2.6em;color:var(--white);
+  cursor:pointer;background:rgba(0,0,0,.3);border-radius:50%;
+  width:56px;height:56px;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);border:2px solid var(--white);transition:var(--tr)
+}
+.cim:hover{transform:rotate(90deg) scale(1.1);background:rgba(255,255,255,.25)}
 
-        .squirrel-home {
-            position:absolute; right:-4px; top:50%; transform:translateY(-50%);
-            width:58px; height:62px; z-index:30;
-            filter:drop-shadow(0 6px 12px rgba(0,0,0,.5));
-        }
-        .h-trunk  { position:absolute; width:42px; height:52px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:35% 35% 20% 20%; right:0; bottom:0; box-shadow:inset -4px -4px 8px #3e2a14,inset 4px 4px 10px #e0b58c; border:2px solid #7b572e; }
-        .h-hole   { position:absolute; width:24px; height:30px; background:#3e2a14; border-radius:45% 45% 20% 20%; right:9px; top:11px; box-shadow:inset 0 0 12px #0a0602; border:2px solid #7b572e; }
-        .h-roof   { position:absolute; width:52px; height:20px; background:#7b572e; top:-9px; right:-5px; border-radius:60% 60% 10% 10%; transform:rotate(2deg); }
-        .h-leaf   { position:absolute; width:16px; height:16px; background:#7fb073; border-radius:70% 0 70% 0; top:-16px; right:17px; transform:rotate(45deg); }
-        .h-leaf2  { right:0; top:-11px; transform:rotate(-14deg); background:#5cb85c; width:14px; height:14px; }
+/* ── Empty state ── */
+.emp{text-align:center;padding:50px 20px;color:rgba(255,255,255,.7);font-size:1.1em}
 
-        .squirrel {
-            position:absolute; top:50%; left:0;
-            transform:translateY(-50%);
-            width:58px; height:48px; z-index:40;
-            animation: runAcross 4.2s ease-in-out forwards;
-            filter:drop-shadow(3px 6px 10px rgba(0,0,0,.5));
-        }
-        @keyframes runAcross {
-            0%   { left:0; transform:translateY(-50%) scaleX(1); }
-            14%  { transform:translateY(-58%) scaleX(1); }
-            28%  { transform:translateY(-42%) scaleX(1); }
-            42%  { transform:translateY(-54%) scaleX(1); }
-            56%  { transform:translateY(-44%) scaleX(1); }
-            70%  { transform:translateY(-53%) scaleX(1); }
-            85%  { transform:translateY(-47%) scaleX(1); }
-            100% { left:calc(100% - 62px); transform:translateY(-50%) scaleX(1); }
-        }
+/* ── Footer ── */
+.ft{
+  background:linear-gradient(145deg,var(--gd),var(--gm),var(--gl));
+  color:var(--white);padding:10px 14px;text-align:center;
+  border-top:2px solid var(--white);border-radius:20px 20px 0 0;
+  font-size:.88rem;width:100%;margin-top:auto
+}
+.ib{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(145deg,#fff,#f0f2f5);color:var(--gd);
+  font-size:1.25em;margin-bottom:5px;
+  border:2px solid var(--beige);transition:var(--tr);text-decoration:none
+}
+.ib:hover{transform:scale(1.1) rotate(10deg)}
+.ft p{font-size:.95em;margin:3px 0;line-height:1.3}
 
-        .s-body  { position:absolute; width:34px; height:30px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:50% 40% 40% 50%; top:9px; left:14px; border:2px solid #7b572e; }
-        .s-head  { position:absolute; width:20px; height:20px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:50% 40% 50% 30%; top:2px; right:-1px; border:2px solid #7b572e; }
-        .s-ear   { position:absolute; width:8px; height:10px; background:#b58b5a; border-radius:50% 50% 0 0; top:-5px; right:2px; transform:rotate(-10deg); border:1px solid #7b572e; }
-        .s-eye   { position:absolute; width:4px; height:4px; background:#fff; border-radius:50%; top:6px; right:5px; box-shadow:0 0 3px #000; }
-        .s-eye::before { content:''; position:absolute; width:2px; height:2px; background:#000; border-radius:50%; top:1px; right:1px; }
-        .s-nose  { position:absolute; width:3px; height:3px; background:#000; border-radius:50%; top:10px; right:2px; }
-        .s-belly { position:absolute; width:16px; height:15px; background:#eac39b; border-radius:40% 20% 30% 40%; top:11px; left:19px; opacity:.7; }
-        .s-tail  { position:absolute; width:24px; height:26px; background:linear-gradient(145deg,#b58b5a,#7b572e); border-radius:80% 20% 70% 30%; top:4px; left:-11px; transform:rotate(20deg); border:2px solid #7b572e; animation:wagTail .2s infinite alternate; }
-        @keyframes wagTail { from{transform:rotate(14deg)} to{transform:rotate(28deg)} }
-        .s-leg-f { position:absolute; width:8px; height:10px; background:#b58b5a; border-radius:30% 30% 20% 20%; bottom:3px; right:8px; border:1px solid #7b572e; animation:legAnim .15s infinite alternate; }
-        .s-leg-b { position:absolute; width:9px; height:11px; background:#b58b5a; border-radius:30% 30% 20% 20%; bottom:3px; left:19px; border:1px solid #7b572e; animation:legAnim .15s infinite alternate-reverse; }
-        @keyframes legAnim { from{transform:rotate(0) translateY(0)} to{transform:rotate(10deg) translateY(-3px)} }
-
-        /* ===== الهيدر ===== */
-        .header {
-            width: 100%;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow: hidden;
-            background: linear-gradient(145deg, #2d6827, #4f9442, #7cb86b);
-            border-bottom: 4px solid var(--white);
-            box-shadow: 0 18px 38px -5px rgba(0,0,0,.55);
-            border-radius: 0 0 40px 40px;
-            position: relative;
-        }
-
-        .header-video {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            object-fit: cover; z-index: -2;
-            filter: brightness(.68) saturate(1.4) hue-rotate(72deg) contrast(1.1);
-        }
-        .video-overlay {
-            position: absolute; inset: 0;
-            background: rgba(30,70,20,.52); z-index: -1;
-        }
-
-        .header-content {
-            position: relative; z-index: 2;
-            width: 100%;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 18px 18px 8px;
-        }
-
-        .logo-circle {
-            width: 82px; height: 82px;
-            border-radius: 50%; overflow: hidden;
-            border: 5px solid var(--white);
-            box-shadow: 0 0 40px #fff, 0 0 80px #f0fff0, 0 5px 18px rgba(0,0,0,.3);
-            margin-bottom: 10px;
-            transition: var(--transition);
-            cursor: pointer;
-        }
-        .logo-circle:hover { transform: scale(1.08) rotate(3deg); box-shadow: 0 0 65px #fff; }
-        .logo-circle img { width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
-
-        .restaurant-name {
-            font-family: 'Tajawal', sans-serif;
-            font-size: clamp(1.6em, 5vw, 2.1em);
-            color: var(--white);
-            text-shadow: 0 0 20px #fff, 0 0 38px #fff, 3px 3px 0 rgba(0,0,0,.3);
-            text-align: center; line-height: 1.2;
-            animation: namePulse 2.8s infinite alternate ease-in-out;
-        }
-        .restaurant-name small {
-            font-size: .5em; display: block;
-            color: var(--beige); letter-spacing: 1.5px;
-            text-shadow: 0 0 14px #000;
-        }
-        @keyframes namePulse {
-            from { text-shadow: 0 0 22px #fff, 0 0 40px #fff; }
-            to   { text-shadow: 0 0 32px #fff, 0 0 65px #f0fff0; }
-        }
-
-        /* ===== Nav Tabs ===== */
-        .nav-tabs {
-            display: flex;
-            flex-wrap: nowrap;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            width: calc(100% - 28px);
-            padding: 8px 14px 8px;
-            margin: 0 14px 10px;
-            background: rgba(255,255,255,.93);
-            backdrop-filter: blur(14px);
-            border-top: 1px solid rgba(255,255,255,.7);
-            box-shadow: 0 4px 12px rgba(0,0,0,.12);
-            gap: 7px;
-            border-radius: 40px 40px 24px 24px;
-            direction: rtl;
-            position: relative; z-index: 2;
-        }
-        .nav-tabs::-webkit-scrollbar { display: none; }
-
-        .nav-tab {
-            background: linear-gradient(145deg, #fff, #f8f9fa);
-            border: 1.5px solid transparent;
-            cursor: pointer;
-            padding: 6px 14px;
-            font-family: 'Cairo', sans-serif;
-            font-size: .84em;
-            color: #2b4d24;
-            font-weight: 800;
-            border-radius: 30px;
-            transition: var(--transition);
-            display: flex; align-items: center; justify-content: center;
-            gap: 5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,.09);
-            white-space: nowrap;
-            flex: 0 0 auto;
-            position: relative; overflow: hidden;
-        }
-        .nav-tab::after {
-            content:'';
-            position:absolute; top:0; left:-100%;
-            width:100%; height:100%;
-            background: linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);
-            transition: left .5s ease;
-        }
-        .nav-tab:hover::after { left:100%; }
-        .nav-tab:active  { transform: scale(.93); }
-        .nav-tab:hover   { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,.14); }
-        .nav-tab.active  {
-            background: linear-gradient(145deg, #3f8b3a, #7cb86b, #b3e6a0);
-            color: var(--white);
-            box-shadow: 0 7px 16px rgba(45,90,39,.65);
-            transform: translateY(-2px);
-            border-color: var(--white);
-            text-shadow: 0 0 7px rgba(0,0,0,.45);
-        }
-        .nav-tab i { font-size: .95em; }
-
-        /* ===== Main Container ===== */
-        .menu-container {
-            max-width: 1400px;
-            margin: 20px auto 40px;
-            padding: 0 16px;
-            flex: 1; width: 100%;
-        }
-
-        /* ===== Skeleton Loading ===== */
-        .skeleton-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 14px;
-        }
-        .skeleton-card {
-            background: rgba(255,255,255,.15);
-            border-radius: var(--radius-card);
-            height: 110px;
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            gap: 12px;
-            border: 2px solid rgba(255,255,255,.25);
-            overflow: hidden;
-            position: relative;
-        }
-        .skeleton-card::after {
-            content:'';
-            position:absolute; inset:0;
-            background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,.25) 50%, transparent 70%);
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-            0%   { transform:translateX(-100%); }
-            100% { transform:translateX(100%); }
-        }
-        .skel-img  { width:78px; height:78px; border-radius:18px; background:rgba(255,255,255,.2); flex-shrink:0; }
-        .skel-lines { flex:1; display:flex; flex-direction:column; gap:8px; padding-right:4px; }
-        .skel-line  { height:12px; background:rgba(255,255,255,.22); border-radius:30px; }
-        .skel-line.short { width:55%; }
-        .skel-line.price { width:35%; height:16px; }
-
-        /* ===== Error State ===== */
-        .error-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: var(--white);
-        }
-        .error-state .error-icon { font-size: 3.5em; margin-bottom: 16px; }
-        .error-state h3 { font-size: 1.5em; margin-bottom: 10px; font-family:'Tajawal',sans-serif; }
-        .error-state p  { opacity: .8; margin-bottom: 24px; font-size: .95em; }
-        .retry-btn {
-            background: linear-gradient(145deg, var(--white), #f0f2f5);
-            color: var(--green-dark);
-            border: none; border-radius: var(--radius-btn);
-            padding: 12px 32px;
-            font-size: 1.05em; font-weight: 800;
-            font-family: 'Cairo', sans-serif;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0,0,0,.3);
-            transition: var(--transition);
-        }
-        .retry-btn:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 14px 28px rgba(0,0,0,.35); }
-        .retry-btn i { margin-left: 7px; }
-
-        /* ===== Section Title ===== */
-        .section-title {
-            font-family: 'Tajawal', sans-serif;
-            font-size: clamp(1.8em, 5vw, 2.4em);
-            color: var(--white);
-            text-shadow: 0 0 22px #fff, 0 0 42px #fff, 2px 2px 0 rgba(0,0,0,.3);
-            margin-bottom: 28px; text-align: center;
-            position: relative;
-        }
-        .section-title::after {
-            content:'';
-            position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
-            width:120px; height:4px;
-            background: linear-gradient(90deg,#fff,#f0f0f0,#fff);
-            border-radius:8px; box-shadow: 0 0 16px #fff;
-        }
-
-        /* ===== Products Grid ===== */
-        .products-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 14px;
-        }
-
-        /* ===== Product Card ===== */
-        .product-card {
-            position: relative;
-            background: #fefefe;
-            border-radius: var(--radius-card);
-            overflow: hidden;
-            box-shadow: var(--shadow-card);
-            border: 3px solid var(--white);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            padding: 8px;
-            opacity: 0; transform: translateY(18px);
-            animation: cardIn .4s ease-out forwards;
-        }
-        @keyframes cardIn {
-            to { opacity:1; transform:translateY(0); }
-        }
-        .product-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            box-shadow: 0 20px 40px -8px #3f6b35, 0 0 0 4px var(--white);
-        }
-
-        .product-image {
-            width: 80px; height: 80px;
-            object-fit: cover;
-            border-radius: 18px;
-            border: 3px solid var(--green-mid);
-            box-shadow: 0 0 12px rgba(255,255,255,.7);
-            transition: transform .35s ease;
-            flex-shrink: 0;
-            cursor: pointer;
-        }
-        .product-card:hover .product-image { transform: scale(1.04); }
-
-        .card-content {
-            padding: 4px 10px 4px 4px;
-            flex-grow: 1;
-            display: flex; flex-direction: column;
-            min-width: 0;
-        }
-
-        .product-title {
-            font-size: 1.08em;
-            color: var(--green-dark);
-            margin-bottom: 4px;
-            font-weight: 900;
-            display: flex; align-items: center; gap: 6px;
-            line-height: 1.2;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .new-tag {
-            background: linear-gradient(145deg, var(--green-mid), var(--green-light));
-            color: var(--white);
-            padding: 2px 8px;
-            border-radius: 30px;
-            font-size: .5em;
-            flex-shrink: 0;
-            animation: tagPulse 1.8s infinite;
-        }
-        @keyframes tagPulse {
-            0%,100% { opacity:1; transform:scale(1); }
-            50%      { opacity:.8; transform:scale(1.05); }
-        }
-
-        .product-description {
-            color: var(--text-dark);
-            font-size: .73em; line-height: 1.3;
-            flex-grow: 1;
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 5px;
-        }
-
-        .product-price {
-            font-size: 1.18em; font-weight: 900;
-            color: var(--green-dark);
-            text-shadow: 0 1px 3px rgba(255,255,255,.5);
-        }
-
-        /* ===== Image Modal ===== */
-        .image-modal {
-            display: none;
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,.88);
-            backdrop-filter: blur(12px);
-            z-index: 3000;
-            justify-content: center; align-items: center;
-        }
-        .image-modal.active { display: flex; }
-        .modal-img-wrap {
-            max-width: 90%; max-height: 82%;
-            border-radius: 30px;
-            border: 5px solid var(--white);
-            box-shadow: 0 28px 65px #000, 0 0 0 4px rgba(255,255,255,.25);
-            overflow: hidden;
-            background: var(--white);
-            animation: zoomIn .3s var(--ease-bounce);
-        }
-        @keyframes zoomIn { from { transform:scale(.7); opacity:0; } to { transform:scale(1); opacity:1; } }
-        .modal-img-wrap img { width:100%; height:100%; object-fit:contain; display:block; }
-        .close-img-modal {
-            position: absolute; top: 22px; left: 22px;
-            font-size: 2.6em; color: var(--white);
-            cursor: pointer;
-            background: rgba(0,0,0,.3);
-            border-radius: 50%; width:56px; height:56px;
-            display: flex; align-items:center; justify-content:center;
-            backdrop-filter: blur(4px);
-            border: 2px solid var(--white);
-            transition: var(--transition);
-        }
-        .close-img-modal:hover { transform: rotate(90deg) scale(1.1); background: rgba(255,255,255,.25); }
-
-        /* ===== Empty State ===== */
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: rgba(255,255,255,.7);
-            font-size: 1.1em;
-        }
-
-        /* ===== Footer ===== */
-        .footer {
-            background: linear-gradient(145deg, var(--green-dark), var(--green-mid), var(--green-light));
-            color: var(--white);
-            padding: 10px 14px;
-            text-align: center;
-            border-top: 2px solid var(--white);
-            border-radius: 20px 20px 0 0;
-            font-size: .88rem;
-            width: 100%; margin-top: auto;
-        }
-        .instagram-btn {
-            display: inline-flex; align-items:center; justify-content:center;
-            width: 34px; height: 34px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #fff, #f0f2f5);
-            color: var(--green-dark);
-            font-size: 1.25em;
-            margin-bottom: 5px;
-            border: 2px solid var(--beige);
-            transition: var(--transition);
-            text-decoration: none;
-        }
-        .instagram-btn:hover { transform: scale(1.1) rotate(10deg); }
-        .footer p { font-size: .95em; margin: 3px 0; line-height: 1.3; }
-
-        /* ===== Responsive ===== */
-        @media (max-width: 480px) {
-            .product-image { width:72px; height:72px; }
-            .product-title  { font-size: .98em; }
-            .product-price  { font-size: 1.08em; }
-            .footer         { padding: 8px 10px; font-size:.8rem; }
-            .nav-tab        { padding: 5px 10px; font-size:.78em; }
-        }
-        @media (min-width: 640px) {
-            .products-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (min-width: 1024px) {
-            .products-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-    </style>
+/* ── Responsive ── */
+@media(max-width:480px){
+  .pi{width:72px;height:72px}
+  .pt{font-size:.98em}
+  .pp{font-size:1.08em}
+  .ft{padding:8px 10px;font-size:.8rem}
+  .ntb{padding:5px 10px;font-size:.78em}
+}
+@media(min-width:640px){.pg{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1024px){.pg{grid-template-columns:repeat(3,1fr)}}
+</style>
 </head>
 <body>
 
-<div id="forest-bg"></div>
-<canvas id="leaves-canvas"></canvas>
-
-<!-- ===== شاشة البداية ===== -->
-<div id="intro-screen">
-    <div id="burst-container" style="position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none;"></div>
-
-    <div class="intro-logo">
-        <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" fetchpriority="high">
-    </div>
-
-    <div class="intro-title">🌲 تل السنديان</div>
-
-    <div class="loader-wrap">
-        <div class="branch">
-            <div class="squirrel-home">
-                <div class="h-trunk"></div>
-                <div class="h-hole"></div>
-                <div class="h-roof"></div>
-                <div class="h-leaf"></div>
-                <div class="h-leaf h-leaf2"></div>
-            </div>
-            <div class="squirrel">
-                <div class="s-tail"></div>
-                <div class="s-body"></div>
-                <div class="s-belly"></div>
-                <div class="s-head">
-                    <div class="s-ear"></div>
-                    <div class="s-eye"></div>
-                    <div class="s-nose"></div>
-                </div>
-                <div class="s-leg-f"></div>
-                <div class="s-leg-b"></div>
-            </div>
+<!-- ── شاشة البداية ── -->
+<div id="is">
+  <div id="bc" style="position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none"></div>
+  <div class="il">
+    <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" fetchpriority="high" decoding="sync" width="150" height="150">
+  </div>
+  <div class="it">🌲 تل السنديان</div>
+  <div class="lw">
+    <div class="br">
+      <div class="sh">
+        <div class="ht"></div>
+        <div class="hh"></div>
+        <div class="hr"></div>
+        <div class="hl"></div>
+        <div class="hl hl2"></div>
+      </div>
+      <div class="sq">
+        <div class="st"></div>
+        <div class="sb"></div>
+        <div class="sv"></div>
+        <div class="sd">
+          <div class="se"></div>
+          <div class="sy"></div>
+          <div class="sn"></div>
         </div>
+        <div class="slf"></div>
+        <div class="slb"></div>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- ===== الهيدر ===== -->
-<header class="header" id="main-header">
-    <video autoplay loop muted playsinline class="header-video"
-           poster="https://via.placeholder.com/1920x600/2D5A27/FFFFFF?text=">
-        <source src="https://cdn.pixabay.com/video/2023/11/19/189813-887078786_medium.mp4" type="video/mp4">
-    </video>
-    <div class="video-overlay"></div>
-
-    <div class="header-content">
-        <div class="logo-circle">
-            <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" loading="eager">
-        </div>
-        <h1 class="restaurant-name">
-            تل السنديان
-            <small>Tel AlSindian</small>
-        </h1>
+<!-- ── الهيدر ── -->
+<header class="hdr" id="mh">
+  <video autoplay loop muted playsinline class="hdr-video"
+         poster="https://via.placeholder.com/1920x600/2D5A27/FFFFFF?text=">
+    <source src="https://cdn.pixabay.com/video/2023/11/19/189813-887078786_medium.mp4" type="video/mp4">
+  </video>
+  <div class="vo"></div>
+  <div class="hc">
+    <div class="lc2">
+      <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" loading="eager" decoding="async" width="82" height="82">
     </div>
-
-    <nav class="nav-tabs" id="navTabs" role="tablist" aria-label="أقسام القائمة"></nav>
+    <h1 class="rn">تل السنديان<small>Tal AlSindian</small></h1>
+  </div>
+  <nav class="nt" id="navTabs" role="tablist" aria-label="أقسام القائمة"></nav>
 </header>
 
-<!-- ===== المحتوى الرئيسي ===== -->
-<main class="menu-container" id="menuContainer" role="main">
-    <!-- يُملأ ديناميكياً -->
-</main>
+<!-- ── المحتوى الرئيسي ── -->
+<main class="mc" id="menuContainer" role="main"></main>
 
-<!-- مودال الصورة -->
-<div class="image-modal" id="imageModal" role="dialog" aria-modal="true" aria-label="عرض الصورة">
-    <span class="close-img-modal" id="closeImgBtn" tabindex="0" aria-label="إغلاق">&times;</span>
-    <div class="modal-img-wrap">
-        <img id="modalImg" src="" alt="صورة المنتج">
-    </div>
+<!-- ── مودال الصورة ── -->
+<div class="im" id="imageModal" role="dialog" aria-modal="true" aria-label="عرض الصورة">
+  <span class="cim" id="closeImgBtn" tabindex="0" aria-label="إغلاق">&times;</span>
+  <div class="miw">
+    <img id="modalImg" src="" alt="صورة المنتج" loading="lazy" decoding="async">
+  </div>
 </div>
 
-<!-- ===== الفوتر ===== -->
-<footer class="footer">
-    <a href="https://www.instagram.com/tal_sindian_cafe/" target="_blank" rel="noopener noreferrer"
-       class="instagram-btn" aria-label="Instagram">
-        <i class="fab fa-instagram"></i>
-    </a>
-    <p>© 2026 تل السنديان — جميع الحقوق محفوظة</p>
-    <p style="font-size:.72em; opacity:.75; margin-top:2px;">نظام القائمة الذكي v4.0</p>
+<!-- ── الفوتر ── -->
+<footer class="ft">
+  <a href="https://www.instagram.com/tal_sindian_cafe/" target="_blank" rel="noopener noreferrer"
+     class="ib" aria-label="Instagram">
+    <i class="fab fa-instagram"></i>
+  </a>
+  <p>© 2026 تل السنديان — جميع الحقوق محفوظة</p>
+  <p style="font-size:.72em;opacity:.75;margin-top:2px">نظام القائمة الذكي v4.0</p>
 </footer>
 
 <script>
-/* =============================================================
-   TEL AL-SINDIAN MENU — Production v4.1
-   ✅ localStorage للبيانات (بدون الصور — روابط مباشرة)
-   ✅ تحديث تلقائي في الخلفية بعد انتهاء TTL
-   ✅ عرض فوري من الكاش عند التوفر
-   ✅ Retry مع Exponential Backoff
-   ✅ IntersectionObserver لأنيميشن البطاقات
-   ✅ منع الزوم + Canvas أوراق GPU-friendly
-============================================================= */
-
 'use strict';
 
 /* ── Config ── */
-const CFG = {
-    API_URL:        'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
-    LS_KEY:         'talsindian_menu_v4',        // مفتاح localStorage
-    LS_KEY_TS:      'talsindian_menu_v4_ts',     // طابع الوقت منفصل للسرعة
-    CACHE_TTL_MS:   30 * 60 * 1000,             // 30 دقيقة
-    BG_REFRESH_MS:  5  * 60 * 1000,             // تحديث خلفي بعد 5 دقائق من عمر الكاش
-    MAX_RETRIES:    3,
-    RETRY_BASE_MS:  800,
-    FETCH_TIMEOUT:  12000,
-    INTRO_HIDE_MS:  4200,
-    PLACEHOLDER_IMG:'https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86',
+const C={
+  API:'https://script.google.com/macros/s/AKfycbyf1LnxXlGpllpyNeO9Gez1ah-DUSaVfTk3KhPDV8lDtN_Zga1GMZDaM387o0XWhIIW/exec',
+  CK:'ts_menu_v4',
+  TTL:6e5,
+  MR:3,
+  RB:800,
+  TO:12000,
+  IH:4200
 };
 
 /* ── State ── */
-const state = {
-    categories:   [],
-    products:     [],
-    activeCatId:  null,
-    loading:      false,
+const S={cats:[],prods:[],activeCat:null,loading:false};
+
+/* ── Prevent ctrl+zoom ── */
+document.addEventListener('wheel',e=>{if(e.ctrlKey)e.preventDefault();},{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&['+','-','=','_','0'].includes(e.key))e.preventDefault();});
+
+/* ── Burst particles (intro only) ── */
+(()=>{
+  const ct=document.getElementById('bc');
+  const its=['🌿','🍂','🌱','🍃','🌲','🌳'];
+  const off=[[-120,-180],[150,-150],[-180,100],[200,170],[-90,210],[130,-220],[-220,-80],[180,130]];
+  const frag=document.createDocumentFragment();
+  off.forEach(([bx,by],i)=>{
+    const el=document.createElement('span');
+    el.className='bp';
+    el.textContent=its[i%its.length];
+    const sz=34+Math.random()*22;
+    el.style.cssText=`font-size:${sz}px;--bx:${bx}px;--by:${by}px;animation-delay:${.1+i*.06}s;left:50%;top:50%;transform:translate(-50%,-50%)`;
+    frag.appendChild(el);
+  });
+  ct.appendChild(frag);
+})();
+
+/* ── Cache ── */
+const cGet=k=>{
+  try{
+    const r=sessionStorage.getItem(k);
+    if(!r)return null;
+    const o=JSON.parse(r);
+    if(Date.now()-o.ts>C.TTL){sessionStorage.removeItem(k);return null;}
+    return o.d;
+  }catch{return null;}
+};
+const cSet=(k,d)=>{
+  try{sessionStorage.setItem(k,JSON.stringify({ts:Date.now(),d}));}catch{}
 };
 
-/* ── منع الزوم ── */
-(function () {
-    document.addEventListener('wheel',        e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
-    document.addEventListener('gesturestart', e => e.preventDefault());
-    document.addEventListener('keydown',      e => {
-        if (e.ctrlKey && ['+','-','=','_','0'].includes(e.key)) e.preventDefault();
-    });
-})();
-
-/* ── Canvas Falling Leaves (GPU-friendly) ── */
-(function initLeaves() {
-    const canvas = document.getElementById('leaves-canvas');
-    const ctx    = canvas.getContext('2d');
-    const EMOJIS = ['🌿','🍂','🍃'];
-    let W, H, leaves = [];
-
-    function resize() {
-        W = canvas.width  = window.innerWidth;
-        H = canvas.height = window.innerHeight;
+/* ── Fetch + retry + timeout ── */
+const fetchR=async(url,r=C.MR)=>{
+  for(let a=0;a<=r;a++){
+    try{
+      const ac=new AbortController();
+      const tid=setTimeout(()=>ac.abort(),C.TO);
+      const res=await fetch(url,{signal:ac.signal,cache:'no-store'});
+      clearTimeout(tid);
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      return res.json();
+    }catch(e){
+      if(a<r)await new Promise(r=>setTimeout(r,C.RB*Math.pow(2,a)));
+      else throw e;
     }
-    function mkLeaf() {
-        return {
-            x:      Math.random() * W,
-            y:      -Math.random() * H * .5,
-            size:   Math.random() * 18 + 12,
-            spd:    Math.random() * 1.2 + .7,
-            rot:    Math.random() * Math.PI * 2,
-            rotV:   (Math.random() - .5) * .04,
-            driftX: (Math.random() - .5) * .6,
-            emoji:  EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
-            alpha:  Math.random() * .4 + .55,
-        };
-    }
-    function init() {
-        resize();
-        for (let i = 0; i < 28; i++) { const l = mkLeaf(); l.y = Math.random() * H; leaves.push(l); }
-    }
-    function tick() {
-        ctx.clearRect(0, 0, W, H);
-        for (let i = 0; i < leaves.length; i++) {
-            const l = leaves[i];
-            l.y += l.spd; l.x += l.driftX; l.rot += l.rotV;
-            if (l.y > H + 30) leaves[i] = mkLeaf();
-            ctx.save();
-            ctx.globalAlpha = l.alpha;
-            ctx.translate(l.x, l.y);
-            ctx.rotate(l.rot);
-            ctx.font = `${l.size}px serif`;
-            ctx.textAlign = 'center';
-            ctx.fillText(l.emoji, 0, 0);
-            ctx.restore();
-        }
-        requestAnimationFrame(tick);
-    }
-    window.addEventListener('resize', resize);
-    init();
-    requestAnimationFrame(tick);
-})();
-
-/* ── Burst Particles عند الإنترو ── */
-(function spawnBurst() {
-    const container = document.getElementById('burst-container');
-    const items   = ['🌿','🍂','🌱','🍃','🌲','🌳'];
-    const offsets = [
-        [-120,-180],[150,-150],[-180,100],[200,170],
-        [-90,210],[130,-220],[-220,-80],[180,130],
-    ];
-    offsets.forEach(([bx, by], i) => {
-        const el = document.createElement('span');
-        el.className = 'burst-particle';
-        el.textContent = items[i % items.length];
-        const sz = 34 + Math.random() * 22;
-        Object.assign(el.style, {
-            fontSize:       sz + 'px',
-            '--bx':         bx + 'px',
-            '--by':         by + 'px',
-            animationDelay: (0.1 + i * 0.06) + 's',
-            left: '50%', top: '50%',
-            transform: 'translate(-50%,-50%)',
-        });
-        container.appendChild(el);
-    });
-})();
-
-/* ══════════════════════════════════════════
-   localStorage Helpers
-   - البيانات (categories + products) محفوظة بدون الصور
-   - الصور تُحمَّل مباشرة من روابطها في وقت الرندر
-   ══════════════════════════════════════════ */
-
-/**
- * يحفظ البيانات في localStorage.
- * الصور لا تُخزَّن — تبقى كروابط URL في كائن المنتج.
- */
-function lsSet(data) {
-    try {
-        const payload = JSON.stringify(data);
-        localStorage.setItem(CFG.LS_KEY,    payload);
-        localStorage.setItem(CFG.LS_KEY_TS, Date.now().toString());
-    } catch (e) {
-        // localStorage ممتلئ أو غير متاح — نتجاهل بصمت
-        console.warn('[TelSindian] localStorage write failed:', e.message);
-    }
-}
-
-/**
- * يجلب البيانات من localStorage.
- * يعيد null إذا لم تكن موجودة أو انتهت صلاحيتها.
- */
-function lsGet() {
-    try {
-        const ts  = localStorage.getItem(CFG.LS_KEY_TS);
-        const raw = localStorage.getItem(CFG.LS_KEY);
-        if (!ts || !raw) return null;
-        if (Date.now() - Number(ts) > CFG.CACHE_TTL_MS) {
-            // انتهت الصلاحية — احذف وأعد null
-            localStorage.removeItem(CFG.LS_KEY);
-            localStorage.removeItem(CFG.LS_KEY_TS);
-            return null;
-        }
-        return JSON.parse(raw);
-    } catch { return null; }
-}
-
-/** عمر الكاش الحالي بالمللي ثانية، أو Infinity إذا لا يوجد */
-function lsAge() {
-    try {
-        const ts = localStorage.getItem(CFG.LS_KEY_TS);
-        return ts ? Date.now() - Number(ts) : Infinity;
-    } catch { return Infinity; }
-}
-
-/** حذف الكاش قسراً (مثلاً عند الضغط على إعادة المحاولة) */
-function lsClear() {
-    try {
-        localStorage.removeItem(CFG.LS_KEY);
-        localStorage.removeItem(CFG.LS_KEY_TS);
-    } catch {}
-}
-
-/* ══════════════════════════════════════════
-   Network Helpers
-   ══════════════════════════════════════════ */
-
-/** Fetch مع timeout وإعادة محاولة تلقائية */
-async function fetchWithRetry(url, retries = CFG.MAX_RETRIES) {
-    for (let attempt = 0; attempt <= retries; attempt++) {
-        try {
-            const ctrl = new AbortController();
-            const tid  = setTimeout(() => ctrl.abort(), CFG.FETCH_TIMEOUT);
-            const res  = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
-            clearTimeout(tid);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return await res.json();
-        } catch (err) {
-            if (attempt < retries) {
-                await new Promise(r => setTimeout(r, CFG.RETRY_BASE_MS * Math.pow(2, attempt)));
-            } else {
-                throw err;
-            }
-        }
-    }
-}
-
-/* ══════════════════════════════════════════
-   UI Helpers
-   ══════════════════════════════════════════ */
-
-function renderSkeleton(count = 6) {
-    return `<div class="skeleton-grid">${
-        Array.from({ length: count }, () => `
-            <div class="skeleton-card">
-                <div class="skel-img"></div>
-                <div class="skel-lines">
-                    <div class="skel-line"></div>
-                    <div class="skel-line short"></div>
-                    <div class="skel-line price"></div>
-                </div>
-            </div>`).join('')
-    }</div>`;
-}
-
-function renderError(message = 'تعذّر تحميل البيانات') {
-    return `
-        <div class="error-state">
-            <div class="error-icon">⚠️</div>
-            <h3>عذراً، حدث خطأ</h3>
-            <p>${message}</p>
-            <button class="retry-btn" onclick="retryLoad()">
-                <i class="fas fa-redo-alt"></i> إعادة المحاولة
-            </button>
-        </div>`;
-}
-
-function catIcon(name) {
-    const n = name.toLowerCase();
-    if (n.includes('ساندويش') || n.includes('ساندويتش')) return 'fa-burger';
-    if (n.includes('طبق')     || n.includes('رئيسية'))   return 'fa-drumstick-bite';
-    if (n.includes('صينية')   || n.includes('صواني'))    return 'fa-utensils';
-    if (n.includes('مقبلات')  || n.includes('سلطة'))     return 'fa-leaf';
-    if (n.includes('مشروب')   || n.includes('عصير'))     return 'fa-glass-water';
-    if (n.includes('حلو')     || n.includes('ديسرت'))    return 'fa-ice-cream';
-    return 'fa-utensils';
-}
-
-function escAttr(s) {
-    return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;');
-}
-
-/* ══════════════════════════════════════════
-   Render
-   ══════════════════════════════════════════ */
-
-function renderTabs() {
-    const nav = document.getElementById('navTabs');
-    nav.innerHTML = state.categories.map((cat, i) => `
-        <div class="nav-tab ${i === 0 ? 'active' : ''}"
-             role="tab"
-             tabindex="${i === 0 ? '0' : '-1'}"
-             aria-selected="${i === 0}"
-             data-cat="${cat.id}"
-             onclick="switchCat('${escAttr(cat.id)}', this)">
-            <i class="fas ${catIcon(cat.name)}"></i>
-            <span>${cat.name}</span>
-        </div>
-    `).join('');
-}
-
-function switchCat(catId, el) {
-    if (state.activeCatId === catId) return;
-    state.activeCatId = catId;
-    document.querySelectorAll('.nav-tab').forEach(t => {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-        t.tabIndex = -1;
-    });
-    el.classList.add('active');
-    el.setAttribute('aria-selected', 'true');
-    el.tabIndex = 0;
-    el.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
-    renderProducts(catId);
-}
-
-function renderProducts(catId) {
-    const container = document.getElementById('menuContainer');
-    const cat   = state.categories.find(c => c.id === catId);
-    const items = state.products
-        .filter(p => p.categoryId === catId)
-        .sort((a, b) => (a.order || 0) - (b.order || 0));
-
-    if (!items.length) {
-        container.innerHTML = `
-            <div class="section-title">${cat?.name || ''}</div>
-            <div class="empty-state">لا توجد منتجات في هذا القسم حالياً</div>`;
-        return;
-    }
-
-    /* الصور: نستخدم src مباشرة من الرابط المخزَّن في البيانات */
-    container.innerHTML = `
-        <h2 class="section-title">${cat?.name || ''}</h2>
-        <div class="products-grid" id="productsGrid">
-            ${items.map((p, i) => `
-                <div class="product-card" style="animation-delay:${i * 0.055}s">
-                    <img
-                        class="product-image"
-                        src="${escAttr(p.image)}"
-                        alt="${escAttr(p.name)}"
-                        loading="lazy"
-                        decoding="async"
-                        onclick="openImg('${escAttr(p.image)}','${escAttr(p.name)}')"
-                        onerror="this.onerror=null;this.src='${CFG.PLACEHOLDER_IMG}'"
-                    >
-                    <div class="card-content">
-                        <h3 class="product-title">
-                            ${p.name}
-                            ${p.isNew ? '<span class="new-tag">جديد</span>' : ''}
-                        </h3>
-                        <p class="product-description">${p.description || ''}</p>
-                        <div class="product-price">${Number(p.price).toFixed(2)} د.أ</div>
-                    </div>
-                </div>`).join('')}
-        </div>`;
-
-    initCardObserver();
-}
-
-function initCardObserver() {
-    if (!('IntersectionObserver' in window)) return;
-    const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.style.animationPlayState = 'running';
-                obs.unobserve(e.target);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.product-card').forEach(card => {
-        card.style.animationPlayState = 'paused';
-        obs.observe(card);
-    });
-}
-
-/* ══════════════════════════════════════════
-   Image Modal
-   ══════════════════════════════════════════ */
-
-function openImg(src, alt) {
-    const modal = document.getElementById('imageModal');
-    const img   = document.getElementById('modalImg');
-    img.src = src; img.alt = alt;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-function closeImg() {
-    document.getElementById('imageModal').classList.remove('active');
-    document.getElementById('modalImg').src = '';
-    document.body.style.overflow = '';
-}
-
-document.getElementById('imageModal').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeImg();
-});
-document.getElementById('closeImgBtn').addEventListener('click', closeImg);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeImg(); });
-
-/* ══════════════════════════════════════════
-   Data Layer
-   ══════════════════════════════════════════ */
-
-/** يطبّق البيانات على الـ state ويرندر الواجهة */
-function applyData(data) {
-    state.categories = (data.categories || []).sort((a, b) => (a.order || 0) - (b.order || 0));
-    state.products   = data.products || [];
-
-    if (!state.categories.length) {
-        document.getElementById('menuContainer').innerHTML =
-            '<div class="empty-state">لا توجد أقسام متاحة حالياً</div>';
-        return;
-    }
-    renderTabs();
-    state.activeCatId = state.categories[0].id;
-    renderProducts(state.activeCatId);
-}
-
-/** يجلب البيانات من الشبكة، يحفظها في localStorage، ثم يطبّقها */
-async function fetchAndStore(showSkeletonFirst = false) {
-    if (showSkeletonFirst) {
-        document.getElementById('menuContainer').innerHTML = renderSkeleton(6);
-    }
-    try {
-        const data = await fetchWithRetry(`${CFG.API_URL}?action=getMenuData`);
-        if (!data?.success) throw new Error('استجابة غير صحيحة من الخادم');
-        lsSet(data);         // حفظ في localStorage
-        applyData(data);     // تطبيق فوري
-    } catch (err) {
-        console.error('[TelSindian] Fetch error:', err);
-        // إذا كان هناك بيانات قديمة، اعرضها ولا تُظهر الخطأ
-        const stale = lsGet() || (() => { try { return JSON.parse(localStorage.getItem(CFG.LS_KEY)); } catch { return null; } })();
-        if (stale && stale.categories?.length) {
-            applyData(stale);
-            console.warn('[TelSindian] Showing stale cache after fetch failure');
-        } else if (showSkeletonFirst) {
-            document.getElementById('menuContainer').innerHTML = renderError(
-                err.name === 'AbortError'
-                    ? 'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.'
-                    : 'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.'
-            );
-        }
-    }
-}
-
-/**
- * نقطة الدخول الرئيسية:
- * 1. إذا وجد كاش صالح  → عرض فوري + تحديث خلفي إذا قارب الكاش على الانتهاء
- * 2. إذا لا يوجد كاش   → Skeleton + جلب شبكة + حفظ
- */
-async function loadMenu() {
-    if (state.loading) return;
-    state.loading = true;
-
-    const cached = lsGet();
-
-    if (cached) {
-        /* ✅ عرض فوري بدون أي skeleton */
-        applyData(cached);
-
-        /* تحديث خلفي إذا مرّ أكثر من BG_REFRESH_MS على الكاش */
-        if (lsAge() > CFG.BG_REFRESH_MS) {
-            fetchAndStore(false).finally(() => { state.loading = false; });
-        } else {
-            state.loading = false;
-        }
-    } else {
-        /* لا كاش → جلب مع Skeleton */
-        await fetchAndStore(true);
-        state.loading = false;
-    }
-}
-
-/** إعادة المحاولة يدوياً (زر الخطأ) */
-window.retryLoad = function () {
-    lsClear();
-    state.loading = false;
-    loadMenu();
+  }
 };
 
-/* ── Expose للـ HTML inline handlers ── */
-window.openImg   = openImg;
-window.switchCat = switchCat;
+/* ── Skeleton ── */
+const skelHTML=(n=6)=>`<div class="sk-g">${
+  '<div class="sk-c"><div class="sk-i"></div><div class="sk-l"><div class="sk-ln"></div><div class="sk-ln s"></div><div class="sk-ln p"></div></div></div>'.repeat(n)
+}</div>`;
 
-/* ══════════════════════════════════════════
-   Boot
-   ══════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-    /* إخفاء شاشة البداية بعد الوقت المحدد */
-    setTimeout(() => {
-        document.getElementById('intro-screen').classList.add('hidden');
-    }, CFG.INTRO_HIDE_MS);
+/* ── Error ── */
+const errHTML=(msg='تعذّر تحميل البيانات')=>`
+  <div class="es">
+    <div class="ei">⚠️</div>
+    <h3>عذراً، حدث خطأ</h3>
+    <p>${msg}</p>
+    <button class="rb" onclick="retryLoad()">
+      <i class="fas fa-redo-alt"></i> إعادة المحاولة
+    </button>
+  </div>`;
 
-    /* تحميل البيانات فوراً — لا ينتظر انتهاء الإنترو */
-    loadMenu();
+/* ── Category icon ── */
+const catIco=n=>{
+  const l=n.toLowerCase();
+  if(l.includes('ساندويش')||l.includes('ساندويتش'))return'fa-burger';
+  if(l.includes('طبق')||l.includes('رئيسية'))return'fa-drumstick-bite';
+  if(l.includes('صينية')||l.includes('صواني'))return'fa-utensils';
+  if(l.includes('مقبلات')||l.includes('سلطة'))return'fa-leaf';
+  if(l.includes('مشروب')||l.includes('عصير'))return'fa-glass-water';
+  if(l.includes('حلو')||l.includes('ديسرت'))return'fa-ice-cream';
+  return'fa-utensils';
+};
+
+/* ── Render tabs ── */
+const renderTabs=()=>{
+  document.getElementById('navTabs').innerHTML=S.cats.map((c,i)=>
+    `<div class="ntb${i===0?' active':''}" role="tab" tabindex="${i===0?0:-1}"
+          aria-selected="${i===0}" data-cat="${c.id}"
+          onclick="switchCat('${c.id}',this)">
+       <i class="fas ${catIco(c.name)}"></i><span>${c.name}</span>
+     </div>`
+  ).join('');
+};
+
+/* ── Switch category ── */
+const switchCat=(id,el)=>{
+  if(S.activeCat===id)return;
+  S.activeCat=id;
+  document.querySelectorAll('.ntb').forEach(t=>{
+    t.classList.remove('active');
+    t.setAttribute('aria-selected','false');
+    t.tabIndex=-1;
+  });
+  el.classList.add('active');
+  el.setAttribute('aria-selected','true');
+  el.tabIndex=0;
+  el.scrollIntoView({behavior:'smooth',inline:'nearest',block:'nearest'});
+  renderProds(id);
+};
+
+/* ── Escape attr ── */
+const ea=s=>String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');
+
+/* ── Render products ──
+   الأصناف تظهر مرسومة بالكامل فوراً عند التحميل.
+   لا IntersectionObserver، لا opacity:0، لا animation-delay على البطاقات.
+── */
+const renderProds=id=>{
+  const ct=document.getElementById('menuContainer');
+  const cat=S.cats.find(c=>c.id===id);
+  const items=S.prods
+    .filter(p=>p.categoryId===id)
+    .sort((a,b)=>(a.order||0)-(b.order||0));
+
+  if(!items.length){
+    ct.innerHTML=`<div class="stl">${cat?.name||''}</div>
+                  <div class="emp">لا توجد منتجات في هذا القسم حالياً</div>`;
+    return;
+  }
+
+  const PH='https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86';
+
+  ct.innerHTML=`
+    <h2 class="stl">${cat?.name||''}</h2>
+    <div class="pg">
+      ${items.map(p=>`
+        <div class="pc">
+          <img class="pi"
+               src="${p.image}"
+               alt="${p.name}"
+               loading="lazy"
+               decoding="async"
+               width="80" height="80"
+               onclick="openImg('${ea(p.image)}','${ea(p.name)}')"
+               onerror="this.src='${PH}'">
+          <div class="cc">
+            <h3 class="pt">
+              ${p.name}
+              ${p.isNew?'<span class="nt2">جديد</span>':''}
+            </h3>
+            <p class="pd">${p.description||''}</p>
+            <div class="pp">${Number(p.price).toFixed(2)} د.أ</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+};
+
+/* ── Image modal ── */
+const openImg=(src,alt)=>{
+  const img=document.getElementById('modalImg');
+  img.src=src;img.alt=alt;
+  document.getElementById('imageModal').classList.add('active');
+  document.body.style.overflow='hidden';
+};
+const closeImg=()=>{
+  document.getElementById('imageModal').classList.remove('active');
+  document.getElementById('modalImg').src='';
+  document.body.style.overflow='';
+};
+document.getElementById('imageModal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget)closeImg();
 });
+document.getElementById('closeImgBtn').addEventListener('click',closeImg);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeImg();});
+
+/* ── Load menu ── */
+const loadMenu=async()=>{
+  if(S.loading)return;
+  S.loading=true;
+  const ct=document.getElementById('menuContainer');
+  ct.innerHTML=skelHTML(6);
+  const cached=cGet(C.CK);
+  if(cached){applyData(cached);S.loading=false;return;}
+  try{
+    const d=await fetchR(`${C.API}?action=getMenuData`);
+    if(d?.success){cSet(C.CK,d);applyData(d);}
+    else throw new Error('bad data');
+  }catch(e){
+    ct.innerHTML=errHTML(
+      e.name==='AbortError'
+        ?'انتهت مهلة الاتصال. تحقق من اتصالك بالإنترنت.'
+        :'تعذّر الاتصال بالخادم. يرجى المحاولة مجدداً.'
+    );
+  }finally{S.loading=false;}
+};
+
+const applyData=d=>{
+  S.cats=(d.categories||[]).sort((a,b)=>(a.order||0)-(b.order||0));
+  S.prods=d.products||[];
+  if(!S.cats.length){
+    document.getElementById('menuContainer').innerHTML=
+      '<div class="emp">لا توجد أقسام متاحة حالياً</div>';
+    return;
+  }
+  renderTabs();
+  S.activeCat=S.cats[0].id;
+  renderProds(S.activeCat);
+};
+
+/* ── Globals ── */
+window.retryLoad=()=>{sessionStorage.removeItem(C.CK);loadMenu();};
+window.openImg=openImg;
+window.switchCat=switchCat;
+
+/* ── Boot ── */
+setTimeout(()=>document.getElementById('is').classList.add('hidden'),C.IH);
+loadMenu();
 </script>
 </body>
 </html>
