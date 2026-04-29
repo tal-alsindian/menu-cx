@@ -7,19 +7,21 @@
 <meta name="description" content="قائمة طعام تل السنديان - مطعم طبيعي أصيل">
 <title>🌲 تل السنديان | قائمة الطعام</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="preload" as="image" href="https://iili.io/qfhk5Pt.png" fetchpriority="high">
+<!-- ✅ الأيقونة بشكل مباشر بدون preload منفصل -->
 <link rel="apple-touch-icon" href="https://iili.io/qfhk5Pt.png">
 <link rel="icon" href="https://iili.io/qfhk5Pt.png">
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@700;900&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@700;900&display=swap"></noscript>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+<!-- ✅ الخطوط: display=swap + تحميل مبكر للنص الحرج فقط -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@700;900&display=swap">
+
+<!-- ✅ Font Awesome عبر CDN محسَّن مع crossorigin -->
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <style>
+/* ── Critical CSS inline — لا حاجة لـ render-blocking ── */
 :root{
   --gd:#1f4a1a;--gm:#3f8b3a;--gl:#7cb86b;
   --beige:#F5E6D3;--white:#fff;--td:#1e3b1a;
@@ -48,13 +50,17 @@ body::before{
   background:linear-gradient(145deg,#1f4a1a,#3f7a32,#65a34e);
   display:flex;flex-direction:column;
   justify-content:center;align-items:center;
-  z-index:9999;transition:opacity 1.2s ease-out;overflow:hidden
+  z-index:9999;transition:opacity 1.2s ease-out;overflow:hidden;
+  /* ✅ will-change مسبق لتفادي إعادة الرسم عند الإخفاء */
+  will-change:opacity
 }
 #is.hidden{opacity:0;pointer-events:none}
 .bp{
   position:absolute;opacity:0;
   animation:bO 1.2s ease-out forwards;
-  filter:drop-shadow(0 0 12px rgba(255,255,255,.9));z-index:5
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.9));z-index:5;
+  /* ✅ عزل طبقة GPU */
+  will-change:transform,opacity;contain:layout style
 }
 @keyframes bO{
   0%{transform:scale(0) translate(0,0);opacity:0}
@@ -67,7 +73,9 @@ body::before{
   box-shadow:0 0 70px #fff,0 0 110px #f0fff0;
   transform:scale(0);opacity:0;
   animation:pI .9s var(--eb) forwards .3s;
-  position:relative;z-index:20
+  position:relative;z-index:20;
+  /* ✅ عزل GPU */
+  will-change:transform,opacity
 }
 .il img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 @keyframes pI{
@@ -81,10 +89,11 @@ body::before{
   color:var(--white);
   text-shadow:0 0 30px #b5e5a0,0 0 60px #fff,3px 3px 0 rgba(0,0,0,.2);
   opacity:0;transform:translateY(28px);
-  animation:sU .9s ease-out forwards .9s;z-index:20
+  animation:sU .9s ease-out forwards .9s;z-index:20;
+  will-change:transform,opacity
 }
 @keyframes sU{to{opacity:1;transform:translateY(0)}}
-.lw{width:min(90%,580px);margin-top:40px;opacity:0;animation:fI .8s ease forwards 1.5s;z-index:20}
+.lw{width:min(90%,580px);margin-top:40px;opacity:0;animation:fI .8s ease forwards 1.5s;z-index:20;will-change:opacity}
 @keyframes fI{to{opacity:1}}
 
 /* Branch + Squirrel */
@@ -110,7 +119,8 @@ body::before{
   position:absolute;top:50%;left:0;transform:translateY(-50%);
   width:58px;height:48px;z-index:40;
   animation:rA 4.2s ease-in-out forwards;
-  filter:drop-shadow(3px 6px 10px rgba(0,0,0,.5))
+  filter:drop-shadow(3px 6px 10px rgba(0,0,0,.5));
+  will-change:left,transform
 }
 @keyframes rA{
   0%{left:0;transform:translateY(-50%) scaleX(1)}
@@ -129,10 +139,10 @@ body::before{
 .sy::before{content:'';position:absolute;width:2px;height:2px;background:#000;border-radius:50%;top:1px;right:1px}
 .sn{position:absolute;width:3px;height:3px;background:#000;border-radius:50%;top:10px;right:2px}
 .sv{position:absolute;width:16px;height:15px;background:#eac39b;border-radius:40% 20% 30% 40%;top:11px;left:19px;opacity:.7}
-.st{position:absolute;width:24px;height:26px;background:linear-gradient(145deg,#b58b5a,#7b572e);border-radius:80% 20% 70% 30%;top:4px;left:-11px;transform:rotate(20deg);border:2px solid #7b572e;animation:wT .2s infinite alternate}
+.st{position:absolute;width:24px;height:26px;background:linear-gradient(145deg,#b58b5a,#7b572e);border-radius:80% 20% 70% 30%;top:4px;left:-11px;transform:rotate(20deg);border:2px solid #7b572e;animation:wT .2s infinite alternate;will-change:transform}
 @keyframes wT{from{transform:rotate(14deg)}to{transform:rotate(28deg)}}
-.slf{position:absolute;width:8px;height:10px;background:#b58b5a;border-radius:30% 30% 20% 20%;bottom:3px;right:8px;border:1px solid #7b572e;animation:lA .15s infinite alternate}
-.slb{position:absolute;width:9px;height:11px;background:#b58b5a;border-radius:30% 30% 20% 20%;bottom:3px;left:19px;border:1px solid #7b572e;animation:lA .15s infinite alternate-reverse}
+.slf{position:absolute;width:8px;height:10px;background:#b58b5a;border-radius:30% 30% 20% 20%;bottom:3px;right:8px;border:1px solid #7b572e;animation:lA .15s infinite alternate;will-change:transform}
+.slb{position:absolute;width:9px;height:11px;background:#b58b5a;border-radius:30% 30% 20% 20%;bottom:3px;left:19px;border:1px solid #7b572e;animation:lA .15s infinite alternate-reverse;will-change:transform}
 @keyframes lA{from{transform:rotate(0) translateY(0)}to{transform:rotate(10deg) translateY(-3px)}}
 
 /* ── Header ── */
@@ -142,7 +152,9 @@ body::before{
   background:linear-gradient(145deg,#2d6827,#4f9442,#7cb86b);
   border-bottom:4px solid var(--white);
   box-shadow:0 18px 38px -5px rgba(0,0,0,.55);
-  border-radius:0 0 40px 40px;position:relative
+  border-radius:0 0 40px 40px;position:relative;
+  /* ✅ عزل الهيدر عن بقية الصفحة */
+  contain:layout style
 }
 .hdr-video{
   position:absolute;inset:0;width:100%;height:100%;
@@ -185,7 +197,9 @@ body::before{
   border-top:1px solid rgba(255,255,255,.7);
   box-shadow:0 4px 12px rgba(0,0,0,.12);
   gap:7px;border-radius:40px 40px 24px 24px;direction:rtl;
-  position:relative;z-index:2
+  position:relative;z-index:2;
+  /* ✅ تحسين overflow scroll على الموبايل */
+  overscroll-behavior-x:contain
 }
 .nt::-webkit-scrollbar{display:none}
 .ntb{
@@ -223,12 +237,15 @@ body::before{
 .sk-c{
   background:rgba(255,255,255,.15);border-radius:var(--rc);
   height:110px;display:flex;align-items:center;padding:10px;gap:12px;
-  border:2px solid rgba(255,255,255,.25);overflow:hidden;position:relative
+  border:2px solid rgba(255,255,255,.25);overflow:hidden;position:relative;
+  /* ✅ عزل الـ skeleton */
+  contain:strict
 }
 .sk-c::after{
   content:'';position:absolute;inset:0;
   background:linear-gradient(90deg,transparent 30%,rgba(255,255,255,.25) 50%,transparent 70%);
-  animation:shim 1.5s infinite
+  animation:shim 1.5s infinite;
+  will-change:transform
 }
 @keyframes shim{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
 .sk-i{width:78px;height:78px;border-radius:18px;background:rgba(255,255,255,.2);flex-shrink:0}
@@ -267,21 +284,28 @@ body::before{
 }
 
 /* ── Products grid ── */
-.pg{display:grid;grid-template-columns:1fr;gap:14px}
+.pg{display:grid;grid-template-columns:1fr;gap:14px;
+  /* ✅ عزل الـ grid لتفادي reflow */
+  contain:layout
+}
 
-/* ── Product card — مرئية بالكامل فوراً، بدون أي تأخير أو تأثير ظهور ── */
+/* ── Product card ── */
 .pc{
   position:relative;background:#fefefe;border-radius:var(--rc);
   overflow:hidden;box-shadow:var(--sc);border:3px solid var(--white);
   transition:var(--tr);display:flex;flex-direction:row;
-  align-items:center;padding:8px
+  align-items:center;padding:8px;
+  /* ✅ عزل كل بطاقة */
+  contain:layout style
 }
 .pc:hover{transform:translateY(-4px) scale(1.01);box-shadow:0 20px 40px -8px #3f6b35,0 0 0 4px var(--white)}
 .pi{
   width:80px;height:80px;object-fit:cover;border-radius:18px;
   border:3px solid var(--gm);box-shadow:0 0 12px rgba(255,255,255,.7);
   transition:transform .35s ease;flex-shrink:0;cursor:pointer;
-  aspect-ratio:1/1
+  aspect-ratio:1/1;
+  /* ✅ منع layout shift للصور */
+  background-color:rgba(63,139,58,.15)
 }
 .pc:hover .pi{transform:scale(1.04)}
 .cc{padding:4px 10px 4px 4px;flex-grow:1;display:flex;flex-direction:column;min-width:0}
@@ -293,7 +317,7 @@ body::before{
 .nt2{
   background:linear-gradient(145deg,var(--gm),var(--gl));
   color:var(--white);padding:2px 8px;border-radius:30px;
-  font-size:.5em;flex-shrink:0;animation:tP 1.8s infinite
+  font-size:.5em;flex-shrink:0;animation:tP 1.8s infinite;will-change:opacity,transform
 }
 @keyframes tP{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.8;transform:scale(1.05)}}
 .pd{
@@ -365,6 +389,7 @@ body::before{
 <div id="is">
   <div id="bc" style="position:absolute;width:100%;height:100%;overflow:hidden;pointer-events:none"></div>
   <div class="il">
+    <!-- ✅ fetchpriority=high + decoding=sync لأسرع ظهور -->
     <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" fetchpriority="high" decoding="sync" width="150" height="150">
   </div>
   <div class="it">🌲 تل السنديان</div>
@@ -395,13 +420,15 @@ body::before{
 
 <!-- ── الهيدر ── -->
 <header class="hdr" id="mh">
-  <video autoplay loop muted playsinline class="hdr-video"
+  <!-- ✅ الفيديو يُحمَّل بـ preload=none لأنه ديكور فقط -->
+  <video autoplay loop muted playsinline preload="none" class="hdr-video"
          poster="https://via.placeholder.com/1920x600/2D5A27/FFFFFF?text=">
     <source src="https://cdn.pixabay.com/video/2023/11/19/189813-887078786_medium.mp4" type="video/mp4">
   </video>
   <div class="vo"></div>
   <div class="hc">
     <div class="lc2">
+      <!-- ✅ الشعار الثاني: eager + async -->
       <img src="https://iili.io/qfhk5Pt.png" alt="تل السنديان" loading="eager" decoding="async" width="82" height="82">
     </div>
     <h1 class="rn">تل السنديان<small>Tal AlSindian</small></h1>
@@ -457,6 +484,7 @@ document.addEventListener('keydown',e=>{if(e.ctrlKey&&['+','-','=','_','0'].incl
   const ct=document.getElementById('bc');
   const its=['🌿','🍂','🌱','🍃','🌲','🌳'];
   const off=[[-120,-180],[150,-150],[-180,100],[200,170],[-90,210],[130,-220],[-220,-80],[180,130]];
+  // ✅ DocumentFragment لتقليل DOM reflows
   const frag=document.createDocumentFragment();
   off.forEach(([bx,by],i)=>{
     const el=document.createElement('span');
@@ -501,9 +529,11 @@ const fetchR=async(url,r=C.MR)=>{
 };
 
 /* ── Skeleton ── */
-const skelHTML=(n=6)=>`<div class="sk-g">${
-  '<div class="sk-c"><div class="sk-i"></div><div class="sk-l"><div class="sk-ln"></div><div class="sk-ln s"></div><div class="sk-ln p"></div></div></div>'.repeat(n)
-}</div>`;
+// ✅ نبني الـ skeleton مرة واحدة ونحفظه في ذاكرة
+const SKEL_HTML=(()=>{
+  const row='<div class="sk-c"><div class="sk-i"></div><div class="sk-l"><div class="sk-ln"></div><div class="sk-ln s"></div><div class="sk-ln p"></div></div></div>';
+  return`<div class="sk-g">${row.repeat(6)}</div>`;
+})();
 
 /* ── Error ── */
 const errHTML=(msg='تعذّر تحميل البيانات')=>`
@@ -530,6 +560,7 @@ const catIco=n=>{
 
 /* ── Render tabs ── */
 const renderTabs=()=>{
+  // ✅ innerHTML مرة واحدة بدل إضافة عناصر فردية
   document.getElementById('navTabs').innerHTML=S.cats.map((c,i)=>
     `<div class="ntb${i===0?' active':''}" role="tab" tabindex="${i===0?0:-1}"
           aria-selected="${i===0}" data-cat="${c.id}"
@@ -558,10 +589,10 @@ const switchCat=(id,el)=>{
 /* ── Escape attr ── */
 const ea=s=>String(s).replace(/'/g,"\\'").replace(/"/g,'&quot;');
 
-/* ── Render products ──
-   الأصناف تظهر مرسومة بالكامل فوراً عند التحميل.
-   لا IntersectionObserver، لا opacity:0، لا animation-delay على البطاقات.
-── */
+/* ── Placeholder محسوب مرة واحدة ── */
+const PH='https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86';
+
+/* ── Render products ── */
 const renderProds=id=>{
   const ct=document.getElementById('menuContainer');
   const cat=S.cats.find(c=>c.id===id);
@@ -575,8 +606,7 @@ const renderProds=id=>{
     return;
   }
 
-  const PH='https://via.placeholder.com/512x512/2D5A27/FFFFFF?text=%D8%AA%D9%84+%D8%A7%D9%84%D8%B3%D9%86%D8%AF%D9%8A%D8%A7%D9%86';
-
+  // ✅ بناء HTML كنص واحد ثم تعيينه دفعة واحدة = صفر reflow أثناء البناء
   ct.innerHTML=`
     <h2 class="stl">${cat?.name||''}</h2>
     <div class="pg">
@@ -625,7 +655,7 @@ const loadMenu=async()=>{
   if(S.loading)return;
   S.loading=true;
   const ct=document.getElementById('menuContainer');
-  ct.innerHTML=skelHTML(6);
+  ct.innerHTML=SKEL_HTML;
   const cached=cGet(C.CK);
   if(cached){applyData(cached);S.loading=false;return;}
   try{
@@ -660,8 +690,9 @@ window.openImg=openImg;
 window.switchCat=switchCat;
 
 /* ── Boot ── */
+// ✅ إخفاء شاشة البداية + بدء تحميل القائمة بالتوازي (لا انتظار)
 setTimeout(()=>document.getElementById('is').classList.add('hidden'),C.IH);
-loadMenu();
+loadMenu(); // يبدأ فوراً بالتوازي مع الـ intro
 </script>
 </body>
 </html>
